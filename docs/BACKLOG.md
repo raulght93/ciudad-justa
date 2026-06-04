@@ -25,8 +25,12 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
-- **Pipeline de capas frías**: script batch (Urban Atlas/SIOSE/NDVI → GeoJSON/PMTiles) en una
-  GitHub Action; publicar a R2 (`03 §3.5`). *Requiere GDAL/tippecanoe — medio.*
+- **Pipeline de capas frías — ingesta raster**: la etapa de scoring ya está hecha
+  (`pipeline/build-green-layer.mjs`); falta la **extracción real** desde Urban Atlas/SIOSE/NDVI
+  con GDAL/turf que alimente el CSV de indicadores. *Requiere GDAL — medio.*
+- **Pipeline — teselado PMTiles** (`tippecanoe`) y publicación a R2 para escala ciudad.
+- **Pipeline — capa de servicios (15-min)**: POIs OSM → accesibilidad a pie → score por celda
+  (misma forma que la de verde).
 - **Contenido del área de vivienda**: incorporar datos verificados (INE, índice de alquiler,
   vivienda vacía) a la sección de expansión. *Requiere fuentes.*
 - **Exportar `og-card.svg` → `og-card.png`** (1200×630) antes de campañas: varias redes solo
@@ -46,3 +50,5 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - CI (GitHub Actions): front (test+build) + worker (test) en push/PR.
 - Seed curado ampliado (16 puntos hostiles + 9 celdas de verde) para la demo del mapa.
 - Branding: favicon.svg + tarjeta social og-card.svg.
+- Pipeline de capa fría (scoring 3-30-300): `pipeline/build-green-layer.mjs` → GeoJSON
+  generado que el mapa consume con fallback. Ingesta raster real queda en backlog.

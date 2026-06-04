@@ -1,0 +1,353 @@
+{
+  "type": "FeatureCollection",
+  "name": "ciudad-justa · capa fría · déficit de verde (generado)",
+  "_generated": {
+    "source": "pipeline/build-green-layer.mjs",
+    "rule": "3-30-300",
+    "cells": 9
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.155,
+              41.378
+            ],
+            [
+              2.175,
+              41.378
+            ],
+            [
+              2.175,
+              41.398
+            ],
+            [
+              2.155,
+              41.398
+            ],
+            [
+              2.155,
+              41.378
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c01",
+        "barrio": "Exemple A",
+        "tree_canopy_pct": 11.4,
+        "green_within_300m": 0.38,
+        "green_deficit_score": 0.62,
+        "detail": "11% cubierta · 38% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.175,
+              41.378
+            ],
+            [
+              2.195,
+              41.378
+            ],
+            [
+              2.195,
+              41.398
+            ],
+            [
+              2.175,
+              41.398
+            ],
+            [
+              2.175,
+              41.378
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c02",
+        "barrio": "Exemple B",
+        "tree_canopy_pct": 33.1,
+        "green_within_300m": 0.91,
+        "green_deficit_score": 0.04,
+        "detail": "33% cubierta · 91% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.155,
+              41.398
+            ],
+            [
+              2.175,
+              41.398
+            ],
+            [
+              2.175,
+              41.418000000000006
+            ],
+            [
+              2.155,
+              41.418000000000006
+            ],
+            [
+              2.155,
+              41.398
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c03",
+        "barrio": "Exemple C",
+        "tree_canopy_pct": 18,
+        "green_within_300m": 0.55,
+        "green_deficit_score": 0.43,
+        "detail": "18% cubierta · 55% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.175,
+              41.398
+            ],
+            [
+              2.195,
+              41.398
+            ],
+            [
+              2.195,
+              41.418000000000006
+            ],
+            [
+              2.175,
+              41.418000000000006
+            ],
+            [
+              2.175,
+              41.398
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c04",
+        "barrio": "Exemple D",
+        "tree_canopy_pct": 27.2,
+        "green_within_300m": 0.74,
+        "green_deficit_score": 0.18,
+        "detail": "27% cubierta · 74% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.195,
+              41.378
+            ],
+            [
+              2.215,
+              41.378
+            ],
+            [
+              2.215,
+              41.398
+            ],
+            [
+              2.195,
+              41.398
+            ],
+            [
+              2.195,
+              41.378
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c05",
+        "barrio": "Exemple E",
+        "tree_canopy_pct": 8.3,
+        "green_within_300m": 0.22,
+        "green_deficit_score": 0.75,
+        "detail": "8% cubierta · 22% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.195,
+              41.398
+            ],
+            [
+              2.215,
+              41.398
+            ],
+            [
+              2.215,
+              41.418000000000006
+            ],
+            [
+              2.195,
+              41.418000000000006
+            ],
+            [
+              2.195,
+              41.398
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c06",
+        "barrio": "Exemple F",
+        "tree_canopy_pct": 24.6,
+        "green_within_300m": 0.66,
+        "green_deficit_score": 0.26,
+        "detail": "25% cubierta · 66% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.155,
+              41.418
+            ],
+            [
+              2.175,
+              41.418
+            ],
+            [
+              2.175,
+              41.438
+            ],
+            [
+              2.155,
+              41.438
+            ],
+            [
+              2.155,
+              41.418
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c07",
+        "barrio": "Exemple G",
+        "tree_canopy_pct": 21,
+        "green_within_300m": 0.6,
+        "green_deficit_score": 0.35,
+        "detail": "21% cubierta · 60% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.175,
+              41.418
+            ],
+            [
+              2.195,
+              41.418
+            ],
+            [
+              2.195,
+              41.438
+            ],
+            [
+              2.175,
+              41.438
+            ],
+            [
+              2.175,
+              41.418
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c08",
+        "barrio": "Exemple H",
+        "tree_canopy_pct": 29.4,
+        "green_within_300m": 0.8,
+        "green_deficit_score": 0.11,
+        "detail": "29% cubierta · 80% a <300 m"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.195,
+              41.418
+            ],
+            [
+              2.215,
+              41.418
+            ],
+            [
+              2.215,
+              41.438
+            ],
+            [
+              2.195,
+              41.438
+            ],
+            [
+              2.195,
+              41.418
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "c09",
+        "barrio": "Exemple I",
+        "tree_canopy_pct": 14.1,
+        "green_within_300m": 0.44,
+        "green_deficit_score": 0.55,
+        "detail": "14% cubierta · 44% a <300 m"
+      }
+    }
+  ]
+}

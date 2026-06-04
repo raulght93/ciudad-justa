@@ -50,8 +50,15 @@ export default function MapSection() {
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
       map.on("load", () => {
-        // Capa fría: déficit de verde (coropleta).
+        // Capa fría: déficit de verde (coropleta). Se pinta al instante con los
+        // datos embebidos y, si existe el GeoJSON generado por el pipeline
+        // (pipeline/build-green-layer.mjs → /data/green-deficit.geojson), se
+        // sustituye al vuelo. Fallback robusto si no está o falla la red.
         map.addSource("green", { type: "geojson", data: GREEN_DEFICIT });
+        fetch("/data/green-deficit.geojson")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((gj) => gj && map.getSource("green")?.setData(gj))
+          .catch(() => {});
         map.addLayer({
           id: "green-fill",
           type: "fill",

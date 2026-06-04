@@ -1,0 +1,10 @@
+{
+  "name": "@ciudad-justa/pipeline",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pipeline batch de capas frías (datos abiertos → GeoJSON/PMTiles estáticos).",
+  "scripts": {
+    "build:green": "node build-green-layer.mjs"
+  }
+}

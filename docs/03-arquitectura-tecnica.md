@@ -135,6 +135,10 @@ Fuentes abiertas
   requests*. Coste marginal cero.
 - Recalcular es **re-ejecutar el batch** (mensual/trimestral); no hay infraestructura viva que
   mantener.
+- **Estado:** la etapa de **scoring/transformación ya está implementada** sin dependencias
+  (`pipeline/build-green-layer.mjs`: indicadores por celda → GeoJSON con `green_deficit_score`
+  por la regla 3-30-300; el front lo consume con *fallback*). Pendiente: ingesta raster real
+  (Urban Atlas/NDVI con GDAL) y teselado PMTiles a escala — ver [`pipeline/README.md`](../pipeline/README.md).
 
 ## 3.6 Privacidad y media (línea roja, no negociable)
 
