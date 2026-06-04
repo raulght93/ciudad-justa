@@ -29,9 +29,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
   GitHub Action; publicar a R2 (`03 §3.5`). *Requiere GDAL/tippecanoe — medio.*
 - **Contenido del área de vivienda**: incorporar datos verificados (INE, índice de alquiler,
   vivienda vacía) a la sección de expansión. *Requiere fuentes.*
-- **Más PoIs/seed curado** de arquitectura hostil para la demo (sin señalar propiedades).
-- **Tests** del front (RTL + axe para accesibilidad) y del Worker.
-- **Favicon / OG image** propios (branding).
+- **Exportar `og-card.svg` → `og-card.png`** (1200×630) antes de campañas: varias redes solo
+  renderizan PNG/JPG en `og:image`.
+- **Tests del Worker** (la API stub) — el front ya tiene tests (RTL + axe).
 - **i18n**: catalán para el piloto de Barcelona.
 
 ## ✅ Hecho (resumen)
@@ -42,3 +42,6 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Gobernanza/legal/sostenibilidad (`06`).
 - POC ejecutable: front page divulgativa (Vite + MapLibre) + Worker stub; build verde.
 - Accesibilidad WCAG AA: contraste auditado + pase de teclado/landmarks; SEO/social meta.
+- Tests del front: 14 verdes (integridad de datos, render del Hero, axe sin violaciones).
+- Seed curado ampliado (16 puntos hostiles + 9 celdas de verde) para la demo del mapa.
+- Branding: favicon.svg + tarjeta social og-card.svg.

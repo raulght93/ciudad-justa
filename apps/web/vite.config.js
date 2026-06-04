@@ -9,4 +9,11 @@ export default defineConfig({
     // maplibre-gl es pesado: queda en su propio chunk (lazy en App).
     chunkSizeWarningLimit: 1200,
   },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/test/setup.js",
+    // Excluye MapSection: usa WebGL (maplibre), no soportado en jsdom.
+    exclude: ["**/node_modules/**", "**/MapSection*"],
+  },
 });

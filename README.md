@@ -63,6 +63,7 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 ```bash
 # Front
 cd apps/web && npm install && npm run dev      # desarrollo
+npm test                                       # vitest: datos + render + axe (a11y)
 npm run build                                  # producción → dist/ (Cloudflare Pages)
 
 # Worker (requiere wrangler)

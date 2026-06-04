@@ -14,6 +14,14 @@ export const HOSTILE_POINTS = {
     f(2.1625, 41.3902, "reported", ["surveillance"], "Cámara orientada a zona de estancia"),
     f(2.1888, 41.3835, "confirmed", ["spikes", "barrier"], "Rocas y pinchos bajo paso elevado"),
     f(2.1690, 41.3955, "documented", ["anti_lie_down"], "Bancos segmentados retirados tras presión vecinal"),
+    f(2.1605, 41.3868, "confirmed", ["anti_sit"], "Asientos individuales abatibles en parada"),
+    f(2.1845, 41.3792, "reported", ["surface"], "Suelo de grava gruesa bajo cornisa"),
+    f(2.1758, 41.3922, "confirmed", ["barrier"], "Bolardos cerrando hueco de soportal"),
+    f(2.1920, 41.3878, "under_review", ["anti_lie_down", "anti_sit"], "Banco curvo de una sola plaza"),
+    f(2.1668, 41.3788, "reported", ["light_sound"], "Dispositivo de sonido agudo en acceso a aparcamiento"),
+    f(2.1712, 41.3812, "confirmed", ["ghost_amenity"], "Aseo público clausurado sin alternativa"),
+    f(2.1870, 41.3940, "disputed", ["barrier"], "Maceteros alineados que bloquean el resguardo"),
+    f(2.1583, 41.3835, "confirmed", ["spikes"], "Pinchos en alféizar a la altura de la calle"),
   ],
 };
 
@@ -35,6 +43,9 @@ export const GREEN_DEFICIT = {
     cell(2.175, 41.398, 0.02, 0.34, "27% cubierta · 74% a <300 m"),
     cell(2.195, 41.378, 0.02, 0.88, "8% cubierta · 22% a <300 m"),
     cell(2.195, 41.398, 0.02, 0.46, "24% cubierta · 66% a <300 m"),
+    cell(2.155, 41.418, 0.02, 0.53, "21% cubierta · 60% a <300 m"),
+    cell(2.175, 41.418, 0.02, 0.27, "29% cubierta · 80% a <300 m"),
+    cell(2.195, 41.418, 0.02, 0.69, "14% cubierta · 44% a <300 m"),
   ],
 };
 
