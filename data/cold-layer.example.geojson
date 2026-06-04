@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "name": "ciudad-justa · capa fría (ejemplo) · déficit de verde por barrio",
+  "_comment": "Formato de las capas frías (coropletas) precalculadas offline desde Urban Atlas/SIOSE/NDVI y servidas como estático (idealmente PMTiles) en R2. Polígonos y valores ilustrativos, NO datos reales. Misma estructura sirve para la capa de acceso a servicios (15-min).",
+  "_indicators": {
+    "tree_canopy_pct": "cubierta arbórea del barrio (regla 3-30-300: objetivo >=30%)",
+    "green_within_300m": "fracción de población a <=300 m de un verde de calidad (>=0.5 ha)",
+    "green_deficit_score": "0 (sin déficit) .. 1 (déficit máximo) — usado para el color de la coropleta"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.160, 41.380], [2.180, 41.380], [2.180, 41.392], [2.160, 41.392], [2.160, 41.380]]]
+      },
+      "properties": {
+        "barrio": "Ejemplo A",
+        "tree_canopy_pct": 11.4,
+        "green_within_300m": 0.38,
+        "green_deficit_score": 0.78
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2.180, 41.380], [2.200, 41.380], [2.200, 41.392], [2.180, 41.392], [2.180, 41.380]]]
+      },
+      "properties": {
+        "barrio": "Ejemplo B",
+        "tree_canopy_pct": 33.1,
+        "green_within_300m": 0.91,
+        "green_deficit_score": 0.12
+      }
+    }
+  ]
+}

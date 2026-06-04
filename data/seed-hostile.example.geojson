@@ -1,0 +1,46 @@
+{
+  "type": "FeatureCollection",
+  "name": "ciudad-justa · capa caliente (ejemplo) · arquitectura hostil",
+  "_comment": "Formato de la capa de puntos hostiles, servida por GET /api/reports y como seed estático. Coords reales aproximadas de Barcelona a modo ilustrativo; NO son reportes verificados.",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.1734, 41.3851] },
+      "properties": {
+        "id": "rep_example_0001",
+        "status": "confirmed",
+        "categories": ["anti_lie_down", "barrier"],
+        "description": "Banco con apoyabrazos divisorios que impiden tumbarse.",
+        "score": 4.2,
+        "photo": null,
+        "created_at": 1733000000000
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.1700, 41.3870] },
+      "properties": {
+        "id": "rep_example_0002",
+        "status": "reported",
+        "categories": ["spikes"],
+        "description": "Pinchos metálicos en repisa de portal.",
+        "score": 0.0,
+        "photo": null,
+        "created_at": 1733600000000
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.1650, 41.3820] },
+      "properties": {
+        "id": "rep_example_0003",
+        "status": "disputed",
+        "categories": ["anti_sit"],
+        "description": "Barra inclinada; en discusión: ¿accesibilidad o anti-permanencia?",
+        "score": 0.5,
+        "photo": null,
+        "created_at": 1734000000000
+      }
+    }
+  ]
+}

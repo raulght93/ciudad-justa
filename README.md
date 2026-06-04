@@ -40,7 +40,16 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 | [`docs/01-arquitectura-hostil-estado-del-arte.md`](docs/01-arquitectura-hostil-estado-del-arte.md) | Estado del arte: definición, taxonomía, autores, consecuencias, alternativas y situación en España. |
 | [`docs/02-producto-poc-mvp.md`](docs/02-producto-poc-mvp.md) | Benchmark de plataformas, retos (sesgo, moderación, VGI, privacidad), datos abiertos en España y propuesta de MVP. |
 | [`docs/03-arquitectura-tecnica.md`](docs/03-arquitectura-tecnica.md) | Stack y despliegue: infra gratuita/barata para el POC, deltas vs tripcraft, capas frías, privacidad de media, escalado por fases. |
+| [`docs/04-modelo-de-datos.md`](docs/04-modelo-de-datos.md) | Esquema relacional, ciclo de vida del reporte, votación ponderada + reputación, moderación y superficie de API. |
 | [`docs/fuentes.md`](docs/fuentes.md) | Bibliografía con valoración de calidad de cada fuente. |
+
+### Artefactos
+
+| Archivo | Contenido |
+|---|---|
+| [`db/schema.sql`](db/schema.sql) | Esquema D1 (SQLite) de la capa caliente, portable a Postgres/PostGIS. |
+| [`data/seed-hostile.example.geojson`](data/seed-hostile.example.geojson) | Formato de la capa caliente (puntos hostiles). |
+| [`data/cold-layer.example.geojson`](data/cold-layer.example.geojson) | Formato de las capas frías (coropletas verde/servicios). |
 
 ## Aviso sobre las fuentes
 
