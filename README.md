@@ -41,6 +41,7 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 | [`docs/02-producto-poc-mvp.md`](docs/02-producto-poc-mvp.md) | Benchmark de plataformas, retos (sesgo, moderación, VGI, privacidad), datos abiertos en España y propuesta de MVP. |
 | [`docs/03-arquitectura-tecnica.md`](docs/03-arquitectura-tecnica.md) | Stack y despliegue: infra gratuita/barata para el POC, deltas vs tripcraft, capas frías, privacidad de media, escalado por fases. |
 | [`docs/04-modelo-de-datos.md`](docs/04-modelo-de-datos.md) | Esquema relacional, ciclo de vida del reporte, votación ponderada + reputación, moderación y superficie de API. |
+| [`docs/05-review-independiente.md`](docs/05-review-independiente.md) | Auditoría crítica de enfoque y contenido: hallazgos con severidad, mejoras concretas y backlog priorizado (bloqueantes antes de publicar). |
 | [`docs/fuentes.md`](docs/fuentes.md) | Bibliografía con valoración de calidad de cada fuente. |
 
 ### Artefactos
@@ -50,6 +51,27 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 | [`db/schema.sql`](db/schema.sql) | Esquema D1 (SQLite) de la capa caliente, portable a Postgres/PostGIS. |
 | [`data/seed-hostile.example.geojson`](data/seed-hostile.example.geojson) | Formato de la capa caliente (puntos hostiles). |
 | [`data/cold-layer.example.geojson`](data/cold-layer.example.geojson) | Formato de las capas frías (coropletas verde/servicios). |
+
+## POC ejecutable
+
+| Carpeta | Qué es |
+|---|---|
+| [`apps/web/`](apps/web/) | Front page divulgativa (Vite + React + MapLibre). Landing dinámica con cifras animadas respaldadas por fuentes, las tres capas, mapa demo de Barcelona, manifiesto de valores y el área de expansión de **precio de la vivienda**. Progresiva: empieza simple, expandes para profundizar. |
+| [`worker/`](worker/) | API stub (Cloudflare Worker + D1): `GET/POST /api/reports` con consulta espacial por bounding-box. |
+
+```bash
+# Front
+cd apps/web && npm install && npm run dev      # desarrollo
+npm run build                                  # producción → dist/ (Cloudflare Pages)
+
+# Worker (requiere wrangler)
+cd worker && npx wrangler d1 create ciudad-justa
+npx wrangler d1 execute ciudad-justa --file=../db/schema.sql
+npx wrangler deploy
+```
+
+El front funciona **sin backend** en la Fase 0 (datos de ejemplo embebidos): el mapa y las
+cifras se sirven estáticos. La API se enchufa en la Fase 1. Ver [`docs/03`](docs/03-arquitectura-tecnica.md).
 
 ## Aviso sobre las fuentes
 
