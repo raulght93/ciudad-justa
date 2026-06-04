@@ -12,20 +12,25 @@ const MapSection = lazy(() => import("./components/MapSection.jsx"));
 export default function App() {
   return (
     <div style={{ background: c.bg, color: c.text, fontFamily: font.sans, minHeight: "100vh" }}>
+      <a href="#contenido" className="skip-link">
+        Saltar al contenido
+      </a>
       <Hero />
-      <Layers />
-      <Suspense
-        fallback={
-          <div style={{ padding: "80px 22px", textAlign: "center", color: c.faint }}>
-            Cargando mapa…
-          </div>
-        }
-      >
-        <MapSection />
-      </Suspense>
-      <How steps={HOW} />
-      <Manifesto />
-      <Housing />
+      <main id="contenido">
+        <Layers />
+        <Suspense
+          fallback={
+            <div style={{ padding: "80px 22px", textAlign: "center", color: c.faint }}>
+              Cargando mapa…
+            </div>
+          }
+        >
+          <MapSection />
+        </Suspense>
+        <How steps={HOW} />
+        <Manifesto />
+        <Housing />
+      </main>
       <Footer />
     </div>
   );

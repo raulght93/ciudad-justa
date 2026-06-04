@@ -11,6 +11,24 @@ reset.textContent = `
   a { color: inherit; }
   ::selection { background: #f4a25955; }
   .maplibregl-popup-content { border-radius: 12px; padding: 12px 14px; }
+
+  /* Accesibilidad (review C6): foco de teclado siempre visible. */
+  :focus-visible { outline: 2px solid #f4a259; outline-offset: 3px; border-radius: 4px; }
+
+  /* Skip-link: oculto hasta recibir foco con Tab. */
+  .skip-link {
+    position: absolute; left: 12px; top: -48px; z-index: 1000;
+    background: #f4a259; color: #1a1206; font-weight: 700;
+    padding: 10px 16px; border-radius: 10px; text-decoration: none;
+    transition: top .2s ease;
+  }
+  .skip-link:focus { top: 12px; }
+
+  /* Respeta a quien prefiere menos movimiento. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *,*::before,*::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
 `;
 document.head.appendChild(reset);
 
