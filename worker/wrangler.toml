@@ -4,11 +4,10 @@ name = "ciudad-justa-api"
 main = "src/index.js"
 compatibility_date = "2026-01-01"
 
-# Descomentar y rellenar database_id tras `wrangler d1 create ciudad-justa`:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "ciudad-justa"
-# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+[[d1_databases]]
+binding = "DB"
+database_name = "ciudad-justa"
+database_id = "68796e1e-33fb-42d5-8f15-7d0d23c0e018"
 
 # R2 para fotos difuminadas (fase 1):
 # [[r2_buckets]]
