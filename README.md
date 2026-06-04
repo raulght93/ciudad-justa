@@ -42,6 +42,7 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 | [`docs/03-arquitectura-tecnica.md`](docs/03-arquitectura-tecnica.md) | Stack y despliegue: infra gratuita/barata para el POC, deltas vs tripcraft, capas frías, privacidad de media, escalado por fases. |
 | [`docs/04-modelo-de-datos.md`](docs/04-modelo-de-datos.md) | Esquema relacional, ciclo de vida del reporte, votación ponderada + reputación, moderación y superficie de API. |
 | [`docs/05-review-independiente.md`](docs/05-review-independiente.md) | Auditoría crítica de enfoque y contenido: hallazgos con severidad, mejoras concretas y backlog priorizado (bloqueantes antes de publicar). |
+| [`docs/06-gobernanza-legal-y-sostenibilidad.md`](docs/06-gobernanza-legal-y-sostenibilidad.md) | Respuesta a los bloqueantes 🔴 de la review: entidad jurídica, política legal/takedown/anonimización, moderación de arranque, sostenibilidad y DPIA. |
 | [`docs/fuentes.md`](docs/fuentes.md) | Bibliografía con valoración de calidad de cada fuente. |
 
 ### Artefactos
@@ -73,11 +74,24 @@ npx wrangler deploy
 El front funciona **sin backend** en la Fase 0 (datos de ejemplo embebidos): el mapa y las
 cifras se sirven estáticos. La API se enchufa en la Fase 1. Ver [`docs/03`](docs/03-arquitectura-tecnica.md).
 
-## Aviso sobre las fuentes
+## Estado de verificación de las fuentes
 
 La investigación base se realizó con un harness de *deep research* (búsqueda multi-fuente +
-extracción de afirmaciones). La fase de verificación adversarial **falló por un fallo técnico
-del harness** (los agentes verificadores no emitieron voto), no por baja calidad del
-contenido: las afirmaciones proceden de fuentes primarias. Cada documento marca explícitamente
-qué es **fuente citable**, qué es **conocimiento de dominio a confirmar** y qué dato es de
-**prensa pendiente de verificación**.
+extracción de afirmaciones). La **verificación adversarial automática no llegó a completarse**
+(los agentes verificadores no emitieron voto), así que **25 afirmaciones quedaron sin verificar**.
+Sin verificar es sin verificar, sea cual sea la causa.
+
+En lugar de justificar el fallo, se ha hecho una **verificación dirigida** de las afirmaciones
+que aparecen en la UI o son más citadas:
+
+- ✅ **1.288 puntos en Barcelona** — corroborado multi-fuente (Arrels + COPE + totbarcelona). Es
+  una **cifra viva crowdsourced**, no un censo auditado: se cita como tal.
+- ✅ **ISGlobal / 3-30-300 y salud** — verificado y datado (n=3.145, Barcelona Health Survey 2016;
+  Nieuwenhuijsen et al., *Environmental Research* 2022).
+- ✅ **Regla 3-30-300** (Konijnendijk 2021), **Rosenberger 2023**, **Decidim** — verificados.
+- 🚫 **Caso Zaragoza** — fuente de baja fiabilidad: retirado como afirmación.
+- ⚠️ **"9 m²/hab. (OMS)"** — estudio primario difícil de rastrear: **fuera de la UI**; se usa
+  3-30-300.
+
+Pendiente (backlog): re-ejecutar la verificación adversarial completa sobre las 25 afirmaciones.
+Cada documento marca **[Fuente]** citable, *(dominio)* a confirmar y *(prensa, verificar)*.

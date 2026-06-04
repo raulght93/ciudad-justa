@@ -107,8 +107,13 @@ Base para las **categorías de reporte** de la app. La literatura documenta, ent
   lógica securitaria del CPTED clásico. *(dominio)*
 - **Reverdecimiento como salud pública.** Evidencia sólida y **española**: vivir en zonas más
   verdes se asocia con **mejor salud mental y menor consumo de medicación** (estudio de
-  **ISGlobal**, Barcelona). **[ISGlobal; PubMed 37832672]** Conecta las tres capas del proyecto
-  (hostil + poco verde + pocos servicios) bajo un mismo marco de salud y equidad.
+  **ISGlobal**, Barcelona). Verificado y datado: estudio de ISGlobal sobre **3.145 habitantes de
+  Barcelona** (15-97 años, *Barcelona Health Survey 2016*); la **adherencia plena a la regla
+  3-30-300** se asoció con mejor salud mental, menor consumo de tranquilizantes/antidepresivos y
+  menos visitas al psicólogo — y **solo el 4,7% de la población cumplía los tres criterios**
+  (Nieuwenhuijsen et al., *Environmental Research* 2022). **[ISGlobal; PubMed 37832672]** Conecta
+  las tres capas del proyecto (hostil + poco verde + pocos servicios) bajo un marco de salud y
+  equidad.
 - **Estándar de referencia para "verde":** la **regla 3-30-300** de **Cecil Konijnendijk
   (2021, Nature Based Solutions Institute)**: poder ver **3 árboles** desde casa, **30% de
   cubierta arbórea** en el barrio y un espacio verde de calidad (≥0,5 ha) a **300 m** (unos 5
@@ -125,20 +130,21 @@ Lo más valioso para anclar el proyecto:
 
 - **Arrels Fundació (Barcelona) — mapeo colaborativo de arquitectura hostil.** Arrels define la
   arquitectura hostil como la tendencia a construir/alterar el espacio público para
-  **desincentivar su uso "impropio"**, y **ya organizó un mapeo colaborativo**: entre el **6 y
-  el 12 de febrero de 2023**, con **+300 estudiantes de ~15 centros** fotografiando barreras y
-  subiéndolas a un **mapa digital colaborativo**. **[Arrels Fundació]**
-  - **Escala del problema (prensa, 2026):** Arrels mantiene un **mapa colaborativo
-    interactivo** y ha documentado **1.288 puntos** de arquitectura hostil en Barcelona
-    (pinchos, bolardos, barrotes en bancos, maceteros estratégicos). Bob Walker, del equipo de
-    calle de Arrels: *"no hemos notado una mejora, al contrario"*. **[COPE, 2/3/2026 —
-    *prensa, verificar la cifra exacta y su fecha de cierre*]**
+  **desincentivar su uso "impropio"**, y **ya organizó un mapeo colaborativo**: el **primer
+  mapeo (6-12 de febrero de 2023)**, con **+300 estudiantes de ~15 centros**, documentó **334
+  ejemplos**; se han repetido mapeos (3.º en 2025, ~14 centros). **[Arrels Fundació]**
+  - **Escala del problema (verificado, multi-fuente, 2026):** el **mapa colaborativo
+    interactivo** de Arrels acumula **1.288 puntos** de arquitectura hostil en Barcelona
+    (pinchos, bolardos, bancos individuales, superficies inclinadas). Bob Walker, del equipo de
+    calle de Arrels: *"no hemos notado una mejora, al contrario"*. **[Arrels; COPE 2/3/2026;
+    totbarcelona]** — *es una **cifra viva crowdsourced** (mapa abierto en crecimiento), no un
+    censo auditado: citar como tal.*
   - **⚠️ Implicación estratégica:** ya existe un actor de referencia haciendo justo esto en
     formato **campaña/herramienta puntual** → Ciudad Justa es la **infraestructura permanente y
     multi-capa** que les falta, y un **aliado natural**, no un competidor.
-- **Zaragoza — ordenanzas cívicas y sanción de la pobreza:** caso citado de cómo la norma
-  municipal extiende el "derecho sancionador" sobre la pobreza. **[araInfo — *fuente de baja
-  fiabilidad en el corpus; usar solo como pista, contrastar antes de citar*]**
+- **Zaragoza — ordenanzas cívicas y sanción de la pobreza:** 🚫 **NO usar como afirmación**
+  (review C3). La única fuente del corpus (araInfo) está marcada de **baja fiabilidad**; queda
+  como **pista interna a contrastar**, nunca como dato citable en docs públicos ni en la UI.
 - **Estrategia Nacional contra el Sinhogarismo 2023-2030 (Gobierno de España).** El gancho
   normativo más fuerte. El documento oficial: reconoce que **las propias administraciones
   discriminan** al poner trabas al uso del espacio público; plantea **revisar leyes/ordenanzas

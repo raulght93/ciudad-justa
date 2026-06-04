@@ -135,14 +135,26 @@ Fuentes abiertas
 
 ## 3.6 Privacidad y media (línea roja, no negociable)
 
-Coherente con el doc 00:
+Coherente con el doc 00 y reforzado tras la review (C5): el difuminado en cliente es la
+decisión correcta, pero **"recomendar" no basta** — debe ser un **gate de subida**.
 
 1. **Difuminado de rostros en el cliente, ANTES de subir** (p. ej. MediaPipe/face-api.js en el
-   navegador). Así **la foto sin difuminar nunca toca el servidor** — la mejor garantía posible.
-2. **Stripping de metadatos EXIF** (incluida geolocalización del propio archivo) en cliente.
-3. **R2** guarda solo el resultado difuminado. Política UX explícita: *"fotografía el objeto, no
-   a la persona"*.
-4. Moderación con capacidad de retirada rápida y *audit log*.
+   navegador). Así **la foto sin difuminar nunca toca el servidor**.
+2. **Gate de subida, no recomendación.** Si el detector encuentra una persona/rostro y el blur
+   **no se ha aplicado o no se ha podido aplicar, la subida se bloquea en el cliente** (no se
+   sube "igual"). La UI obliga a difuminar o a re-encuadrar al objeto. Invariante reforzado en
+   DB: `photos.blurred CHECK (blurred = 1)` ([`04`](04-modelo-de-datos.md) / `db/schema.sql`).
+3. **Fallback explícito cuando el blur no puede ejecutarse** (móvil de gama baja, detector
+   falla, sin WebGL): **no se sube la foto**; el reporte se crea sin imagen. Nunca se degrada a
+   "subir sin difuminar". El rendimiento en gama baja es **criterio de validación** (§3.9), no un
+   supuesto.
+4. **Difuminar el rostro no anonimiza por contexto.** Política UX: *"fotografía el objeto, no a
+   la persona"* — encuadrar el elemento (banco, pincho), evitar a personas identificables aunque
+   se difuminen.
+5. **Stripping de metadatos EXIF** (incluida geolocalización del propio archivo) en cliente.
+6. **R2** guarda solo el resultado difuminado. Moderación con retirada rápida y *audit log*.
+7. **DPIA / EIPD** (evaluación de impacto RGPD) **obligatoria antes de la Fase 1** — tratamiento
+   de imágenes en contextos con personas vulnerables (ver [`06 §6.6`](06-gobernanza-legal-y-sostenibilidad.md)).
 
 ## 3.7 Estimación de coste y umbrales de escalado
 

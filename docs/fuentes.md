@@ -41,16 +41,25 @@ institucional / académica), **secondary** (prensa o divulgación de calidad), *
 | 25 | [Decidim — repositorio oficial (GitHub)](https://github.com/decidim/decidim) | primary | Stack (Rails), AGPL v3, espacios+componentes |
 | 26 | [Decidim — Wikipedia](https://en.wikipedia.org/wiki/Decidim) | secondary | Historia (2017, Ajuntament), licencias, Metadecidim |
 
-## Nota metodológica
+## Nota metodológica y estado de verificación
 
 La investigación base se ejecutó con un harness de *deep research* (5 ángulos, 24 fuentes, 97
-afirmaciones extraídas). La **fase de verificación adversarial falló por un error técnico** del
-propio harness: los agentes verificadores se colgaron y no emitieron voto ("0-0, 3 abstain"),
-de modo que el sistema marcó por defecto las 25 afirmaciones como "refutadas". **No es un juicio
-sobre el contenido** —las afirmaciones proceden de las fuentes primarias listadas arriba. Tres
-huecos se cerraron después con búsquedas/fetches puntuales: regla 3-30-300 (Konijnendijk),
-cifra de Barcelona (Arrels/COPE → 1.288) y detalle técnico de Decidim y defensiveTO.
+afirmaciones extraídas). La **verificación adversarial automática no se completó** (los agentes
+verificadores no emitieron voto: "0-0, 3 abstain"), por lo que **25 afirmaciones quedaron sin
+verificar** — independientemente de la causa técnica.
 
-Pendiente de verificación manual antes de uso formal: cifra exacta y fecha de cierre de las
-"1.288 barreras" de Barcelona; caso Zaragoza (fuente de baja fiabilidad); estudio primario de
-la cifra OMS de m²/habitante.
+### Verificación dirigida realizada (review C3/C4)
+
+| Afirmación | Estado | Detalle |
+|---|---|---|
+| 1.288 puntos hostiles en Barcelona | ✅ corroborado multi-fuente | Arrels + COPE + totbarcelona. **Cifra viva crowdsourced** (mapa abierto), no censo auditado. 1.er mapeo 2023 = 334 ejemplos. |
+| Verde ↔ salud mental / medicación | ✅ verificado y datado | ISGlobal, n=3.145, Barcelona Health Survey 2016; Nieuwenhuijsen et al., *Environmental Research* 2022; 4,7% cumple las tres condiciones de 3-30-300. |
+| Regla 3-30-300 | ✅ verificado | Konijnendijk (2021). |
+| Rosenberger 2023 / Decidim | ✅ verificado | Tipología por mecanismos; Decidim Rails/AGPL/2017. |
+| Caso Zaragoza | 🚫 retirado | Única fuente (araInfo) de baja fiabilidad → no es afirmación citable. |
+| "9 m²/hab. (OMS)" | ⚠️ fuera de la UI | Estudio primario difícil de rastrear; se prefiere 3-30-300. |
+
+### Pendiente (backlog)
+
+Re-ejecutar la verificación adversarial completa sobre las 25 afirmaciones (review C4); contrastar
+la fecha de cierre exacta del recuento de Arrels directamente con la fundación.
