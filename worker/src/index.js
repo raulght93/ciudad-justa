@@ -1,7 +1,14 @@
-// Ciudad Justa · API stub (Cloudflare Worker)
-// Superficie mínima de docs/04 §4.6. D1 como almacén de la capa caliente.
-// Esto es un esqueleto: valida forma y devuelve GeoJSON; la lógica de
-// reputación/moderación se implementa en fases posteriores.
+// Ciudad Justa · API (Cloudflare Worker) — fase E1a: lectura + escritura básica.
+// Superficie de docs/04 §4.6. D1 = almacén de la capa caliente.
+// Votación/reputación/moderación llegan en E1b-E1e (ver docs/07).
+
+import { geohash } from "./geohash.js";
+
+// Categorías válidas de la taxonomía (docs/04 §4.2). Espejo del CHECK del esquema.
+const CATEGORIES = new Set([
+  "anti_lie_down", "anti_sit", "spikes", "barrier",
+  "surface", "surveillance", "light_sound", "ghost_amenity",
+]);
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -63,9 +70,40 @@ export default {
       if (!body || typeof body.lat !== "number" || typeof body.lng !== "number") {
         return json({ error: "lat y lng numéricos requeridos" }, 400);
       }
-      // TODO fase 1: verificar Turnstile, rate-limit, generar id, INSERT en D1,
-      // estado inicial 'reported'. Aquí solo eco para el esqueleto.
-      return json({ ok: true, received: { lat: body.lat, lng: body.lng, status: "reported" } }, 201);
+      if (body.lat < -90 || body.lat > 90 || body.lng < -180 || body.lng > 180) {
+        return json({ error: "lat/lng fuera de rango" }, 400);
+      }
+      // Categorías: filtra a las válidas de la taxonomía.
+      const categories = Array.isArray(body.categories)
+        ? [...new Set(body.categories.filter((k) => CATEGORIES.has(k)))]
+        : [];
+
+      // TODO E1d: verificar Turnstile + rate-limit antes de escribir.
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+
+      const id = crypto.randomUUID();
+      const now = Date.now();
+      const gh = geohash(body.lat, body.lng);
+      // Usuario anónimo por dispositivo (cabecera opcional). INSERT idempotente.
+      const device = request.headers.get("x-device-id") || "anon";
+
+      const stmts = [
+        env.DB.prepare(
+          "INSERT OR IGNORE INTO users (id, role, reputation, created_at) VALUES (?, 'user', 1.0, ?)"
+        ).bind(device, now),
+        env.DB.prepare(
+          "INSERT INTO reports (id, lat, lng, geohash, status, taxonomy_version, score, description, created_by, created_at, updated_at) " +
+          "VALUES (?, ?, ?, ?, 'reported', 1, 0, ?, ?, ?, ?)"
+        ).bind(id, body.lat, body.lng, gh, body.description ?? null, device, now, now),
+        ...categories.map((k) =>
+          env.DB.prepare(
+            "INSERT INTO report_categories (report_id, category_key) VALUES (?, ?)"
+          ).bind(id, k)
+        ),
+      ];
+      await env.DB.batch(stmts);
+
+      return json({ id, status: "reported", categories, geohash: gh }, 201);
     }
 
     return json({ error: "not found" }, 404);

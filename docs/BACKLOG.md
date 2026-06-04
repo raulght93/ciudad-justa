@@ -20,8 +20,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - **Bootstrap de moderación** operativo: curación manual + moderadores semilla (`06 §6.4`).
 - **Política de takedown** y términos de uso publicados (`06 §6.3`).
 - **Flujo de subida con blur-gate** real (cliente): MediaPipe/face-api.js, fallback "no subir",
-  strip EXIF (`03 §3.6`). *Medio.*
-- **API Worker → D1**: implementar INSERT/voto/reputación sobre el stub actual (`04 §4.4-4.6`).
+  strip EXIF (`03 §3.6`). *Medio.* → fase E1d (`07`).
+- **API Worker → D1**: E1a ✅ (lectura+escritura). Pendiente **E1b votación**, **E1c reputación
+  + estados**, **E1e moderación** (`04 §4.4-4.6`, `07 §E`).
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 

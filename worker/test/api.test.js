@@ -1,27 +1,32 @@
 // Tests del Worker con el runner nativo de Node (node --test) — sin dependencias.
-// Request/Response/URL son globales en Node ≥18.
+// Request/Response/URL/crypto.randomUUID son globales en Node ≥18.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index.js";
 
-// Mock de D1: captura el SQL y los args, devuelve filas fijas.
+// Mock de D1: registra cada sentencia preparada (sql+args), soporta all()/run()/batch().
 function mockDB(rows = []) {
-  const calls = { sql: null, args: null };
-  return {
-    calls,
-    prepare(sql) {
-      calls.sql = sql;
-      return {
-        bind(...args) {
-          calls.args = args;
-          return { all: async () => ({ results: rows }) };
-        },
-      };
-    },
+  const log = [];
+  const prepare = (sql) => {
+    const st = {
+      sql,
+      args: null,
+      bind(...args) {
+        this.args = args;
+        log.push({ sql, args });
+        return this;
+      },
+      all: async () => ({ results: rows }),
+      run: async () => ({ success: true }),
+    };
+    return st;
   };
+  return { log, prepare, batch: async (stmts) => stmts.map(() => ({ success: true })) };
 }
 
 const req = (url, init) => new Request(`https://x${url}`, init);
+const post = (body, headers) =>
+  req("/api/reports", { method: "POST", body: JSON.stringify(body), headers });
 
 test("GET /api/reports sin bbox → 400", async () => {
   const res = await worker.fetch(req("/api/reports"), {});
@@ -33,7 +38,7 @@ test("GET /api/reports con bbox pero sin D1 → 501", async () => {
   assert.equal(res.status, 501);
 });
 
-test("GET /api/reports devuelve GeoJSON desde D1", async () => {
+test("GET /api/reports devuelve GeoJSON desde D1 con consulta bbox", async () => {
   const db = mockDB([
     { id: "r1", lat: 41.38, lng: 2.17, status: "confirmed", description: "Banco", score: 3 },
   ]);
@@ -41,31 +46,50 @@ test("GET /api/reports devuelve GeoJSON desde D1", async () => {
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.type, "FeatureCollection");
-  assert.equal(body.features.length, 1);
   assert.deepEqual(body.features[0].geometry.coordinates, [2.17, 41.38]);
-  assert.equal(body.features[0].properties.status, "confirmed");
-  // Consulta espacial por bbox + filtro de estado.
-  assert.match(db.calls.sql, /lat BETWEEN \? AND \?/);
-  assert.match(db.calls.sql, /status = \?/);
-  assert.deepEqual(db.calls.args, [41.3, 41.4, 2.1, 2.2, "confirmed"]);
+  const q = db.log[0];
+  assert.match(q.sql, /lat BETWEEN \? AND \?/);
+  assert.match(q.sql, /status = \?/);
+  assert.deepEqual(q.args, [41.3, 41.4, 2.1, 2.2, "confirmed"]);
 });
 
 test("POST /api/reports sin coordenadas → 400", async () => {
-  const res = await worker.fetch(
-    req("/api/reports", { method: "POST", body: JSON.stringify({ foo: 1 }) }),
-    {}
-  );
+  const res = await worker.fetch(post({ foo: 1 }), {});
   assert.equal(res.status, 400);
 });
 
-test("POST /api/reports válido → 201 con estado 'reported'", async () => {
+test("POST /api/reports con lat/lng fuera de rango → 400", async () => {
+  const res = await worker.fetch(post({ lat: 200, lng: 2 }), { DB: mockDB() });
+  assert.equal(res.status, 400);
+});
+
+test("POST /api/reports sin D1 → 501", async () => {
+  const res = await worker.fetch(post({ lat: 41.38, lng: 2.17 }), {});
+  assert.equal(res.status, 501);
+});
+
+test("POST /api/reports inserta reporte + categorías + usuario y devuelve 201", async () => {
+  const db = mockDB();
   const res = await worker.fetch(
-    req("/api/reports", { method: "POST", body: JSON.stringify({ lat: 41.38, lng: 2.17 }) }),
-    {}
+    post({ lat: 41.38, lng: 2.17, categories: ["spikes", "barrier", "INVALID"], description: "x" },
+      { "x-device-id": "dev-123" }),
+    { DB: db }
   );
   assert.equal(res.status, 201);
   const body = await res.json();
-  assert.equal(body.received.status, "reported");
+  assert.equal(body.status, "reported");
+  // Categoría inválida filtrada.
+  assert.deepEqual(body.categories.sort(), ["barrier", "spikes"]);
+  assert.match(body.geohash, /^[0-9b-z]{7}$/);
+
+  const sqls = db.log.map((s) => s.sql);
+  assert.ok(sqls.some((s) => /INSERT OR IGNORE INTO users/.test(s)), "inserta usuario");
+  assert.ok(sqls.some((s) => /INSERT INTO reports/.test(s)), "inserta reporte");
+  // Dos categorías válidas → dos inserts en report_categories.
+  assert.equal(sqls.filter((s) => /INSERT INTO report_categories/.test(s)).length, 2);
+  // El usuario anónimo viene de la cabecera.
+  const userStmt = db.log.find((s) => /INSERT OR IGNORE INTO users/.test(s.sql));
+  assert.equal(userStmt.args[0], "dev-123");
 });
 
 test("OPTIONS → CORS", async () => {

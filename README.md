@@ -66,9 +66,10 @@ cd apps/web && npm install && npm run dev      # desarrollo
 npm test                                       # vitest: datos + render + axe (a11y)
 npm run build                                  # producción → dist/ (Cloudflare Pages)
 
-# Worker (requiere wrangler)
-cd worker && npx wrangler d1 create ciudad-justa
-npx wrangler d1 execute ciudad-justa --file=../db/schema.sql
+# Worker (requiere wrangler) — D1 ya creada (ver wrangler.toml)
+cd worker && node --test                                  # 9 tests, sin deps
+npx wrangler d1 execute ciudad-justa --file=../db/schema.sql   # esquema
+npx wrangler d1 execute ciudad-justa --file=../db/seed.sql     # seed curado (demo)
 npx wrangler deploy
 ```
 

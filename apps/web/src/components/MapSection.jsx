@@ -3,6 +3,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { c, font, radius } from "../styles/tokens.js";
 import { HOSTILE_POINTS, GREEN_DEFICIT, BARCELONA } from "../data/geo.js";
+import { fetchReports } from "../api/reports.js";
 
 // Basemap raster de CARTO (sin API key, hot-linkable; mismo patrón que
 // africa-trip-planning). En producción: estilo vector + capas frías en PMTiles.
@@ -72,8 +73,30 @@ export default function MapSection() {
           },
         });
 
-        // Capa caliente: puntos de arquitectura hostil.
+        // Capa caliente: puntos de arquitectura hostil. Se pinta al instante con
+        // los datos locales de ejemplo y, si la API devuelve reportes validados
+        // para el viewport actual, se sustituyen al vuelo. Fallback robusto: si la
+        // API falla o no hay reportes en la zona, se mantiene el dato local.
         map.addSource("hostile", { type: "geojson", data: HOSTILE_POINTS });
+
+        let hotCtl;
+        const loadHot = () => {
+          const b = map.getBounds();
+          const bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
+          hotCtl?.abort();
+          hotCtl = new AbortController();
+          fetchReports(bbox, { signal: hotCtl.signal })
+            .then((gj) => {
+              if (gj.features.length > 0) map.getSource("hostile")?.setData(gj);
+            })
+            .catch(() => {}); // sin red / sin datos → se conserva HOSTILE_POINTS
+        };
+        loadHot();
+        let hotTimer;
+        map.on("moveend", () => {
+          clearTimeout(hotTimer);
+          hotTimer = setTimeout(loadHot, 350);
+        });
         map.addLayer({
           id: "hostile-pts",
           type: "circle",
