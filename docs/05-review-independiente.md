@@ -183,3 +183,23 @@ renderice una landing, si se quiere que el scaffold compile.)
 > privacidad operativa). Resolver el bloque 🔴 es lo que separa "investigación interesante" de
 > "herramienta cívica defendible ante un ayuntamiento, una universidad o un tribunal" — exactamente
 > el listón que el propio `00` se fija.
+
+## 5.8 Registro de resolución
+
+| # | Sev | Estado | Dónde |
+|---|---|---|---|
+| C4 | 🔴 | ✅ Mitigado | Verificación dirigida + README/`fuentes.md` reescritos. Pendiente: re-ejecutar verificación adversarial completa. |
+| C3 | 🔴 | ✅ Resuelto | 1.288 corroborado multi-fuente y reframe a "cifra viva"; Zaragoza retirado; 9 m² fuera de UI. `01`, `fuentes.md`, `content.js` |
+| C1 | 🔴 | ✅ Documentado | `06`: entidad jurídica, anonimización, takedown ≤72h, asesoría como gate previo a Fase 1. |
+| E4 | 🔴/🟠 | ✅ Documentado | `06`: moderación de arranque (curación + semilla) + sostenibilidad/financiación. |
+| C5 | 🔴 | ✅ Resuelto | `03 §3.6` reescrito: blur como gate + fallback (no subir) + DPIA. |
+| E1 | 🟠 | ✅ Resuelto | `03 §3` reencuadrado a secuencia (Fase 0 autosuficiente; social = hipótesis). |
+| E2 | 🟠 | ✅ Documentado | `02 §2.3 bis`: ¿plataforma propia o contribuir a Arrels?; valor diferencial = capas frías. |
+| C2 | 🟠 | ✅ Resuelto | `04 §4.7` reescrito: índice solo con capas frías; hostil como overlay cualitativo. |
+| E3 | 🟡 | ✅ Resuelto | `02 §2.4`: Barcelona justificada como decisión + alternativas. |
+| C6 | 🟡 | ✅ Resuelto | Contraste auditado con script; `faint` → `#8893ab` (AA); WCAG AA línea roja en `00 §4.7` y gate en `03 §3.8`. |
+| §5.5 | 🟡 | ✅ Obsoleto | El front ya existe y compila (`apps/web`, commit del POC). |
+
+Pendiente real en backlog tras esta pasada: **re-ejecutar la verificación adversarial completa**
+(C4) y **contrastar con Arrels la fecha de cierre del recuento**; lo demás queda implementado o
+documentado.

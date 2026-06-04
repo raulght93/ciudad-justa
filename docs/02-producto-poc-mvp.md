@@ -90,6 +90,26 @@ crítica de usuarios**, y reservar la **capa "caliente" colaborativa** (arquitec
 reportada) para crecer encima. Esto mitiga el problema del arranque en frío típico de las apps
 sociales.
 
+## 2.3 bis · ¿Plataforma propia o contribución a Arrels? (review E2)
+
+Honestidad estratégica: en **Fase 0** (seed curado + dos coropletas), el producto **se parece
+mucho al mapa que Arrels ya tiene**. El argumento "infraestructura permanente multi-capa vs.
+campaña puntual" (§1.5, §2.1) **solo se materializa en la Fase 1** — justo la que se aplaza (E1).
+Por tanto la pregunta es real y hay que responderla por escrito **antes de levantar plataforma
+paralela**:
+
+- **Opción A — Contribuir a / integrarse con Arrels.** Menos duplicación, aprovecha su comunidad
+  y legitimidad. Encaja si lo que aportamos cabe como módulo o capa sobre su mapa.
+- **Opción B — Plataforma propia.** Solo se justifica si aporta algo que Arrels **no tiene ya**.
+  Y lo que aporta **no es el mapa de puntos hostiles** (eso ya existe), sino:
+  1. las **capas frías de verde y servicios** (datos abiertos, satélite) que Arrels no maneja;
+  2. la **narrativa de índice territorial** que cruza exclusión + ambiente + servicios;
+  3. la **infraestructura de validación/reputación** reutilizable por otras ciudades.
+
+**Decisión pendiente** (no la cerramos aquí): si se opta por plataforma propia, este apartado fija
+que su valor diferencial vive en las capas frías y la narrativa, **no** en competir con el mapa de
+Arrels. Lo ideal es **explorar antes la vía de colaboración**.
+
 ## 2.4 Propuesta de POC / MVP cívico-académico
 
 Coherente con la orientación (activismo + cívico-académico, sin ánimo de lucro) y con el marco
@@ -99,7 +119,16 @@ de valores (doc 00).
 (verde/servicios) con reportes ciudadanos validados (arquitectura hostil) puede visibilizar la
 exclusión por diseño en ciudades españolas y servir de herramienta de presión e investigación.*
 
-**Alcance MVP (1 ciudad piloto — sugerida Barcelona: Arrels + Decidim + datos Urban Atlas):**
+**Por qué Barcelona como piloto (review E3 — decisión, no obviedad).** A favor: máxima densidad
+de **datos abiertos** (Urban Atlas + open data municipal maduro), **aliados** (Arrels, ISGlobal,
+Decidim del propio Ajuntament) y **demanda ya validada** (los mapeos de Arrels). En contra: es la
+ciudad con **más saturación** del tema, por lo que el **valor marginal** de una plataforma propia
+es menor (ver E2). *Alternativa a considerar:* una ciudad **sin actor de referencia** (p. ej.
+Zaragoza, Sevilla, Málaga) daría más valor incremental y menos solapamiento, a costa de menos
+datos y aliados. **Se mantiene Barcelona para el POC** por madurez de datos y validación de
+demanda, dejando constancia de que es una decisión y no un supuesto.
+
+**Alcance MVP (1 ciudad piloto — Barcelona: Arrels + Decidim + datos Urban Atlas):**
 
 1. **Mapa base** OSM + capas frías (Urban Atlas / NDVI para verde; OSM POIs para
    servicios-15min).

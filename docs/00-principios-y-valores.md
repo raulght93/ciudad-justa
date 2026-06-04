@@ -65,6 +65,10 @@ Aquí el posicionamiento deja de ser declaración y se vuelve producto:
 6. **Verde y servicios como justicia, no estética.** Las capas "poco verde / pocos servicios"
    se enmarcan como **injusticia ambiental y territorial**: quién respira peor y vive menos
    según su código postal.
+7. **Accesibilidad de la propia herramienta (línea roja).** Un proyecto sobre inclusión no puede
+   tener una interfaz excluyente. **WCAG 2.1 AA** como mínimo: contraste ≥4.5:1 en texto, navegación
+   por teclado, lectores de pantalla, `prefers-reduced-motion`. Auditado y aplicado en los tokens
+   (review C6). La coherencia con la causa empieza por la propia app.
 
 ## La tensión que hay que gestionar (honestidad intelectual)
 

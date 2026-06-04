@@ -127,9 +127,28 @@ El front compone **3 capas**:
 2. **Servicios** (coropleta, PMTiles estático) — accesibilidad 15-min.
 3. **Hostil** (puntos, GeoJSON desde la API + seed estático) — capa caliente.
 
-El **índice de injusticia** de un barrio (narrativa divulgativa, Fase 0) puede combinar las tres
-*en el cliente* sin coste de servidor: `score = f(déficit_verde, déficit_servicios,
-densidad_hostil_normalizada)`.
+### El índice NO fusiona capa caliente y fría (review C2)
+
+Tentación a evitar: un único número `f(déficit_verde, déficit_servicios, densidad_hostil)`.
+**Sería un error metodológico** y, además, contradiría el propio diagnóstico del proyecto:
+
+- Las dos capas frías (verde, servicios) son **objetivas y completas**: cubren todo el territorio
+  por igual (satélite / datos abiertos), son comparables entre barrios.
+- La capa hostil es **subjetiva y sesgada por participación**: refleja "dónde hay usuarios que
+  reportan", no "dónde hay problema" ([`00 §5`](00-principios-y-valores.md), [`02 §2.1`](02-producto-poc-mvp.md)).
+
+Fundirlas en un sumando ponderado **contamina lo objetivo con lo sesgado** y produce un ranking
+de barrios atacable y, peor, injusto con los barrios que aún no reportan.
+
+**Regla:**
+1. **Índice territorial = solo capas frías.** `idx = g(déficit_verde, déficit_servicios)`,
+   completo y comparable. Es el que puede rankear barrios y sostener narrativa.
+2. **La capa hostil se superpone como evidencia cualitativa**, nunca como sumando. Se muestra en
+   paralelo (puntos sobre la coropleta), siempre con su estado de verificación y normalizada por
+   población/superficie al agregar — y con el recordatorio de que **ausencia de reportes ≠
+   ausencia de problema**.
+3. En la UI: tres capas visibles a la vez; el "índice" colorea solo lo frío; lo hostil son los
+   puntos encima.
 
 ## 4.8 Privacidad y retención
 

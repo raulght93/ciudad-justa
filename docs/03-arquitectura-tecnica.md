@@ -6,9 +6,12 @@
 > se analizan **solo los deltas** propios de Ciudad Justa.
 >
 > **Principio de coste:** infra **gratuita o barata** para el POC; escalar solo si hace falta.
-> **Principio de producto (doble flanco):** el POC prioriza algo **divulgativo, visual y
-> generador de conciencia**; la herramienta social masiva viene después — pero el **modelo de
-> datos es el mismo desde el día 1** para avanzar ambos flancos sin reescribir.
+> **Principio de producto (secuencia, no simultaneidad — review E1):** la **Fase 0 divulgativa es
+> un producto completo y autosuficiente** y la prioridad real; la **capa social colaborativa es
+> una hipótesis a validar *después***, no un destino asumido. Técnicamente el modelo de datos es
+> el mismo desde el día 1 (no hay que reescribir), pero **producto, comunidad y captación son
+> distintos**: lo divulgativo se gana con narrativa/prensa/SEO; lo social, con *outreach* barrio
+> a barrio y moderación. Se construye la Fase 0 entera antes de comprometerse con la Fase 1.
 
 ## 3.1 Qué heredamos de tripcraft (y por qué aplica)
 
@@ -181,12 +184,16 @@ de arranque**.
 - **Auth:** propia ligera (device token → magic-link), Supabase Auth como plan B.
 - **Anti-abuso:** Turnstile + rate-limit en Worker + votación ponderada por reputación.
 - **Pipeline de datos:** batch offline (GitHub Action) → estáticos en R2.
+- **Accesibilidad (criterio de aceptación):** **WCAG 2.1 AA** — contraste ≥4.5:1 (tokens
+  auditados con script, review C6), navegación por teclado, roles/labels ARIA, foco visible,
+  `prefers-reduced-motion`. Es *gate*, no mejora opcional ([`00`](00-principios-y-valores.md) §4.7).
 - **Licencia:** software libre (coherente con doc 00; alineable con Decidim AGPL si se integra).
 
-> **Por qué este stack sirve a los dos flancos a la vez:** el POC divulgativo se monta casi
-> entero con piezas **estáticas** (mapa + capas frías en R2) → barato y visual ya. La herramienta
-> social se construye **encima** del mismo modelo de datos añadiendo Worker+D1 y la capa de
-> confianza, sin tirar nada de lo anterior.
+> **Por qué este stack permite la secuencia (no obliga a la simultaneidad):** la Fase 0
+> divulgativa se monta casi entera con piezas **estáticas** (mapa + capas frías en R2) → barata,
+> visual y **completa por sí sola**. Si la hipótesis social se valida, la Fase 1 se construye
+> **encima** del mismo modelo de datos (Worker+D1 + capa de confianza) sin tirar nada — pero no
+> es un requisito para que la Fase 0 aporte valor.
 
 ## 3.9 Verificación pendiente antes de implementar
 

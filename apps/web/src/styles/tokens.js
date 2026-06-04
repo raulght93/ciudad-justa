@@ -10,7 +10,7 @@ export const c = {
   surface2: "#1d2638",
   text: "#eef2f9",
   muted: "#9aa6bd",
-  faint: "#64708a",
+  faint: "#8893ab", // subido para WCAG AA en texto pequeño (≥4.5:1 sobre bg/surface) — review C6
   accent: "#f4a259", // ocre — color de marca / dignidad
   accentDeep: "#e07a3e",
   hostile: "#ef4444", // capa arquitectura hostil
