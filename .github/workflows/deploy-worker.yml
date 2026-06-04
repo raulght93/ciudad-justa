@@ -1,0 +1,44 @@
+name: Deploy Worker
+
+# Despliega la API (Cloudflare Worker) al hacer push a main cuando cambia el
+# worker o el esquema. También se puede lanzar a mano (workflow_dispatch).
+#
+# Requiere dos secrets en el repo (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — token con permiso "Edit Cloudflare Workers"
+#   CLOUDFLARE_ACCOUNT_ID  — id de la cuenta de Cloudflare
+#
+# NO aplica el esquema ni el seed de D1 (eso es manual e idempotente; ver README).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "worker/**"
+      - "db/**"
+      - ".github/workflows/deploy-worker.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Test + deploy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Gate: no se despliega si los tests del Worker fallan.
+      - name: Test
+        run: node --test
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: deploy

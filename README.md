@@ -69,14 +69,24 @@ npm test                                       # vitest: datos + render + axe (a
 npm run build                                  # producción → dist/ (Cloudflare Pages)
 
 # Worker (requiere wrangler) — D1 ya creada (ver wrangler.toml)
-cd worker && node --test                                  # 9 tests, sin deps
-npx wrangler d1 execute ciudad-justa --file=../db/schema.sql   # esquema
-npx wrangler d1 execute ciudad-justa --file=../db/seed.sql     # seed curado (demo)
+cd worker && node --test                                  # 22 tests, sin deps
+npx wrangler d1 execute ciudad-justa --remote --file=../db/schema.sql   # esquema (idempotente)
+npx wrangler d1 execute ciudad-justa --remote --file=../db/seed.sql     # seed curado (demo)
 npx wrangler deploy
 ```
 
 El front funciona **sin backend** en la Fase 0 (datos de ejemplo embebidos): el mapa y las
 cifras se sirven estáticos. La API se enchufa en la Fase 1. Ver [`docs/03`](docs/03-arquitectura-tecnica.md).
+
+### CI / Deploy automático
+
+- **`.github/workflows/ci.yml`** — tests + build del front y tests del worker en cada push/PR.
+- **`.github/workflows/deploy-worker.yml`** — despliega el Worker al cambiar `worker/**` o `db/**`
+  en `main` (gate: tests del worker). Requiere los secrets `CLOUDFLARE_API_TOKEN` (permiso *Edit
+  Cloudflare Workers*) y `CLOUDFLARE_ACCOUNT_ID`. El esquema/seed de D1 se aplican a mano
+  (idempotentes; comandos arriba).
+- **Front (Cloudflare Pages):** conecta el repo en el panel de Pages (root `apps/web`, build
+  `npm run build`, salida `dist`) para que despliegue solo en cada push.
 
 ## Estado de verificación de las fuentes
 
