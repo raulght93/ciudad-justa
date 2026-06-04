@@ -1,0 +1,11 @@
+{
+  "name": "@ciudad-justa/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "API de la capa caliente (Cloudflare Worker + D1).",
+  "scripts": {
+    "test": "node --test",
+    "deploy": "wrangler deploy"
+  }
+}
