@@ -51,7 +51,10 @@ Cada subfase es pequeña y testeable; la D1 ya existe (`wrangler.toml`).
 - **E1b** ✅: **votación** ponderada — `POST /api/reports/:id/vote`, `weight` congelado desde la
   reputación, upsert (1 voto/usuario), recálculo de `score` y transición de estado por umbral
   (sin tocar estados de moderación). 13 tests del Worker.
-- **E1c:** **reputación** y transiciones de estado (reported→under_review→confirmed/disputed).
+- **E1c** ✅: **reputación dinámica** — al confirmarse un reporte se liquida la reputación
+  (premia votos +1 y al autor, penaliza −1), acotada a [0.2, 5.0]; los pesos ya emitidos no se
+  tocan (congelados). Solo liquida en la **primera** confirmación. 16 tests del Worker.
+  *Pendiente: liquidación al rechazar (llega con E1e moderación).*
 - **E1d:** **subida de foto con blur-gate** en cliente + R2 (depende de C/DPIA antes de publicar).
 - **E1e:** **moderación** (cola, roles, audit log) + bootstrap (doc 06 §6.4).
 

@@ -22,6 +22,33 @@ function statusForScore(score) {
   return "reported";
 }
 
+// Reputación dinámica (E1c, docs/04 §4.4). Se liquida cuando un reporte queda
+// CONFIRMADO por la comunidad: premia a quien acertó (votó +1 y al autor),
+// penaliza a quien votó en contra. Acotada a [REP_MIN, REP_MAX]. Los pesos de
+// los votos ya emitidos NO se tocan (están congelados): solo cambia la
+// reputación de cara a votos futuros.
+const REP_REWARD = 0.2;
+const REP_PENALTY = 0.3; // penalizar pesa más que premiar (frena cuentas desechables)
+const REP_MIN = 0.2;
+const REP_MAX = 5.0;
+
+async function settleReputationOnConfirm(db, reportId) {
+  await db.batch([
+    db.prepare(
+      "UPDATE users SET reputation = MIN(?, reputation + ?) " +
+      "WHERE id IN (SELECT user_id FROM votes WHERE report_id = ? AND value = 1)"
+    ).bind(REP_MAX, REP_REWARD, reportId),
+    db.prepare(
+      "UPDATE users SET reputation = MAX(?, reputation - ?) " +
+      "WHERE id IN (SELECT user_id FROM votes WHERE report_id = ? AND value = -1)"
+    ).bind(REP_MIN, REP_PENALTY, reportId),
+    db.prepare(
+      "UPDATE users SET reputation = MIN(?, reputation + ?) " +
+      "WHERE id = (SELECT created_by FROM reports WHERE id = ?)"
+    ).bind(REP_MAX, REP_REWARD, reportId),
+  ]);
+}
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -161,7 +188,11 @@ export default {
       await env.DB.prepare("UPDATE reports SET score = ?, status = ?, updated_at = ? WHERE id = ?")
         .bind(score, status, now, reportId).run();
 
-      return json({ id: reportId, score, status });
+      // E1c: al CONFIRMARSE por primera vez, liquida la reputación de la comunidad.
+      const justConfirmed = status === "confirmed" && report.status !== "confirmed";
+      if (justConfirmed) await settleReputationOnConfirm(env.DB, reportId);
+
+      return json({ id: reportId, score, status, settled: justConfirmed });
     }
 
     return json({ error: "not found" }, 404);

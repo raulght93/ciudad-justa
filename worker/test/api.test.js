@@ -141,6 +141,47 @@ test("POST vote NO altera un estado de moderación (disputed)", async () => {
   assert.equal(body.status, "disputed"); // se respeta la moderación
 });
 
+// ---- E1c: reputación dinámica ----
+
+test("al confirmarse, liquida reputación (premia +1 y autor, penaliza -1)", async () => {
+  const db = mockDB({ report: { status: "under_review" }, voteScore: 6 });
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.status, "confirmed");
+  assert.equal(body.settled, true);
+  const ups = db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql));
+  assert.equal(ups.length, 3); // upvoters, downvoters, autor
+  assert.ok(ups.some((s) => /value = 1/.test(s.sql)), "premia upvoters");
+  assert.ok(ups.some((s) => /value = -1/.test(s.sql)), "penaliza downvoters");
+  assert.ok(ups.some((s) => /created_by FROM reports/.test(s.sql)), "premia autor");
+});
+
+test("si el voto no cruza el umbral, NO liquida reputación", async () => {
+  const db = mockDB({ report: { status: "reported" }, voteScore: 1 });
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.status, "reported");
+  assert.equal(body.settled, false);
+  assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 0);
+});
+
+test("ya confirmado: votar de nuevo no vuelve a liquidar", async () => {
+  const db = mockDB({ report: { status: "confirmed" }, voteScore: 8 });
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.settled, false);
+  assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 0);
+});
+
 test("OPTIONS → CORS", async () => {
   const res = await worker.fetch(req("/api/reports", { method: "OPTIONS" }), {});
   assert.equal(res.headers.get("access-control-allow-origin"), "*");

@@ -22,8 +22,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - **Política de takedown** y términos de uso publicados (`06 §6.3`).
 - **Flujo de subida con blur-gate** real (cliente): MediaPipe/face-api.js, fallback "no subir",
   strip EXIF (`03 §3.6`). *Medio.* → fase E1d (`07`).
-- **API Worker → D1**: E1a ✅ (lectura+escritura), E1b ✅ (votación ponderada). Pendiente
-  **E1c reputación dinámica**, **E1e moderación** (`04 §4.4-4.6`, `07 §E`).
+- **API Worker → D1**: E1a ✅ (lectura+escritura), E1b ✅ (votación), E1c ✅ (reputación
+  dinámica). Pendiente **E1e moderación** (cola, roles, audit log, liquidación al rechazar) y
+  **E1d subida con blur-gate** (`04 §4.4-4.6`, `07 §E`).
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
