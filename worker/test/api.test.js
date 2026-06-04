@@ -9,7 +9,7 @@ import worker from "../src/index.js";
 //   { rows, report:{status}|undefined, reputation, voteScore }
 function mockDB(arg = {}) {
   const cfg = Array.isArray(arg) ? { rows: arg } : arg;
-  const { rows = [], report, reputation = 1.0, voteScore = 0 } = cfg;
+  const { rows = [], report, reputation = 1.0, voteScore = 0, role } = cfg;
   const log = [];
   const prepare = (sql) => ({
     sql,
@@ -23,6 +23,7 @@ function mockDB(arg = {}) {
     run: async () => ({ success: true }),
     first: async () => {
       if (/FROM reports WHERE id/.test(sql)) return report; // {status} | undefined
+      if (/role FROM users/.test(sql)) return role === undefined ? undefined : { role };
       if (/reputation FROM users/.test(sql)) return { reputation };
       if (/SUM\(value \* weight\)/.test(sql)) return { score: voteScore };
       return null;
@@ -179,6 +180,68 @@ test("ya confirmado: votar de nuevo no vuelve a liquidar", async () => {
   );
   const body = await res.json();
   assert.equal(body.settled, false);
+  assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 0);
+});
+
+// ---- E1e: moderación ----
+
+const mod = (id, body, headers) =>
+  req(`/api/mod/reports/${id}`, { method: "POST", body: JSON.stringify(body), headers });
+
+test("moderación con action inválida → 400", async () => {
+  const res = await worker.fetch(mod("r1", { action: "explotar" }), { DB: mockDB({ role: "admin" }) });
+  assert.equal(res.status, 400);
+});
+
+test("moderación sin rol de moderación → 403", async () => {
+  const res = await worker.fetch(
+    mod("r1", { action: "reject" }, { "x-device-id": "alguien" }),
+    { DB: mockDB({ role: "user" }) }
+  );
+  assert.equal(res.status, 403);
+});
+
+test("moderación sobre reporte inexistente → 404", async () => {
+  const res = await worker.fetch(
+    mod("nope", { action: "reject" }, { "x-device-id": "mod1" }),
+    { DB: mockDB({ role: "moderator", report: undefined }) }
+  );
+  assert.equal(res.status, 404);
+});
+
+test("rechazar registra en moderation_log y liquida reputación inversa", async () => {
+  const db = mockDB({ role: "moderator", report: { status: "under_review" } });
+  const res = await worker.fetch(
+    mod("r1", { action: "reject", note: "spam" }, { "x-device-id": "mod1" }),
+    { DB: db }
+  );
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.status, "rejected");
+  assert.ok(db.log.some((s) => /INSERT INTO moderation_log/.test(s.sql)), "audit log");
+  assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 3, "liquidación inversa");
+});
+
+test("confirmar por moderación liquida reputación de confirmación", async () => {
+  const db = mockDB({ role: "moderator", report: { status: "reported" } });
+  const res = await worker.fetch(
+    mod("r1", { action: "confirm" }, { "x-device-id": "mod1" }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.status, "confirmed");
+  assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 3);
+});
+
+test("restaurar no liquida reputación pero sí registra", async () => {
+  const db = mockDB({ role: "admin", report: { status: "rejected" } });
+  const res = await worker.fetch(
+    mod("r1", { action: "restore" }, { "x-device-id": "boss" }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.status, "reported");
+  assert.ok(db.log.some((s) => /INSERT INTO moderation_log/.test(s.sql)));
   assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 0);
 });
 

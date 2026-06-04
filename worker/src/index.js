@@ -49,6 +49,34 @@ async function settleReputationOnConfirm(db, reportId) {
   ]);
 }
 
+// Liquidación inversa al RECHAZAR (E1e): penaliza autor y votantes +1
+// (apoyaron algo falso), premia a quien votó -1 (acertó al dudar).
+async function settleReputationOnReject(db, reportId) {
+  await db.batch([
+    db.prepare(
+      "UPDATE users SET reputation = MAX(?, reputation - ?) " +
+      "WHERE id IN (SELECT user_id FROM votes WHERE report_id = ? AND value = 1)"
+    ).bind(REP_MIN, REP_PENALTY, reportId),
+    db.prepare(
+      "UPDATE users SET reputation = MIN(?, reputation + ?) " +
+      "WHERE id IN (SELECT user_id FROM votes WHERE report_id = ? AND value = -1)"
+    ).bind(REP_MAX, REP_REWARD, reportId),
+    db.prepare(
+      "UPDATE users SET reputation = MAX(?, reputation - ?) " +
+      "WHERE id = (SELECT created_by FROM reports WHERE id = ?)"
+    ).bind(REP_MIN, REP_PENALTY, reportId),
+  ]);
+}
+
+// Acción de moderación → estado destino (docs/04 §4.3).
+const MOD_ACTIONS = {
+  confirm: "confirmed",
+  reject: "rejected",
+  document: "documented",
+  dispute: "disputed",
+  restore: "reported",
+};
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -193,6 +221,47 @@ export default {
       if (justConfirmed) await settleReputationOnConfirm(env.DB, reportId);
 
       return json({ id: reportId, score, status, settled: justConfirmed });
+    }
+
+    // POST /api/mod/reports/:id  { action, note? }   (E1e — moderación)
+    const modMatch = pathname.match(/^\/api\/mod\/reports\/([^/]+)$/);
+    if (modMatch && request.method === "POST") {
+      const reportId = decodeURIComponent(modMatch[1]);
+      const body = await request.json().catch(() => null);
+      const action = body?.action;
+      if (!action || !(action in MOD_ACTIONS)) {
+        return json({ error: `action inválida (${Object.keys(MOD_ACTIONS).join("|")})` }, 400);
+      }
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+
+      // Autorización por rol (moderador/admin). Auth real (sesión) en fase posterior.
+      const device = request.headers.get("x-device-id") || "anon";
+      const actor = await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(device).first();
+      if (!actor || (actor.role !== "moderator" && actor.role !== "admin")) {
+        return json({ error: "requiere rol de moderación" }, 403);
+      }
+
+      const report = await env.DB.prepare("SELECT status FROM reports WHERE id = ?").bind(reportId).first();
+      if (!report) return json({ error: "reporte no encontrado" }, 404);
+
+      const newStatus = MOD_ACTIONS[action];
+      const now = Date.now();
+      await env.DB.batch([
+        env.DB.prepare("UPDATE reports SET status = ?, updated_at = ? WHERE id = ?")
+          .bind(newStatus, now, reportId),
+        env.DB.prepare(
+          "INSERT INTO moderation_log (id, report_id, actor_id, action, note, created_at) VALUES (?, ?, ?, ?, ?, ?)"
+        ).bind(crypto.randomUUID(), reportId, device, action, body.note ?? null, now),
+      ]);
+
+      // Liquidación de reputación en las transiciones terminales.
+      if (newStatus === "confirmed" && report.status !== "confirmed") {
+        await settleReputationOnConfirm(env.DB, reportId);
+      } else if (newStatus === "rejected" && report.status !== "rejected") {
+        await settleReputationOnReject(env.DB, reportId);
+      }
+
+      return json({ id: reportId, status: newStatus, action });
     }
 
     return json({ error: "not found" }, 404);

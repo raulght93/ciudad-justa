@@ -56,7 +56,11 @@ Cada subfase es pequeña y testeable; la D1 ya existe (`wrangler.toml`).
   tocan (congelados). Solo liquida en la **primera** confirmación. 16 tests del Worker.
   *Pendiente: liquidación al rechazar (llega con E1e moderación).*
 - **E1d:** **subida de foto con blur-gate** en cliente + R2 (depende de C/DPIA antes de publicar).
-- **E1e:** **moderación** (cola, roles, audit log) + bootstrap (doc 06 §6.4).
+- **E1e** ✅: **moderación** — `POST /api/mod/reports/:id { action, note }` con acciones
+  confirm/reject/document/dispute/restore, **autorización por rol** (moderator/admin), escritura
+  en `moderation_log` (audit) y **liquidación de reputación** en transiciones terminales
+  (confirmar premia / rechazar penaliza, inversa). 22 tests del Worker. *Pendiente: auth real de
+  sesión (hoy por cabecera `x-device-id`) y la UI de moderación.*
 
 > Principio: cada subfase entra con sus tests y por CI. Lo verdaderamente caro (workflow de
 > verificación completo, GDAL a escala, revisión jurídica, constitución) queda al final de su
