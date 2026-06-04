@@ -18,8 +18,8 @@ No hace falta relanzar el workflow de ~105 agentes de golpe (eso es lo caro).
 
 ## B · Blindaje legal + entidad (review C1/E4) — borrador → revisión → constitución
 
-- **B1:** **borradores** de política de takedown, términos de uso, aviso legal y guion de
-  anonimización de propiedad. *Barato (documentos).*
+- **B1** ✅: **borradores** de aviso legal, términos de uso, política de privacidad, takedown y
+  guion DPIA en [`legal/`](legal/). *Pendiente B2 (revisión jurídica) + B3 (constitución).*
 - **B2:** **revisión por jurista** (LSSI + honor + RGPD). *Coste acotado, externo.*
 - **B3:** **constitución de la asociación/fundación**. *Trámite, no técnico.*
 - Regla: hasta B3, solo datos **agregados/curados**, sin señalar propiedades concretas.
@@ -48,7 +48,9 @@ Cada subfase es pequeña y testeable; la D1 ya existe (`wrangler.toml`).
   el reporte (uuid + geohash + categorías validadas + usuario anónimo por dispositivo) vía
   `batch`; `db/seed.sql` curado; cliente front `api/reports.js` + consumo en el mapa con
   fallback; 9 tests del Worker. *(D1 ya creada; falta aplicar schema+seed y desplegar.)*
-- **E1b:** **votación** con `weight` congelado; recálculo de `score`.
+- **E1b** ✅: **votación** ponderada — `POST /api/reports/:id/vote`, `weight` congelado desde la
+  reputación, upsert (1 voto/usuario), recálculo de `score` y transición de estado por umbral
+  (sin tocar estados de moderación). 13 tests del Worker.
 - **E1c:** **reputación** y transiciones de estado (reported→under_review→confirmed/disputed).
 - **E1d:** **subida de foto con blur-gate** en cliente + R2 (depende de C/DPIA antes de publicar).
 - **E1e:** **moderación** (cola, roles, audit log) + bootstrap (doc 06 §6.4).

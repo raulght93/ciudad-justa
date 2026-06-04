@@ -10,6 +10,18 @@ const CATEGORIES = new Set([
   "surface", "surveillance", "light_sound", "ghost_amenity",
 ]);
 
+// Umbrales de transición de estado por score (docs/04 §4.4). Configurables.
+const UNDER_REVIEW_AT = 2; // score ≥ → entra en cola de revisión
+const CONFIRM_AT = 5; //       score ≥ → confirmado por la comunidad
+// Estados que el score puede mover automáticamente (los demás son de moderación).
+const AUTO_STATUS = new Set(["reported", "under_review", "confirmed"]);
+
+function statusForScore(score) {
+  if (score >= CONFIRM_AT) return "confirmed";
+  if (score >= UNDER_REVIEW_AT) return "under_review";
+  return "reported";
+}
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -104,6 +116,52 @@ export default {
       await env.DB.batch(stmts);
 
       return json({ id, status: "reported", categories, geohash: gh }, 201);
+    }
+
+    // POST /api/reports/:id/vote  { value: +1 | -1 }   (E1b — votación ponderada)
+    const voteMatch = pathname.match(/^\/api\/reports\/([^/]+)\/vote$/);
+    if (voteMatch && request.method === "POST") {
+      const reportId = decodeURIComponent(voteMatch[1]);
+      const body = await request.json().catch(() => null);
+      if (!body || (body.value !== 1 && body.value !== -1)) {
+        return json({ error: "value debe ser +1 o -1" }, 400);
+      }
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+
+      // El reporte debe existir (y no estar en un estado terminal de moderación).
+      const report = await env.DB.prepare("SELECT status FROM reports WHERE id = ?")
+        .bind(reportId).first();
+      if (!report) return json({ error: "reporte no encontrado" }, 404);
+
+      const device = request.headers.get("x-device-id") || "anon";
+      const now = Date.now();
+
+      // Asegura el usuario y lee su reputación (peso que se CONGELA en el voto).
+      await env.DB.prepare(
+        "INSERT OR IGNORE INTO users (id, role, reputation, created_at) VALUES (?, 'user', 1.0, ?)"
+      ).bind(device, now).run();
+      const user = await env.DB.prepare("SELECT reputation FROM users WHERE id = ?")
+        .bind(device).first();
+      const weight = user?.reputation ?? 1.0;
+
+      // Upsert del voto (un voto por usuario y reporte; re-votar actualiza).
+      await env.DB.prepare(
+        "INSERT INTO votes (id, report_id, user_id, value, weight, created_at) VALUES (?, ?, ?, ?, ?, ?) " +
+        "ON CONFLICT(report_id, user_id) DO UPDATE SET value = excluded.value, weight = excluded.weight, created_at = excluded.created_at"
+      ).bind(crypto.randomUUID(), reportId, device, body.value, weight, now).run();
+
+      // Recalcula el score ponderado y la transición de estado (sin tocar
+      // estados de moderación: disputed/documented/rejected).
+      const agg = await env.DB.prepare(
+        "SELECT COALESCE(SUM(value * weight), 0) AS score FROM votes WHERE report_id = ?"
+      ).bind(reportId).first();
+      const score = Math.round((agg?.score ?? 0) * 100) / 100;
+      const status = AUTO_STATUS.has(report.status) ? statusForScore(score) : report.status;
+
+      await env.DB.prepare("UPDATE reports SET score = ?, status = ?, updated_at = ? WHERE id = ?")
+        .bind(score, status, now, reportId).run();
+
+      return json({ id: reportId, score, status });
     }
 
     return json({ error: "not found" }, 404);

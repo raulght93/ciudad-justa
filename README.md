@@ -43,6 +43,8 @@ permitidos) responde con honestidad. Ver [`docs/00-principios-y-valores.md`](doc
 | [`docs/04-modelo-de-datos.md`](docs/04-modelo-de-datos.md) | Esquema relacional, ciclo de vida del reporte, votación ponderada + reputación, moderación y superficie de API. |
 | [`docs/05-review-independiente.md`](docs/05-review-independiente.md) | Auditoría crítica de enfoque y contenido: hallazgos con severidad, mejoras concretas y backlog priorizado (bloqueantes antes de publicar). |
 | [`docs/06-gobernanza-legal-y-sostenibilidad.md`](docs/06-gobernanza-legal-y-sostenibilidad.md) | Respuesta a los bloqueantes 🔴 de la review: entidad jurídica, política legal/takedown/anonimización, moderación de arranque, sostenibilidad y DPIA. |
+| [`docs/07-fases-de-lo-caro.md`](docs/07-fases-de-lo-caro.md) | Cómo trocear lo caro en fases pequeñas y baratas (verificación por lotes, legal, ingesta raster, backend E1a-E1e). |
+| [`docs/legal/`](docs/legal/) | Borradores legales (B1): aviso legal, términos, privacidad, takedown, DPIA. Pendientes de revisión jurídica. |
 | [`docs/fuentes.md`](docs/fuentes.md) | Bibliografía con valoración de calidad de cada fuente. |
 
 ### Artefactos

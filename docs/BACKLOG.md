@@ -9,8 +9,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
   (review C4). *Caro* (harness de deep-research) → diferido hasta tener fecha de publicación.
   Mientras tanto: verificación dirigida ya hecha (ver `fuentes.md`).
 - **Contrastar con Arrels** la fecha de cierre exacta del recuento de 1.288 puntos.
-- **Constituir entidad jurídica** + asesoría legal (LSSI/honor/RGPD) antes de señalar ubicaciones
-  concretas (`06 §6.2`, §6.7).
+- **Legal:** borradores B1 ✅ (`docs/legal/`: aviso legal, términos, privacidad, takedown, DPIA).
+  Pendiente **B2** (revisión jurídica) y **B3** (constituir entidad) antes de señalar ubicaciones
+  concretas (`06 §6.2`, §6.7, `07 §B`).
 - **DPIA / EIPD** redactada antes de la Fase 1 (`06 §6.6`, `03 §3.6`).
 
 ## 🟠 Antes de la Fase 1 social
@@ -21,8 +22,8 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - **Política de takedown** y términos de uso publicados (`06 §6.3`).
 - **Flujo de subida con blur-gate** real (cliente): MediaPipe/face-api.js, fallback "no subir",
   strip EXIF (`03 §3.6`). *Medio.* → fase E1d (`07`).
-- **API Worker → D1**: E1a ✅ (lectura+escritura). Pendiente **E1b votación**, **E1c reputación
-  + estados**, **E1e moderación** (`04 §4.4-4.6`, `07 §E`).
+- **API Worker → D1**: E1a ✅ (lectura+escritura), E1b ✅ (votación ponderada). Pendiente
+  **E1c reputación dinámica**, **E1e moderación** (`04 §4.4-4.6`, `07 §E`).
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 

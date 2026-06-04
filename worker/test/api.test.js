@@ -4,23 +4,30 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index.js";
 
-// Mock de D1: registra cada sentencia preparada (sql+args), soporta all()/run()/batch().
-function mockDB(rows = []) {
+// Mock de D1: registra cada sentencia (sql+args) y soporta all()/run()/first()/batch().
+// Acepta un array (filas para GET) o un objeto de config para el flujo de voto:
+//   { rows, report:{status}|undefined, reputation, voteScore }
+function mockDB(arg = {}) {
+  const cfg = Array.isArray(arg) ? { rows: arg } : arg;
+  const { rows = [], report, reputation = 1.0, voteScore = 0 } = cfg;
   const log = [];
-  const prepare = (sql) => {
-    const st = {
-      sql,
-      args: null,
-      bind(...args) {
-        this.args = args;
-        log.push({ sql, args });
-        return this;
-      },
-      all: async () => ({ results: rows }),
-      run: async () => ({ success: true }),
-    };
-    return st;
-  };
+  const prepare = (sql) => ({
+    sql,
+    args: null,
+    bind(...args) {
+      this.args = args;
+      log.push({ sql, args });
+      return this;
+    },
+    all: async () => ({ results: rows }),
+    run: async () => ({ success: true }),
+    first: async () => {
+      if (/FROM reports WHERE id/.test(sql)) return report; // {status} | undefined
+      if (/reputation FROM users/.test(sql)) return { reputation };
+      if (/SUM\(value \* weight\)/.test(sql)) return { score: voteScore };
+      return null;
+    },
+  });
   return { log, prepare, batch: async (stmts) => stmts.map(() => ({ success: true })) };
 }
 
@@ -90,6 +97,48 @@ test("POST /api/reports inserta reporte + categorías + usuario y devuelve 201",
   // El usuario anónimo viene de la cabecera.
   const userStmt = db.log.find((s) => /INSERT OR IGNORE INTO users/.test(s.sql));
   assert.equal(userStmt.args[0], "dev-123");
+});
+
+// ---- E1b: votación ----
+
+test("POST vote con value inválido → 400", async () => {
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 2 }) }),
+    { DB: mockDB({ report: { status: "reported" } }) }
+  );
+  assert.equal(res.status, 400);
+});
+
+test("POST vote sobre reporte inexistente → 404", async () => {
+  const res = await worker.fetch(
+    req("/api/reports/nope/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: mockDB({ report: undefined }) }
+  );
+  assert.equal(res.status, 404);
+});
+
+test("POST vote suma score y confirma al cruzar el umbral", async () => {
+  const db = mockDB({ report: { status: "reported" }, reputation: 1.0, voteScore: 5 });
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: db }
+  );
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.score, 5);
+  assert.equal(body.status, "confirmed"); // 5 ≥ CONFIRM_AT
+  // El voto se inserta con upsert (un voto por usuario/reporte).
+  assert.ok(db.log.some((s) => /INSERT INTO votes/.test(s.sql) && /ON CONFLICT/.test(s.sql)));
+});
+
+test("POST vote NO altera un estado de moderación (disputed)", async () => {
+  const db = mockDB({ report: { status: "disputed" }, voteScore: 9 });
+  const res = await worker.fetch(
+    req("/api/reports/r1/vote", { method: "POST", body: JSON.stringify({ value: 1 }) }),
+    { DB: db }
+  );
+  const body = await res.json();
+  assert.equal(body.status, "disputed"); // se respeta la moderación
 });
 
 test("OPTIONS → CORS", async () => {
