@@ -1,7 +1,44 @@
 import { useState } from "react";
-import { c, font, radius } from "../styles/tokens.js";
+import { c, font, radius, kicker as kickerStyle } from "../styles/tokens.js";
 import { useReveal } from "../hooks/useReveal.js";
 import { SOURCES } from "../data/content.js";
+
+// Etiqueta monospace con índice de sección y filete: "01 ——— LAS CAPAS".
+export function Kicker({ n, children, color = c.accent }) {
+  return (
+    <div style={{ ...kickerStyle, color, display: "flex", alignItems: "center", gap: 12 }}>
+      {n && <span>{n}</span>}
+      <span style={{ width: 28, height: 1, background: color, opacity: 0.6 }} aria-hidden />
+      <span style={{ color: c.muted, letterSpacing: kickerStyle.letterSpacing }}>{children}</span>
+    </div>
+  );
+}
+
+// Cabecera de sección reutilizable: kicker + título display + entradilla.
+export function SectionHead({ n, kicker, title, lead, color = c.accent }) {
+  return (
+    <Reveal>
+      <Kicker n={n} color={color}>{kicker}</Kicker>
+      <h2 style={titleStyle()}>{title}</h2>
+      {lead && <p style={leadStyle()}>{lead}</p>}
+    </Reveal>
+  );
+}
+
+export function titleStyle() {
+  return {
+    fontFamily: font.serif,
+    fontWeight: 900,
+    fontSize: "clamp(2rem, 5.2vw, 3.4rem)",
+    lineHeight: 1.04,
+    letterSpacing: "-0.025em",
+    margin: "18px 0 0",
+    color: c.text,
+  };
+}
+export function leadStyle() {
+  return { maxWidth: 640, marginTop: 16, fontSize: "1.15rem", lineHeight: 1.6, color: c.muted };
+}
 
 // Contenedor que revela su contenido al entrar en viewport.
 export function Reveal({ children, delay = 0, as: Tag = "div", style }) {

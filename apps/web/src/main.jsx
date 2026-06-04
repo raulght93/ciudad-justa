@@ -24,9 +24,15 @@ reset.textContent = `
   }
   .skip-link:focus { top: 12px; }
 
+  /* Ticker de cifras. */
+  @keyframes cj-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .cj-marquee { animation: cj-marquee 38s linear infinite; }
+  .cj-marquee:hover { animation-play-state: paused; }
+
   /* Respeta a quien prefiere menos movimiento. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
+    .cj-marquee { animation: none !important; }
     *,*::before,*::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
   }
 `;

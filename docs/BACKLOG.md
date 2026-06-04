@@ -55,3 +55,7 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Branding: favicon.svg + tarjeta social og-card.svg.
 - Pipeline de capa fría (scoring 3-30-300): `pipeline/build-green-layer.mjs` → GeoJSON
   generado que el mapa consume con fallback. Ingesta raster real queda en backlog.
+- Rediseño de la front (estética "dossier cívico"): tipografía display + monospace, índices de
+  sección, ticker de cifras, divisor de pinchos, copies reescritos.
+- Interfaz móvil dedicada: nav sticky translúcida + menú a pantalla completa + barra de acción
+  inferior fija; cuenta animada con decimales.

@@ -32,11 +32,12 @@ export function useReveal(options = {}) {
   return [ref, shown];
 }
 
-// Cuenta animada hacia un valor al hacerse visible.
-export function useCountUp(target, shown, duration = 1400) {
+// Cuenta animada hacia un valor al hacerse visible. Soporta decimales.
+export function useCountUp(target, shown, decimals = 0, duration = 1400) {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!shown) return;
+    const f = 10 ** decimals;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setN(target);
@@ -48,11 +49,11 @@ export function useCountUp(target, shown, duration = 1400) {
       if (start === undefined) start = t;
       const p = Math.min(1, (t - start) / duration);
       const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
-      setN(Math.round(target * eased));
+      setN(Math.round(target * eased * f) / f);
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [target, shown, duration]);
+  }, [target, shown, decimals, duration]);
   return n;
 }

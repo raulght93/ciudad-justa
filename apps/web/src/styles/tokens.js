@@ -24,11 +24,21 @@ export const c = {
 export const font = {
   serif: "'Fraunces', Georgia, 'Times New Roman', serif",
   sans: "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+  mono: "'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace",
 };
 
 export const radius = { sm: 10, md: 16, lg: 24, pill: 999 };
 
-export const maxW = 1100;
+export const maxW = 1180;
+
+// Etiqueta monospace en versalitas (kickers, metadatos, índices de sección).
+export const kicker = {
+  fontFamily: font.mono,
+  fontSize: 12,
+  fontWeight: 700,
+  letterSpacing: "0.18em",
+  textTransform: "uppercase",
+};
 
 export const shadow = {
   card: "0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 50px -28px rgba(0,0,0,0.8)",

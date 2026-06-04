@@ -6,7 +6,7 @@ import { KEY_STATS, SOURCES } from "../data/content.js";
 describe("<Hero>", () => {
   it("muestra el titular y un CTA al mapa", () => {
     render(<Hero />);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/diseño urbano/i);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/no estés/i);
     const cta = screen.getByRole("link", { name: /ver el mapa/i });
     expect(cta).toHaveAttribute("href", "#mapa");
   });

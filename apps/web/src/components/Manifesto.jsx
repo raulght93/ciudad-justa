@@ -1,28 +1,29 @@
-import { c, font, radius } from "../styles/tokens.js";
+import { c, font, radius, kicker } from "../styles/tokens.js";
 import { MANIFESTO } from "../data/content.js";
-import { Reveal, Section, Pill, Expandable } from "./primitives.jsx";
-import { h2 } from "./Layers.jsx";
+import { Reveal, Section, Expandable, Kicker, SectionHead, titleStyle } from "./primitives.jsx";
 
 export default function Manifesto() {
   return (
     <div style={{ borderTop: `1px solid ${c.line}`, borderBottom: `1px solid ${c.line}`, background: c.bgAlt }}>
       <Section id="manifiesto">
         <Reveal>
-          <Pill>No somos neutrales</Pill>
+          <Kicker n="04">No somos neutrales</Kicker>
           <blockquote
             style={{
               fontFamily: font.serif,
               fontWeight: 600,
-              fontSize: "clamp(1.8rem, 4.4vw, 3.1rem)",
-              lineHeight: 1.18,
-              letterSpacing: "-0.015em",
+              fontStyle: "italic",
+              fontSize: "clamp(2rem, 5.4vw, 3.6rem)",
+              lineHeight: 1.12,
+              letterSpacing: "-0.02em",
               margin: "22px 0 0",
               color: c.text,
+              maxWidth: 18 + "ch",
             }}
           >
             «{MANIFESTO.claim}»
           </blockquote>
-          <p style={{ maxWidth: 680, marginTop: 22, fontSize: "1.1rem", lineHeight: 1.65, color: c.muted }}>
+          <p style={{ maxWidth: 640, marginTop: 24, fontSize: "1.12rem", lineHeight: 1.65, color: c.muted }}>
             {MANIFESTO.body}
           </p>
 
@@ -49,29 +50,20 @@ export default function Manifesto() {
 export function How({ steps }) {
   return (
     <Section id="como">
-      <Reveal>
-        <h2 style={h2()}>Simple: detecta, valida, presiona</h2>
-      </Reveal>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 18,
-          marginTop: 38,
-        }}
-      >
+      <SectionHead n="03" kicker="Cómo funciona" title="Detecta, valida, revierte" />
+      <ol style={{ listStyle: "none", padding: 0, margin: "38px 0 0", display: "grid", gap: 0,
+        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+        border: `1px solid ${c.line}`, borderRadius: radius.lg, overflow: "hidden", background: c.surface }}>
         {steps.map((s, i) => (
-          <Reveal key={s.n} delay={i * 90}>
-            <div style={{ background: c.surface, border: `1px solid ${c.line}`, borderRadius: radius.lg, padding: 24, height: "100%" }}>
-              <div style={{ fontFamily: font.serif, fontWeight: 900, fontSize: "2.4rem", color: c.accent, lineHeight: 1 }}>
-                {String(s.n).padStart(2, "0")}
-              </div>
-              <h3 style={{ margin: "12px 0 0", fontSize: "1.25rem", color: c.text }}>{s.t}</h3>
-              <p style={{ marginTop: 8, color: c.muted, lineHeight: 1.6 }}>{s.d}</p>
+          <Reveal key={s.n} delay={i * 90} as="li">
+            <div style={{ padding: 28, height: "100%", borderRight: i < steps.length - 1 ? `1px solid ${c.line}` : "none" }}>
+              <div style={{ ...kicker, color: c.accent, fontSize: 13 }}>Paso {String(s.n).padStart(2, "0")}</div>
+              <h3 style={{ ...titleStyle(), fontSize: "1.5rem", margin: "12px 0 0" }}>{s.t}</h3>
+              <p style={{ marginTop: 10, color: c.muted, lineHeight: 1.6 }}>{s.d}</p>
             </div>
           </Reveal>
         ))}
-      </div>
+      </ol>
     </Section>
   );
 }

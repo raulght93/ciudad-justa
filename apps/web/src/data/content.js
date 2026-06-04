@@ -34,44 +34,75 @@ export const SOURCES = {
   },
 };
 
-// Cifras-ancla del hero (data-driven, con fuente).
+// Navegación / índice del dossier.
+export const NAV = [
+  { n: "01", id: "capas", label: "Las capas" },
+  { n: "02", id: "mapa", label: "El mapa" },
+  { n: "03", id: "como", label: "Cómo funciona" },
+  { n: "04", id: "manifiesto", label: "Manifiesto" },
+  { n: "05", id: "vivienda", label: "Vivienda" },
+];
+
+// Hero.
+export const HERO = {
+  kicker: "Dossier cívico abierto · ciudades españolas",
+  line1: "Hay sitios diseñados",
+  line2pre: "para que ",
+  line2accent: "no estés", // se resalta
+  line2post: ".",
+  // El test de accesibilidad/Hero comprueba que aparece "diseño urbano".
+  sub: "Pinchos donde alguien dormiría. Bancos partidos para que nadie se tumbe. Calles sin un árbol ni un servicio a quince minutos. Es exclusión por **diseño urbano** —y casi siempre es invisible. Aquí la cartografiamos, la votamos y la sacamos a la luz.",
+  ctaPrimary: { label: "Ver el mapa", href: "#mapa" },
+  ctaSecondary: { label: "Por qué importa", href: "#manifiesto" },
+};
+
+// Ticker de cifras (banda en movimiento; respeta reduced-motion).
+export const TICKER = [
+  "1.288 barreras hostiles mapeadas en Barcelona",
+  "30 % de cubierta arbórea: el mínimo que casi ningún barrio alcanza",
+  "300 m a un parque · 5 minutos a pie · menos ansiolíticos",
+  "El espacio público es un derecho, no un activo",
+  "Solo el 4,7 % de Barcelona cumple la regla 3-30-300",
+  "Documentar · votar · revertir",
+];
+
+// Cifras-ancla (data-driven, con fuente).
 export const KEY_STATS = [
   {
     value: 1288,
     suffix: "",
-    label: "puntos hostiles en el mapa colaborativo de Barcelona",
-    note: "cifra viva del mapa abierto de Arrels (crowdsourced, en crecimiento)",
+    label: "barreras hostiles en el mapa de Barcelona",
+    note: "y subiendo: es un recuento vivo, hecho a pie de calle",
     source: "arrels",
     color: c.hostile,
   },
   {
     value: 30,
-    suffix: "%",
-    label: "cubierta arbórea mínima por barrio (regla 3-30-300)",
-    note: "muchos barrios no llegan ni a la mitad",
+    suffix: " %",
+    label: "de copa arbórea por barrio: el mínimo saludable",
+    note: "la regla 3-30-300; la mayoría de barrios no llega",
     source: "konijnendijk",
     color: c.green,
   },
   {
-    value: 300,
-    suffix: " m",
-    label: "distancia máxima recomendada a un espacio verde de calidad",
-    note: "≈ 5 min a pie. Cumplir 3-30-300 se asocia a menos medicación (ISGlobal, n=3.145)",
+    value: 4.7,
+    suffix: " %",
+    label: "de Barcelona vive con verde suficiente cerca",
+    note: "el resto, peor salud mental y más medicación (ISGlobal, n=3.145)",
     source: "isglobal",
     color: c.service,
   },
 ];
 
-// Manifiesto de valores (doc 00). Empieza simple; se profundiza al expandir.
+// Manifiesto de valores (doc 00).
 export const MANIFESTO = {
-  claim:
-    "El espacio público es un derecho, no un activo a proteger de quien lo necesita.",
-  body: "Esta herramienta no es neutral, y lo declara. Prima la dignidad humana y los derechos humanos universales por encima de los intereses de propiedad y mercado. La ideología elige las preguntas; el rigor metodológico responde con honestidad.",
+  claim: "El espacio público es de quien lo habita, no de quien lo blinda.",
+  body: "No fingimos neutralidad: esta herramienta toma partido por la dignidad y los derechos humanos antes que por la propiedad. La ideología decide qué preguntamos; el método —datos abiertos, fuentes citadas, contra-argumento— responde con honestidad.",
   rights: [
-    { k: "Derecho a la vivienda", v: "DUDH art. 25 · PIDESC art. 11 · Constitución española art. 47" },
-    { k: "Derecho a la ciudad", v: "el espacio urbano es de quien lo habita, no solo de quien lo posee" },
-    { k: "Libertad de circulación y a migrar", v: "DUDH art. 13 · ninguna frontera interior en la calle" },
-    { k: "No a la ciudadanía de segunda", v: "nadie es «uso impropio» del espacio público" },
+    { k: "Derecho a la vivienda", v: "DUDH 25 · PIDESC 11 · Constitución española 47" },
+    { k: "Derecho a la ciudad", v: "habitarla pesa más que poseerla" },
+    { k: "Libertad de circular y migrar", v: "DUDH 13 · ninguna frontera en la acera" },
+    { k: "Nadie es ciudadano de segunda", v: "ningún cuerpo es «uso impropio»" },
   ],
 };
 
@@ -81,10 +112,11 @@ export const LAYERS = [
     id: "hostile",
     color: c.hostile,
     icon: "▲",
+    tag: "01",
     title: "Arquitectura hostil",
     short:
-      "Diseño pensado para expulsar: pinchos, bancos imposibles de usar, amenidades fantasma.",
-    deep: "Estrategia que usa el entorno construido para restringir comportamientos «indeseables» —tumbarse, sentarse, refugiarse— y, con ello, expulsar a quienes más dependen del espacio público. Se clasifica por mecanismo (Rosenberger 2023): anti-tumbado, pinchos, barreras, vigilancia, luz/sonido, amenidades fantasma. No resuelve el sinhogarismo: lo desplaza y deshumaniza el espacio común.",
+      "Mobiliario diseñado para echar: pinchos, bancos antitumbado, fuentes y aseos que desaparecen.",
+    deep: "No prohíbe con un cartel: lo hace con el hierro y el hormigón. Restringe tumbarse, sentarse o resguardarse para expulsar a quien más necesita la calle. Se clasifica por su mecanismo (Rosenberger, 2023): antitumbado, pinchos, barreras, vigilancia, luz y sonido, y «amenidades fantasma». No resuelve el sinhogarismo —lo esconde.",
     source: "rosenberger",
     layer: "caliente · reporte ciudadano validado",
   },
@@ -92,46 +124,45 @@ export const LAYERS = [
     id: "green",
     color: c.green,
     icon: "❋",
+    tag: "02",
     title: "Déficit de verde",
-    short:
-      "Quién respira peor según su código postal. El verde no es estética: es salud.",
-    deep: "Vivir en zonas más verdes se asocia con mejor salud mental y menor consumo de medicación (ISGlobal). La regla 3-30-300 fija el umbral: 3 árboles visibles desde casa, 30% de cubierta arbórea en el barrio, un verde de calidad a 300 m. El reparto desigual del verde es injusticia ambiental.",
+    short: "Tu salud depende de tu código postal. El verde no es decoración: es medicina.",
+    deep: "Vivir entre verde se asocia con mejor salud mental y menos ansiolíticos y antidepresivos (ISGlobal, Barcelona). La regla 3-30-300 marca el listón: 3 árboles a la vista, 30 % de copa en el barrio, un parque a 300 m. Repartirlo mal es injusticia ambiental con nombre y dirección.",
     source: "isglobal",
-    layer: "fría · precalculada de datos abiertos (Urban Atlas / NDVI)",
+    layer: "fría · datos abiertos (Urban Atlas · NDVI)",
   },
   {
     id: "service",
     color: c.service,
     icon: "◉",
-    title: "Falta de servicios",
-    short:
-      "Barrios donde lo básico no está a 15 minutos a pie. La ciudad desigual.",
-    deep: "Accesibilidad peatonal a servicios esenciales —salud, educación, comercio, transporte— como indicador de equidad territorial (ciudad de 15 minutos). Se calcula con datos abiertos (OSM, indicadores de la Agenda Urbana Española) y se normaliza por población.",
+    tag: "03",
+    title: "Servicios a quince minutos",
+    short: "Barrios donde lo básico no está a un paseo. La ciudad de dos velocidades.",
+    deep: "Salud, escuela, comercio, transporte: lo esencial debería estar a quince minutos a pie. Medimos esa distancia con datos abiertos (OSM, indicadores de la Agenda Urbana Española) y la normalizamos por población, para no confundir «barrio sin reportes» con «barrio sin problema».",
     source: "aue",
-    layer: "fría · precalculada de datos abiertos (OSM · AUE)",
+    layer: "fría · datos abiertos (OSM · AUE)",
   },
 ];
 
-// Cómo funciona (3 pasos, simple).
+// Cómo funciona (3 pasos).
 export const HOW = [
-  { n: 1, t: "Detecta", d: "Fotografías el objeto —nunca a la persona— y lo geolocalizas. El rostro se difumina en tu propio móvil antes de subir nada." },
-  { n: 2, t: "Valida", d: "La comunidad confirma o rebate. Votación ponderada por reputación y contra-argumentos: un reposabrazos puede ser accesibilidad real." },
-  { n: 3, t: "Presiona", d: "Documentar → visibilizar → presionar. El objetivo último es la reversión del mobiliario hostil y el reverdecimiento." },
+  { n: 1, t: "Detecta", d: "Fotografías el objeto —nunca a la persona—. El rostro se difumina en tu móvil antes de subir nada; si no se puede, no se sube." },
+  { n: 2, t: "Valida", d: "La comunidad confirma o rebate. Voto ponderado por reputación y derecho a réplica: un reposabrazos puede ser accesibilidad de verdad." },
+  { n: 3, t: "Revierte", d: "Documentar para visibilizar, visibilizar para presionar. El final feliz es un pincho menos y un árbol más." },
 ];
 
 // Área de expansión: la barrera del precio de la vivienda.
 export const HOUSING = {
   color: c.housing,
   kicker: "Próxima capa · en preparación",
-  title: "La barrera del precio de la vivienda",
-  lead: "La arquitectura hostil es el síntoma visible. El precio de la vivienda es la barrera estructural que está detrás.",
-  body: "Si el banco con pinchos expulsa de la acera, el precio de la vivienda expulsa de la ciudad entera. Ciudad Justa prepara una capa para cartografiar la presión del coste de la vivienda en España —esfuerzo de alquiler sobre la renta, desplazamiento de vecinos, turistificación, vivienda vacía— y cruzarla con las otras tres capas: ¿son los mismos barrios los que pierden verde, servicios Y acceso a la vivienda?",
-  rightLink: { k: "Anclaje", v: "Derecho a la vivienda — art. 47 de la Constitución española" },
-  // Métricas placeholder: se rellenarán con fuentes verificadas antes de publicar.
+  title: "El precio de la vivienda",
+  lead: "El banco con pinchos te echa de la acera. El precio de la vivienda te echa de la ciudad entera.",
+  body: "La arquitectura hostil es el síntoma que se ve; el coste de la vivienda, la barrera que lo explica. Preparamos una capa para cartografiar la presión del alquiler en España —esfuerzo sobre la renta, desplazamiento de vecinos, turistificación, vivienda vacía— y cruzarla con las otras tres: ¿son los mismos barrios los que pierden el verde, los servicios y, encima, el techo?",
+  rightLink: { k: "Anclaje", v: "Derecho a la vivienda · art. 47 de la Constitución" },
   metrics: [
-    { value: "—", label: "% de la renta destinado al alquiler", todo: true },
+    { value: "—", label: "% de la renta que se va en alquiler", todo: true },
     { value: "—", label: "barrios en riesgo de desplazamiento", todo: true },
-    { value: "—", label: "viviendas vacías vs. demanda", todo: true },
+    { value: "—", label: "vivienda vacía frente a demanda", todo: true },
   ],
-  note: "Datos pendientes de incorporar con fuentes verificadas (INE, Índice de Precios del Alquiler, registros municipales). Esta sección es un marcador de expansión, no contenido cerrado.",
+  note: "Cifras pendientes de incorporar con fuentes verificadas (INE, Índice de Precios del Alquiler, registros municipales). Esta sección es un marcador de expansión, no contenido cerrado.",
 };
