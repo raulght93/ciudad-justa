@@ -32,6 +32,10 @@ export const SOURCES = {
     label: "defensiveTO — Cara Chellew",
     url: "https://www.defensiveto.org/about",
   },
+  ecologistas: {
+    label: "Ecologistas en Acción · Córdoba (arbolado y calor)",
+    url: "https://www.ecologistasenaccion.org/territorios/andalucia/cordoba/",
+  },
 };
 
 // Navegación / índice del dossier.
@@ -127,9 +131,10 @@ export const LAYERS = [
     tag: "02",
     title: "Déficit de verde",
     short: "Tu salud depende de tu código postal. El verde no es decoración: es medicina.",
-    deep: "Vivir entre verde se asocia con mejor salud mental y menos ansiolíticos y antidepresivos (ISGlobal, Barcelona). La regla 3-30-300 marca el listón: 3 árboles a la vista, 30 % de copa en el barrio, un parque a 300 m. Repartirlo mal es injusticia ambiental con nombre y dirección.",
+    deep: "Vivir entre verde se asocia con mejor salud mental y menos ansiolíticos y antidepresivos (ISGlobal, Barcelona). La regla 3-30-300 marca el listón: 3 árboles a la vista, 30 % de copa en el barrio, un parque a 300 m. Repartirlo mal es injusticia ambiental con nombre y dirección. En Córdoba —la ciudad más calurosa de España (récord 47,6 °C)— la falta de sombra es salud pública; cruzamos los datos abiertos con el trabajo de campo de Ecologistas en Acción.",
     source: "isglobal",
-    layer: "fría · datos abiertos (Urban Atlas · NDVI)",
+    ally: "ecologistas",
+    layer: "fría · datos abiertos (Urban Atlas · NDVI · OSM)",
   },
   {
     id: "service",

@@ -34,9 +34,13 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
-- **Pipeline de capas frías — ingesta raster**: la etapa de scoring ya está hecha
-  (`pipeline/build-green-layer.mjs`); falta la **extracción real** desde Urban Atlas/SIOSE/NDVI
-  con GDAL/turf que alimente el CSV de indicadores. *Requiere GDAL — medio.*
+- **Pipeline — cubierta arbórea REAL (raster)**: la ingesta de geometría OSM ya está
+  (`pipeline/ingest-osm.mjs`, piloto Córdoba); `green_cover_pct` es hoy un **proxy OSM**. Falta
+  la cubierta arbórea real con **NDVI (Sentinel-2) / Urban Atlas STL + GDAL** (zonal stats). *Medio.*
+- **Datos de Córdoba — Ecologistas en Acción**: incorporar sus informes de arbolado/déficit de
+  sombra/calor como capa o validación local (ya citados en front + `cities.js`). Posible aliado.
+- **Verde real OSM**: sustituir `inputs/cordoba-green.sample.geojson` por la descarga real de
+  Overpass (query en `pipeline/README.md`).
 - **Pipeline — teselado PMTiles** (`tippecanoe`) y publicación a R2 para escala ciudad.
 - **Pipeline — capa de servicios (15-min)**: POIs OSM → accesibilidad a pie → score por celda
   (misma forma que la de verde).
@@ -61,8 +65,11 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - CI (GitHub Actions): front (test+build) + worker (test) en push/PR.
 - Seed curado ampliado (16 puntos hostiles + 9 celdas de verde) para la demo del mapa.
 - Branding: favicon.svg + tarjeta social og-card.svg.
-- Pipeline de capa fría (scoring 3-30-300): `pipeline/build-green-layer.mjs` → GeoJSON
-  generado que el mapa consume con fallback. Ingesta raster real queda en backlog.
+- Pipeline de capa fría (scoring 3-30-300): `pipeline/build-green-layer.mjs` + `lib/score.mjs`
+  → GeoJSON que el mapa consume con fallback.
+- Ingesta de verde por ciudad (`pipeline/ingest-osm.mjs` + turf + `cities.js`): piloto **Córdoba**
+  (45 celdas, déficit 0.18→1) desde geometría OSM; `green_within_300m` + `green_cover_pct`.
+  Ecologistas en Acción citado como fuente/aliado local en el front (footer + capa verde).
 - Rediseño de la front (estética "dossier cívico"): tipografía display + monospace, índices de
   sección, ticker de cifras, divisor de pinchos, copies reescritos.
 - Interfaz móvil dedicada: nav sticky translúcida + menú a pantalla completa + barra de acción

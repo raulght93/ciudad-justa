@@ -35,8 +35,10 @@ La etapa de scoring ya está hecha; lo caro es la ingesta geoespacial.
 
 - **D1:** documentar fuentes y método exacto (Urban Atlas/SIOSE/NDVI) y **descargar 1 área
   pequeña a mano**. Barato.
-- **D2:** script **GDAL/turf** que extrae los indicadores por celda de esa AOI → alimenta el CSV
-  que ya consume `build-green-layer.mjs`. Medio.
+- **D2** ✅ (geometría OSM): `pipeline/ingest-osm.mjs` (turf) — rejilla por ciudad
+  (`pipeline/cities.js`, piloto **Córdoba**), `green_within_300m` (buffer 300 m) y
+  `green_cover_pct` por celda → GeoJSON. Fuentes locales: **Ecologistas en Acción (Córdoba)** +
+  OSM/Urban Atlas. *Pendiente D2b: cubierta arbórea REAL (NDVI/Urban Atlas + GDAL); hoy es proxy.*
 - **D3:** ampliar a la ciudad piloto + **teselado PMTiles** (tippecanoe) en R2.
 - **D4:** automatizar en GitHub Action (recálculo trimestral).
 

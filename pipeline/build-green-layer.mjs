@@ -19,24 +19,11 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { deficitScore } from "./lib/score.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const INPUT = resolve(__dirname, "inputs/barcelona-green.sample.csv");
 const OUTPUT = resolve(__dirname, "../apps/web/public/data/green-deficit.geojson");
-
-// Parámetros de la regla 3-30-300.
-const CANOPY_TARGET = 30; // % de cubierta arbórea objetivo en el barrio
-const W_CANOPY = 0.5; // peso del componente cubierta
-const W_ACCESS = 0.5; // peso del componente acceso a verde a <300 m
-
-const clamp01 = (x) => Math.max(0, Math.min(1, x));
-
-// deficit ∈ [0,1]: 0 = sin déficit, 1 = déficit máximo.
-function deficitScore(canopyPct, accessFrac) {
-  const canopyShort = clamp01((CANOPY_TARGET - canopyPct) / CANOPY_TARGET);
-  const accessShort = clamp01(1 - accessFrac);
-  return Math.round((W_CANOPY * canopyShort + W_ACCESS * accessShort) * 100) / 100;
-}
 
 function parseCsv(text) {
   const [header, ...rows] = text.trim().split(/\r?\n/);

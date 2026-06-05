@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "name": "Córdoba · zonas verdes (MUESTRA ilustrativa, no exhaustiva)",
+  "_comment": "Polígonos aproximados de parques reales de Córdoba para ejecutar la ingesta sin red. En producción se sustituye por la descarga real de OSM (Overpass: leisure=park, landuse=grass/forest, natural=*) o Urban Atlas. NO usar como dato.",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Jardines de la Victoria / Paseo de la Victoria" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7889,37.8825],[-4.7866,37.8825],[-4.7866,37.8905],[-4.7889,37.8905],[-4.7889,37.8825]]] } },
+    { "type": "Feature", "properties": { "name": "Jardines de la Agricultura" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7905,37.8888],[-4.7878,37.8888],[-4.7878,37.8918],[-4.7905,37.8918],[-4.7905,37.8888]]] } },
+    { "type": "Feature", "properties": { "name": "Parque Cruz Conde" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7975,37.8742],[-4.7918,37.8742],[-4.7918,37.8788],[-4.7975,37.8788],[-4.7975,37.8742]]] } },
+    { "type": "Feature", "properties": { "name": "Sotos de la Albolafia (río)" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7806,37.8758],[-4.7726,37.8758],[-4.7726,37.8788],[-4.7806,37.8788],[-4.7806,37.8758]]] } },
+    { "type": "Feature", "properties": { "name": "Parque de Miraflores" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7726,37.8745],[-4.7686,37.8745],[-4.7686,37.8778],[-4.7726,37.8778],[-4.7726,37.8745]]] } },
+    { "type": "Feature", "properties": { "name": "Balcón del Guadalquivir / Parque Cruz de Juárez" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.7686,37.8858],[-4.7626,37.8858],[-4.7626,37.8898],[-4.7686,37.8898],[-4.7686,37.8858]]] } }
+  ]
+}

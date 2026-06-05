@@ -72,7 +72,7 @@ function Footer() {
           <p style={{ marginTop: 12, color: c.muted, lineHeight: 1.6, fontSize: 14.5 }}>Dossier cívico abierto, sin ánimo de lucro. Código y datos libres. La dignidad por delante de la propiedad.</p>
         </div>
         <div style={{ fontFamily: font.mono, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: c.faint, lineHeight: 2, textAlign: "right" }}>
-          Datos · Arrels · ISGlobal · Konijnendijk<br />Estrategia de Sinhogarismo · Agenda Urbana<br />
+          Datos · Arrels · ISGlobal · Konijnendijk<br />Ecologistas en Acción · Estrategia de Sinhogarismo · Agenda Urbana<br />
           <span style={{ color: c.muted }}>Bibliografía → docs/fuentes.md</span>
         </div>
       </div>

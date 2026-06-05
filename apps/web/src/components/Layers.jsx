@@ -26,7 +26,10 @@ function LayerCard({ l }) {
           <div style={{ overflow: "hidden" }}>
             <div style={{ marginTop: 14, paddingLeft: 14, borderLeft: `2px solid ${l.color}`, color: c.muted, lineHeight: 1.65, fontSize: 15 }}>
               <p>{l.deep}</p>
-              <div style={{ marginTop: 12 }}><SourceTag id={l.source} /></div>
+              <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 14 }}>
+                <SourceTag id={l.source} />
+                {l.ally && <SourceTag id={l.ally} />}
+              </div>
             </div>
           </div>
         </div>
