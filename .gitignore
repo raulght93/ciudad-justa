@@ -4,3 +4,4 @@ dist/
 *.log
 .wrangler/
 pipeline/inputs/treemaps/
+pipeline/inputs/income/

@@ -92,7 +92,7 @@ export default function CaseMap({ caseDef }) {
           map.addSource(id, { type: "geojson", data: l.embedded || EMPTY });
           if (l.kind === "choropleth") {
             map.addLayer({ id, type: "fill", source: id, layout: { visibility }, paint: { "fill-color": ["interpolate", ["linear"], ["get", l.prop], ...l.ramp], "fill-opacity": 0.45, "fill-outline-color": c.line } });
-            map.on("mousemove", id, (e) => { map.getCanvas().style.cursor = "pointer"; const p = e.features[0].properties; hover.setLngLat(e.lngLat).setHTML(`<div style="font-family:${font.mono};font-size:11px;color:#111"><strong>${p.barrio || p.zona || ""}</strong><br>${p.detail || ""}</div>`).addTo(map); });
+            map.on("mousemove", id, (e) => { map.getCanvas().style.cursor = "pointer"; const p = e.features[0].properties; hover.setLngLat(e.lngLat).setHTML(`<div style="font-family:${font.mono};font-size:11px;color:#111"><strong>${p.barrio || p.zona || p.cusec || ""}</strong><br>${p.detail || ""}</div>`).addTo(map); });
             map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; hover.remove(); });
           } else {
             map.addLayer({ id, type: "circle", source: id, layout: { visibility }, paint: { "circle-radius": ["match", ["get", "status"], "confirmed", 8, "documented", 8, 6], "circle-color": color, "circle-opacity": ["match", ["get", "status"], "reported", 0.5, "disputed", 0.6, 0.92], "circle-stroke-width": 1.5, "circle-stroke-color": "#fff2" } });
@@ -179,6 +179,7 @@ function Legend({ layer, color }) {
     return <span style={ls()}><span style={{ fontFamily: font.mono, fontSize: 10, fontWeight: 700, color: "#0a0a0b", background: color, border: "2px solid #0a0a0b", padding: "2px 6px" }}>€</span> Ejemplos de precio (muestra) · pulsa el pin</span>;
   }
   const lo = layer.ramp[1], hi = layer.ramp[layer.ramp.length - 1];
-  return <span style={ls()}><span style={{ width: 64, height: 12, background: `linear-gradient(90deg, ${lo}, ${hi})`, border: `1px solid ${c.line}` }} /> menos → más {layer.key === "housing" ? "presión" : "déficit"}</span>;
+  const word = layer.key === "housing" ? "presión" : layer.key === "income" ? "vulnerabilidad (menor renta)" : layer.key === "rent" ? "€/m² alquiler" : "déficit";
+  return <span style={ls()}><span style={{ width: 64, height: 12, background: `linear-gradient(90deg, ${lo}, ${hi})`, border: `1px solid ${c.line}` }} /> menos → más {word}</span>;
 }
 function ls() { return { display: "inline-flex", alignItems: "center", gap: 8, fontFamily: font.mono, fontSize: 12, letterSpacing: "0.04em", color: c.muted }; }

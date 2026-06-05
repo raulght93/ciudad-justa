@@ -36,6 +36,14 @@ export const SOURCES = {
     label: "Ecologistas en Acción · Córdoba (arbolado y calor)",
     url: "https://www.ecologistasenaccion.org/territorios/andalucia/cordoba/",
   },
+  ine: {
+    label: "INE · Atlas de distribución de renta de los hogares (2023)",
+    url: "https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736177088",
+  },
+  urbanatlas: {
+    label: "Copernicus · Urban Atlas Street Tree Layer 2021",
+    url: "https://land.copernicus.eu/en/products/urban-atlas/street-tree-layer-2021",
+  },
 };
 
 // Navegación / índice del dossier.
