@@ -45,7 +45,8 @@ const cells = grid();
 const gsrc = pick("green");
 if (gsrc) {
   const green = JSON.parse(readFileSync(gsrc.path, "utf8"));
-  const greens = green.features.filter((f) => f.geometry?.type?.includes("Polygon"));
+  // Filtra micro-polígonos (<300 m²) — irrelevantes y disparan el coste de intersección.
+  const greens = green.features.filter((f) => f.geometry?.type?.includes("Polygon") && safeArea(f) >= 300);
   let access = null;
   for (const g of greens) { const b = turf.buffer(g, 300, { units: "meters" }); access = access ? turf.union(access, b) : b; }
 

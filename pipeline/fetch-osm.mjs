@@ -17,16 +17,33 @@ if (!city) { console.error(`Ciudad desconocida: ${cityKey}`); process.exit(1); }
 const [minLng, minLat, maxLng, maxLat] = city.bbox;
 const BB = `${minLat},${minLng},${maxLat},${maxLng}`; // Overpass = (S,W,N,E)
 const UA = "ciudad-justa/1.0 (civic mapping)";
-const ENDPOINT = "https://overpass-api.de/api/interpreter";
+const ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function overpass(query) {
-  const res = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
-    body: "data=" + encodeURIComponent(query),
-  });
-  if (!res.ok) throw new Error(`Overpass ${res.status}`);
-  return res.json();
+// Reintenta rotando endpoints ante cualquier fallo (servidores saturados).
+async function overpass(query, tries = 10) {
+  let last;
+  for (let i = 0; i < tries; i++) {
+    const url = ENDPOINTS[i % ENDPOINTS.length];
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
+        body: "data=" + encodeURIComponent(query),
+      });
+      if (res.ok) return res.json();
+      last = `HTTP ${res.status}`;
+      console.log(`  ${res.status} en ${new URL(url).host}, reintento ${i + 1}/${tries}…`);
+    } catch (e) {
+      last = e.message;
+      console.log(`  fallo en ${new URL(url).host} (${e.message}), reintento ${i + 1}/${tries}…`);
+    }
+    await sleep(4000 * (i + 1));
+  }
+  throw new Error(`Overpass: agotados los reintentos (${last})`);
 }
 
 // Categorías de servicio esencial (ciudad de 15 minutos).

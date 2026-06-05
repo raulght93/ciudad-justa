@@ -54,6 +54,7 @@ export const CASES = [
     layers: [
       { key: "housing", label: "Zonas", kind: "choropleth", url: "/data/malaga-housing.example.geojson", prop: "housing_pressure", ramp: RAMP_HOUSING },
       { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
+      { key: "green", label: "Verde", kind: "choropleth", url: "/data/malaga-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
     ],
   },
 ];

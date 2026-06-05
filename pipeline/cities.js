@@ -17,6 +17,14 @@ export const CITIES = {
     // (Córdoba) — informes de arbolado, déficit de sombra y olas de calor.
     localSources: ["Ecologistas en Acción · Córdoba", "Urban Atlas (FUA)", "OSM / Overpass"],
   },
+  malaga: {
+    name: "Málaga",
+    center: [-4.421, 36.721],
+    bbox: [-4.49, 36.68, -4.36, 36.75],
+    cell: 0.012,
+    note: "Turistificación y gentrificación; presión de alquiler y desplazamiento. Cruce vivienda × verde × servicios.",
+    fua: "ES (Urban Atlas FUA Málaga)",
+  },
   murcia: {
     name: "Murcia",
     center: [-1.1307, 37.9847],
