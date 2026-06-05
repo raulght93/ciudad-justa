@@ -44,6 +44,10 @@ export const SOURCES = {
     label: "Copernicus · Urban Atlas Street Tree Layer 2021",
     url: "https://land.copernicus.eu/en/products/urban-atlas/street-tree-layer-2021",
   },
+  serpavi: {
+    label: "SERPAVI · Mitma — índice de alquiler €/m²·mes (2024)",
+    url: "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi",
+  },
 };
 
 // Navegación / índice del dossier.

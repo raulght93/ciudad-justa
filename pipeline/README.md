@@ -13,7 +13,7 @@ sirve como estáticos. Coste de ejecución ≈ 0 y coste de servir ≈ 0 (R2 / P
 | **Ingesta verde (OSM)** | ✅ | `ingest-osm.mjs` (turf): por celda `green_within_300m` (buffer 300 m) + `green_cover_pct` (verde ∩ celda). Usa el dato real si existe, si no la muestra. |
 | **Capa de servicios 15-min (a)** | ✅ | `ingest-osm.mjs`: por celda `service_deficit` = % de categorías esenciales **sin POI a <800 m** (≈10 min). Córdoba real. |
 | **Cubierta arbórea REAL (b)** | ✅ | `ingest-canopy.mjs`: lee el **Urban Atlas Street Tree Layer** (vector FlatGeobuf `.fgb`, EPSG:3035), reproyecta (proj4) y calcula `tree_canopy_pct` por celda → recalcula el déficit (`canopy_proxy: false`). Sin GDAL ni QGIS. Córdoba 0–29 %, Málaga hechas. |
-| **Vivienda real (c)** | ⛏️ | Málaga es muestra. Real: **Sistema Estatal de Índices de Precios de Alquiler (Mitma)** + **Atlas de renta (INE)** por sección censal + cartografía de secciones (INE). Sin scraping de portales (ToS). Procedimiento abajo. |
+| **Vivienda real (c)** | ✅ | **Alquiler €/m²·mes** real por sección: `ingest-rent.mjs` lee la base de SERPAVI (Mitma, XLSX) y la une a la geometría INE. **Renta** real por sección: `ingest-housing.mjs` (INE Atlas). Málaga hechas (alquiler 5,3–20,9 €/m²). |
 | **Teselado PMTiles** | ⛏️ | A escala ciudad: `tippecanoe` → PMTiles en R2 en vez de GeoJSON. (BACKLOG) |
 
 ## Uso
@@ -53,13 +53,19 @@ Hay **dos cosas distintas** y conviene no confundirlas (lo aclaramos al revisar)
 > Nota: lo que se descargó en `inputs/income/map` y `inputs/income/census` es la **cartografía de
 > secciones del INE** (SECC_CE), **no** la capa de precios de Mitma. Sirve de geometría para ambos.
 
-**Para el alquiler €/m² real (lo que pediste):**
-1. Descarga los **datos por sección censal** en <https://serpavi.mivau.gob.es> (tabla; da renta
-   media €/m²·mes, importe €/mes y superficie por sección). Si viene en XLSX, "Guardar como CSV".
-2. Déjalo en `pipeline/inputs/rent/serpavi.csv`.
-3. `node ingest-rent.mjs rent/serpavi.csv 29067 malaga-rent` → `public/data/malaga-rent.geojson`
-   (autodetecta columnas; si falla, `--sec=N --rent=N --sep=;`). Luego lo cableamos como capa
-   **"Alquiler €/m²"** del caso Málaga.
+**Para el alquiler €/m² real — ✅ ya hecho para Málaga:**
+- ⚠️ `serpavi.mivau.gob.es` es la **consulta por dirección/catastro** (un inmueble), NO la
+  descarga masiva. La base completa por sección está en
+  <https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi> → **"Base de datos
+  completa"** (XLSX 2011–2024, ~71 MB; enlace directo en `cdn.mivau.gob.es/.../serpavi/`).
+- Déjala en `pipeline/inputs/rent/serpavi.xlsx` (gitignored) y:
+  ```bash
+  node ingest-rent.mjs rent/serpavi.xlsx 29067 malaga-rent
+  ```
+  Lee la hoja "Secciones censales", columna **`ALQM2_LV_M_VC_24`** (alquiler vivienda colectiva,
+  mediana, 2024, €/m²·mes), une por CUSEC a la geometría INE → `public/data/malaga-rent.geojson`.
+  Otra ciudad: cambia el prefijo CUSEC (p. ej. Córdoba `29067`→`14021`... ojo: Málaga capital es
+  `29067`). Otro año/indicador: `--col=ALQM2_LV_M_VC_23`.
 
 ### Renta (INE Atlas) — ✅ hecha · y otras fuentes
 Dónde ir a por los datos (todo descarga gratuita):

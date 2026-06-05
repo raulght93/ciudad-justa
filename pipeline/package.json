@@ -12,6 +12,7 @@
     "@turf/turf": "^6.5.0",
     "flatgeobuf": "^3.27.0",
     "proj4": "^2.11.0",
-    "shapefile": "^0.6.6"
+    "shapefile": "^0.6.6",
+    "xlsx": "^0.18.5"
   }
 }

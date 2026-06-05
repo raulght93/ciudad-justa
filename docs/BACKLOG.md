@@ -34,9 +34,11 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
-- **(c) Vivienda real (Málaga)**: sustituir la muestra por **Mitma (índice de alquiler)** + **INE
-  (Atlas de renta + secciones censales)**; pins de precio solo con datos agregados con licencia
-  (no scraping de portales).
+- **(c) ✅ Vivienda real (Málaga)**: alquiler €/m²·mes real (SERPAVI/Mitma 2024, `ingest-rent.mjs`,
+  5,3–20,9 €/m²) + renta real (INE, `ingest-housing.mjs`). Pendiente: extender a más ciudades;
+  pins de precio siguen siendo ejemplos (datos agregados con licencia, no scraping).
+- **Simplificar geometría de secciones** (`malaga-rent`/`malaga-income` ~1 MB): turf.simplify para
+  aligerar el GeoJSON servido.
 - **Ecologistas en Acción (Córdoba)**: integrar sus informes de arbolado/sombra como capa o
   validación (ya citados en el front). Posible aliado.
 - **Servicios/verde en más ciudades**: `fetch-osm.mjs` + `ingest-osm.mjs` ya son por-ciudad
