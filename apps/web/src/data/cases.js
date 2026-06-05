@@ -39,6 +39,7 @@ export const CASES = [
     layers: [
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/cordoba-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/cordoba-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
+      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/cordoba-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
     ],
   },
   {

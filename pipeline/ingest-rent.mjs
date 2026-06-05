@@ -15,6 +15,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as shapefile from "shapefile";
+import * as turf from "@turf/turf";
 import proj4 from "proj4";
 import XLSX from "xlsx";
 
@@ -80,6 +81,8 @@ for (const f of feats) {
   f.properties.rent_norm = hi > lo ? Math.round(((f.properties.rent_m2 - lo) / (hi - lo)) * 100) / 100 : 0.5;
   f.properties.detail = `${f.properties.rent_m2.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €/m²·mes`;
 }
+// Simplifica geometría (~11 m) para aligerar el GeoJSON servido.
+for (const f of feats) turf.simplify(f, { tolerance: 0.0001, highQuality: false, mutate: true });
 const OUT = resolve(__dirname, `../apps/web/public/data/${outName}.geojson`);
 writeFileSync(OUT, JSON.stringify({ type: "FeatureCollection", name: "Alquiler €/m²·mes por sección (real · SERPAVI/Mitma 2024)",
   _generated: { source: "ingest-rent.mjs", col: RENT_COL, prefix, sections: feats.length, range: [lo, hi] }, features: feats }) + "\n");

@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as shapefile from "shapefile";
+import * as turf from "@turf/turf";
 import proj4 from "proj4";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -80,6 +81,8 @@ for (const f of feats) {
   f.properties.housing_vuln = Math.round((1 - norm) * 100) / 100;
   f.properties.detail = `${f.properties.income.toLocaleString("es-ES")} €/persona/año`;
 }
+// Simplifica geometría (~11 m) para aligerar el GeoJSON servido.
+for (const f of feats) turf.simplify(f, { tolerance: 0.0001, highQuality: false, mutate: true });
 
 writeFileSync(OUT, JSON.stringify({
   type: "FeatureCollection",
