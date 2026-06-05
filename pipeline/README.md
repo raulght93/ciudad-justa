@@ -44,7 +44,24 @@ node build-green-layer.mjs      # inputs/barcelona-green.sample.csv → public/d
 No hace falta QGIS/GDAL: el STL es **vector** (FlatGeobuf), se lee con `flatgeobuf`, se reproyecta
 de EPSG:3035 con `proj4` y se suma el área de copa por celda con `turf`.
 
-### (c) Vivienda real — pendiente, fuentes oficiales (sin scraping)
+### (c) Vivienda real — RENTA hecha; ALQUILER €/m² pendiente de descarga
+
+Hay **dos cosas distintas** y conviene no confundirlas (lo aclaramos al revisar):
+- **Renta (INE Atlas)** = lo que ingresan los hogares (€/persona/año). ✅ Hecho: `ingest-housing.mjs`.
+- **Alquiler (SERPAVI/Mitma)** = lo que **cuesta** alquilar (**€/m²·mes**). ⛏️ Falta el fichero.
+
+> Nota: lo que se descargó en `inputs/income/map` y `inputs/income/census` es la **cartografía de
+> secciones del INE** (SECC_CE), **no** la capa de precios de Mitma. Sirve de geometría para ambos.
+
+**Para el alquiler €/m² real (lo que pediste):**
+1. Descarga los **datos por sección censal** en <https://serpavi.mivau.gob.es> (tabla; da renta
+   media €/m²·mes, importe €/mes y superficie por sección). Si viene en XLSX, "Guardar como CSV".
+2. Déjalo en `pipeline/inputs/rent/serpavi.csv`.
+3. `node ingest-rent.mjs rent/serpavi.csv 29067 malaga-rent` → `public/data/malaga-rent.geojson`
+   (autodetecta columnas; si falla, `--sec=N --rent=N --sep=;`). Luego lo cableamos como capa
+   **"Alquiler €/m²"** del caso Málaga.
+
+### Renta (INE Atlas) — ✅ hecha · y otras fuentes
 Dónde ir a por los datos (todo descarga gratuita):
 1. **Alquiler · Mitma** — *Sistema Estatal de Índices de Precios del Alquiler de Vivienda*
    (€/m²/mes por **municipio y sección censal**). Buscar "SEIPAV" o vía
