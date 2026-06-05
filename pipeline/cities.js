@@ -6,6 +6,14 @@
 // valor marginal alto (calor, déficit de verde, sin actor de referencia saturando).
 
 export const CITIES = {
+  barcelona: {
+    name: "Barcelona",
+    center: [2.174, 41.3874],
+    bbox: [2.10, 41.34, 2.23, 41.45],
+    cell: 0.012,
+    note: "Capa caliente (arquitectura hostil) + verde/servicios fríos. Pilotó el proyecto.",
+    fua: "ES (Urban Atlas FUA Barcelona)",
+  },
   cordoba: {
     name: "Córdoba",
     center: [-4.7794, 37.8882],

@@ -73,10 +73,11 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Cubierta arbórea REAL (b) (`ingest-canopy.mjs`): Urban Atlas Street Tree Layer (FlatGeobuf,
   EPSG:3035) → `tree_canopy_pct` por celda + recálculo del déficit. Córdoba (0–29%) y Málaga.
   Sin GDAL/QGIS (flatgeobuf + proj4 + turf).
-- Ingesta OSM REAL (`fetch-osm.mjs` Overpass + `ingest-osm.mjs` turf, `cities.js`): Córdoba con
-  **1.152 polígonos de verde + 849 POIs** reales → capas `green-deficit` (verde) y
-  `services-deficit` (15-min, <800 m). Córdoba muestra ahora Verde + Servicios reales en el front.
-  Ecologistas en Acción citado como fuente/aliado.
+- Ingesta OSM REAL (`fetch-osm.mjs` Overpass + `ingest-osm.mjs` turf, `cities.js`): **Córdoba,
+  Málaga y Barcelona** con verde + servicios 15-min reales (Barcelona 8.174 POIs, Málaga 1.896,
+  Córdoba 849). Copa arbórea real (Urban Atlas) en las tres. En el front: Barcelona = Hostil +
+  Verde + Servicios reales; Córdoba = Verde + Servicios; Málaga = Renta + Verde + Servicios +
+  Ejemplos. Ecologistas en Acción citado.
 - Rediseño de la front (estética "dossier cívico"): tipografía display + monospace, índices de
   sección, ticker de cifras, divisor de pinchos, copies reescritos.
 - Interfaz móvil dedicada: nav sticky translúcida + menú a pantalla completa + barra de acción

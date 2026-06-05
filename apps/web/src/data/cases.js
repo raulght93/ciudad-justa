@@ -22,7 +22,8 @@ export const CASES = [
     stat: { value: "1.288", label: "barreras en el mapa de Arrels", source: "arrels" },
     layers: [
       { key: "hostile", label: "Hostil", kind: "points", embedded: HOSTILE_POINTS, api: true },
-      { key: "green", label: "Verde", kind: "choropleth", url: "/data/green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
+      { key: "green", label: "Verde", kind: "choropleth", url: "/data/barcelona-green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
+      { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
     ],
   },
   {
@@ -52,9 +53,9 @@ export const CASES = [
     stat: { value: "5,7×", label: "de brecha de renta entre secciones (INE 2023)", source: "ine" },
     layers: [
       { key: "income", label: "Renta", kind: "choropleth", url: "/data/malaga-income.geojson", prop: "housing_vuln", ramp: RAMP_HOUSING },
-      { key: "housing", label: "Presión", kind: "choropleth", url: "/data/malaga-housing.example.geojson", prop: "housing_pressure", ramp: RAMP_HOUSING, sample: true },
-      { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/malaga-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
+      { key: "service", label: "Servicios", kind: "choropleth", url: "/data/malaga-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
+      { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
     ],
   },
 ];
