@@ -36,12 +36,10 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
   (misma forma que la de verde).
 - **Contenido del área de vivienda**: incorporar datos verificados (INE, índice de alquiler,
   vivienda vacía) a la sección de expansión. *Requiere fuentes.*
-- **Regenerar `og-card.svg`** en la estética "Contradiseño" (el actual es del diseño "noche
-  cívica" anterior) y exportar a **PNG 1200×630** antes de campañas.
+- **Exportar `og-card.svg` → PNG 1200×630** antes de campañas (varias redes no renderizan SVG
+  en `og:image`). El SVG ya está en la estética nueva.
 - **Decidir una sola dirección** (Cartel A vs Editorial C) cuando se valide: borrar
   `context/Direction.jsx` + `DirectionToggle` y dejar una sola variante de Hero.
-- **Pase de contraste AA** sobre los nuevos tokens (`faint` en `surface`/`panel`) para confirmar
-  ≥4.5:1 en texto pequeño tras el cambio de paleta.
 - **i18n**: catalán para el piloto de Barcelona.
 
 ## ✅ Hecho (resumen)
@@ -66,3 +64,6 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Design system "Contradiseño" (dark riso-punk) aplicado a toda la front: tokens, fuentes
   (Anton/Space Grotesk/Space Mono), motivos (sierra, grano, misregistro), marca de pin partido
   diagonal. Switch **Cartel ↔ Editorial** (`context/Direction.jsx`) persistido en localStorage.
+- Pase de contraste AA de la paleta "Contradiseño": auditado con script; único fallo (`redInk`
+  sobre papel, 4.0) corregido a `#c52507` (5.02). Resto ≥4.5.
+- `og-card.svg` regenerada en la estética nueva (pin partido + sierra + señal) + `twitter:image`.

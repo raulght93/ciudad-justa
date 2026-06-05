@@ -1,41 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Ciudad Justa">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0f1420"/>
-      <stop offset="1" stop-color="#0b0e14"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.15" cy="0" r="0.8">
-      <stop offset="0" stop-color="#ef4444" stop-opacity="0.18"/>
-      <stop offset="1" stop-color="#ef4444" stop-opacity="0"/>
-    </radialGradient>
+    <pattern id="saw" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+      <path d="M0 28 L14 4 L28 28 Z" fill="none" stroke="#ff3b12" stroke-width="2"/>
+    </pattern>
+    <style>
+      .disp { font-family: 'Anton', 'Arial Narrow', Impact, sans-serif; text-transform: uppercase; }
+      .mono { font-family: 'Space Mono', ui-monospace, monospace; text-transform: uppercase; }
+    </style>
   </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect width="1200" height="630" fill="url(#glow)"/>
 
-  <!-- marca -->
-  <g transform="translate(80 70)">
-    <rect width="44" height="44" rx="10" fill="#161d2b" stroke="#f4a259" stroke-width="2"/>
-    <rect x="11" y="22" width="22" height="4" rx="2" fill="#f4a259"/>
-    <rect x="20" y="15" width="4" height="13" rx="2" fill="#ef4444"/>
-    <text x="60" y="31" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="700"
-          letter-spacing="3" fill="#f4a259">CIUDAD JUSTA · ESPAÑA</text>
+  <!-- papel de tinta -->
+  <rect width="1200" height="630" fill="#0a0a0b"/>
+
+  <!-- pin partido por raya diagonal (rojo + eco cian) -->
+  <g transform="translate(80 64) scale(0.62)">
+    <path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#00e5ff" transform="translate(2.6,2.2)" opacity="0.85"/>
+    <path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/>
+    <line x1="-2" y1="40" x2="50" y2="6" stroke="#0a0a0b" stroke-width="5"/>
   </g>
+  <text x="124" y="96" class="mono" fill="#ffe000" font-size="22" font-weight="700" letter-spacing="4">CIUDAD JUSTA</text>
+  <text x="1120" y="96" class="mono" fill="#00e5ff" font-size="20" letter-spacing="2" text-anchor="end">41.3851° N · 2.1734° E</text>
 
-  <!-- titular -->
-  <text x="80" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-weight="900"
-        fill="#eef2f9" letter-spacing="-2">La exclusión que el</text>
-  <text x="80" y="400" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-weight="900"
-        letter-spacing="-2"><tspan fill="#f4a259">diseño urbano</tspan><tspan fill="#eef2f9"> esconde.</tspan></text>
-
-  <text x="80" y="470" font-family="Inter, system-ui, sans-serif" font-size="30" fill="#9aa6bd">
-    Arquitectura hostil · déficit de verde · falta de servicios en ciudades españolas.
+  <!-- titular cartel -->
+  <text x="76" y="296" class="disp" fill="#f4f1ea" font-size="118" letter-spacing="1">HAY SITIOS DISEÑADOS</text>
+  <text x="76" y="410" class="disp" font-size="118" letter-spacing="1">
+    <tspan fill="#f4f1ea">PARA QUE </tspan><tspan fill="#ff3b12">NO ESTÉS.</tspan>
   </text>
 
+  <text x="80" y="470" class="mono" fill="#b7b3a8" font-size="23" letter-spacing="1">
+    ARQUITECTURA HOSTIL · DÉFICIT DE VERDE · SERVICIOS NEGADOS
+  </text>
+
+  <!-- banda de sierra (pinchos) -->
+  <rect x="0" y="520" width="1200" height="28" fill="url(#saw)" opacity="0.6"/>
+
   <!-- leyenda de capas -->
-  <g transform="translate(80 530)" font-family="Inter, system-ui, sans-serif" font-size="24" fill="#9aa6bd">
-    <circle cx="10" cy="-8" r="10" fill="#ef4444"/><text x="30" y="0">Hostil</text>
-    <circle cx="190" cy="-8" r="10" fill="#34d399"/><text x="210" y="0">Verde</text>
-    <circle cx="360" cy="-8" r="10" fill="#60a5fa"/><text x="380" y="0">Servicios</text>
-    <circle cx="585" cy="-8" r="10" fill="#a78bfa"/><text x="605" y="0">Vivienda (próx.)</text>
+  <g transform="translate(80 588)" class="mono" font-size="22" letter-spacing="1">
+    <circle cx="9" cy="-7" r="9" fill="#ff3b12"/><text x="28" y="0" fill="#b7b3a8">HOSTIL</text>
+    <circle cx="184" cy="-7" r="9" fill="#2fe08a"/><text x="203" y="0" fill="#b7b3a8">VERDE</text>
+    <circle cx="349" cy="-7" r="9" fill="#00e5ff"/><text x="368" y="0" fill="#b7b3a8">SERVICIOS</text>
+    <circle cx="566" cy="-7" r="9" fill="#b084ff"/><text x="585" y="0" fill="#b7b3a8">VIVIENDA · PRÓX.</text>
   </g>
 </svg>

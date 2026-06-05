@@ -15,7 +15,7 @@ export const c = {
 
   accent: "#ff3b12",     // ROJO SEÑAL — marca / dignidad
   accentDeep: "#e02e0a",
-  redInk: "#e02e0a",     // rojo sobre papel
+  redInk: "#c52507",     // rojo sobre papel (≥4.5:1 sobre paper, WCAG AA — review AA)
   yellow: "#ffe000",     // señal secundaria / ticker / foco
   cyan: "#00e5ff",       // contrapunto frío
 
