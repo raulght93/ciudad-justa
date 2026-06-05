@@ -49,7 +49,7 @@ export default function MapsSection() {
 }
 
 function KeyStrip() {
-  const keys = [["Hostil", c.hostile], ["Verde", c.green], ["Vivienda", c.housing]];
+  const keys = [["Hostil", c.hostile], ["Verde", c.green], ["Servicios", c.service], ["Vivienda", c.housing]];
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 18, margin: "22px 0 4px" }}>
       {keys.map(([label, col]) => (

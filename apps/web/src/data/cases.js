@@ -6,6 +6,7 @@ import { HOSTILE_POINTS, GREEN_DEFICIT } from "./geo.js";
 
 // Rampas de color por tipo de capa (rojo = peor).
 const RAMP_GREEN = [0, c.green, 0.5, "#d9c64a", 1, c.hostile]; // déficit de verde
+const RAMP_SERVICE = [0, c.service, 0.5, "#d9c64a", 1, c.hostile]; // déficit de servicios (15-min)
 const RAMP_HOUSING = [0, "#2a2433", 0.5, c.housing, 1, c.hostile]; // presión de vivienda
 
 export const CASES = [
@@ -22,6 +23,7 @@ export const CASES = [
     layers: [
       { key: "hostile", label: "Hostil", kind: "points", embedded: HOSTILE_POINTS, api: true },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
+      { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services.example.geojson", prop: "service_deficit", ramp: RAMP_SERVICE, sample: true },
     ],
   },
   {
@@ -50,7 +52,8 @@ export const CASES = [
     note: "Muestra ilustrativa: cuanto más violeta, más presión de alquiler y desplazamiento. Pendiente de datos reales (INE · Índice de Precios del Alquiler).",
     stat: { value: "muestra", label: "presión de vivienda (datos reales pendientes)", source: null },
     layers: [
-      { key: "housing", label: "Vivienda", kind: "choropleth", url: "/data/malaga-housing.example.geojson", prop: "housing_pressure", ramp: RAMP_HOUSING },
+      { key: "housing", label: "Zonas", kind: "choropleth", url: "/data/malaga-housing.example.geojson", prop: "housing_pressure", ramp: RAMP_HOUSING },
+      { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
     ],
   },
 ];

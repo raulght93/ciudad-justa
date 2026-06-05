@@ -1,0 +1,13 @@
+{
+  "type": "FeatureCollection",
+  "name": "Málaga · ejemplos de precios (MUESTRA ilustrativa, NO listados reales)",
+  "_comment": "Puntos estilo Idealista/Booking con precios INVENTADOS pero de orden realista para Málaga (2026), para maquetar la capa. Sustituir por datos reales agregados (INE / Índice de Precios del Alquiler / portales con licencia). NO usar como dato ni señalar inmuebles concretos.",
+  "features": [
+    { "type": "Feature", "properties": { "price": "1.500 €/mes", "kind": "alquiler", "detail": "Centro Histórico · 2 hab · ~16 €/m²" }, "geometry": { "type": "Point", "coordinates": [-4.4214, 36.7213] } },
+    { "type": "Feature", "properties": { "price": "2.100 €/mes", "kind": "alquiler", "detail": "La Malagueta · frente al mar · 3 hab" }, "geometry": { "type": "Point", "coordinates": [-4.4090, 36.7195] } },
+    { "type": "Feature", "properties": { "price": "320.000 €", "kind": "compra", "detail": "Soho · reformado · 70 m²" }, "geometry": { "type": "Point", "coordinates": [-4.4250, 36.7170] } },
+    { "type": "Feature", "properties": { "price": "950 €/mes", "kind": "alquiler", "detail": "Teatinos · 3 hab · zona universitaria" }, "geometry": { "type": "Point", "coordinates": [-4.4700, 36.7220] } },
+    { "type": "Feature", "properties": { "price": "780 €/mes", "kind": "alquiler", "detail": "Huelin · 2 hab · barrio obrero" }, "geometry": { "type": "Point", "coordinates": [-4.4345, 36.7120] } },
+    { "type": "Feature", "properties": { "price": "620 €/mes", "kind": "alquiler", "detail": "Palma-Palmilla · 3 hab · renta baja, alta vulnerabilidad" }, "geometry": { "type": "Point", "coordinates": [-4.4340, 36.7300] } }
+  ]
+}

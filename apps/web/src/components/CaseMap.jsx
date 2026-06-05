@@ -1,6 +1,7 @@
 // Mapa de un "caso" (una ciudad · una o más capas). Monta MapLibre SOLO al
 // entrar en viewport (3 mapas en la página → no 3 instancias vivas a la vez).
-// Interactividad media: zoom/pan, popup en puntos, leyenda, toggle de capas.
+// Capas: points (hostil, popup), choropleth (coropleta + tooltip al pasar),
+// price (pins HTML estilo Idealista, clicables). Toggle entre capas.
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -30,9 +31,36 @@ export default function CaseMap({ caseDef }) {
   const wrapRef = useRef(null);
   const elRef = useRef(null);
   const mapRef = useRef(null);
+  const markersRef = useRef([]);
+  const dataRef = useRef({});
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(caseDef.layers[0].key);
   const [err, setErr] = useState(false);
+  const color = caseDef.color;
+
+  function clearMarkers() { markersRef.current.forEach((m) => m.remove()); markersRef.current = []; }
+
+  async function addPriceMarkers(layer) {
+    const map = mapRef.current;
+    if (!map) return;
+    let fc = dataRef.current[layer.key];
+    if (!fc) {
+      try { fc = await (await fetch(layer.url)).json(); dataRef.current[layer.key] = fc; } catch { return; }
+    }
+    for (const f of fc.features) {
+      const el = document.createElement("div");
+      el.style.cssText = `font-family:${font.mono};font-size:12px;font-weight:700;color:#0a0a0b;background:${color};border:2px solid #0a0a0b;padding:4px 8px;white-space:nowrap;cursor:pointer;box-shadow:2px 2px 0 0 #0a0a0b`;
+      el.textContent = f.properties.price;
+      const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(
+        `<div style="font-family:${font.sans};max-width:230px">
+           <strong style="color:${c.housingTx || color}">${f.properties.price}</strong>
+           <span style="font-size:11px;color:#666"> · ${f.properties.kind || ""}</span>
+           <div style="margin-top:4px;color:#111">${f.properties.detail || ""}</div>
+           <div style="margin-top:6px;font-size:10px;color:#999">muestra ilustrativa · no es un listado real</div>
+         </div>`);
+      markersRef.current.push(new maplibregl.Marker({ element: el, anchor: "bottom" }).setLngLat(f.geometry.coordinates).setPopup(popup).addTo(map));
+    }
+  }
 
   // Monta el mapa solo cuando el contenedor entra en viewport.
   useEffect(() => {
@@ -47,23 +75,54 @@ export default function CaseMap({ caseDef }) {
     if (!visible || !elRef.current || mapRef.current) return;
     let map;
     try {
-      map = new maplibreInit(elRef.current, caseDef);
-      mapRef.current = map.map;
-      map.map.on("error", () => setErr(true));
-      map.ready.catch(() => setErr(true));
+      map = new maplibregl.Map({ container: elRef.current, style: STYLE, center: caseDef.center, zoom: caseDef.zoom, attributionControl: { compact: true } });
+      mapRef.current = map;
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      map.on("error", () => setErr(true));
+      const hover = new maplibregl.Popup({ closeButton: false, offset: 8 });
+
+      map.on("load", () => {
+        caseDef.layers.forEach((l, i) => {
+          const id = `${caseDef.id}-${l.key}`;
+          const visibility = i === 0 ? "visible" : "none";
+          if (l.kind === "price") {
+            if (i === 0) addPriceMarkers(l); // por defecto solo si es la primera capa
+            return; // los precios son marcadores HTML, no capas de estilo
+          }
+          map.addSource(id, { type: "geojson", data: l.embedded || EMPTY });
+          if (l.kind === "choropleth") {
+            map.addLayer({ id, type: "fill", source: id, layout: { visibility }, paint: { "fill-color": ["interpolate", ["linear"], ["get", l.prop], ...l.ramp], "fill-opacity": 0.45, "fill-outline-color": c.line } });
+            map.on("mousemove", id, (e) => { map.getCanvas().style.cursor = "pointer"; const p = e.features[0].properties; hover.setLngLat(e.lngLat).setHTML(`<div style="font-family:${font.mono};font-size:11px;color:#111"><strong>${p.barrio || p.zona || ""}</strong><br>${p.detail || ""}</div>`).addTo(map); });
+            map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; hover.remove(); });
+          } else {
+            map.addLayer({ id, type: "circle", source: id, layout: { visibility }, paint: { "circle-radius": ["match", ["get", "status"], "confirmed", 8, "documented", 8, 6], "circle-color": color, "circle-opacity": ["match", ["get", "status"], "reported", 0.5, "disputed", 0.6, 0.92], "circle-stroke-width": 1.5, "circle-stroke-color": "#fff2" } });
+            wirePopup(map, id);
+          }
+          if (l.url) fetch(l.url).then((r) => (r.ok ? r.json() : null)).then((gj) => gj && map.getSource(id)?.setData(gj)).catch(() => {});
+          if (l.api) {
+            const loadHot = () => { const b = map.getBounds(); fetchReports([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]).then((gj) => { if (gj.features.length) map.getSource(id)?.setData(gj); }).catch(() => {}); };
+            loadHot();
+            let t; map.on("moveend", () => { clearTimeout(t); t = setTimeout(loadHot, 350); });
+          }
+        });
+      });
     } catch { setErr(true); }
-    return () => { mapRef.current?.remove(); mapRef.current = null; };
+    return () => { clearMarkers(); mapRef.current?.remove(); mapRef.current = null; };
   }, [visible, caseDef]);
 
-  // Toggle de capa activa → visibilidad en MapLibre.
+  // Toggle de capa activa.
   function pick(key) {
     setActive(key);
     const map = mapRef.current;
     if (!map) return;
+    clearMarkers();
     for (const l of caseDef.layers) {
+      if (l.kind === "price") continue;
       const id = `${caseDef.id}-${l.key}`;
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", l.key === key ? "visible" : "none");
     }
+    const al = caseDef.layers.find((l) => l.key === key);
+    if (al?.kind === "price") addPriceMarkers(al);
   }
 
   const activeLayer = caseDef.layers.find((l) => l.key === active);
@@ -76,9 +135,7 @@ export default function CaseMap({ caseDef }) {
             const on = l.key === active;
             return (
               <button key={l.key} onClick={() => pick(l.key)} aria-pressed={on}
-                style={{ cursor: "pointer", fontFamily: font.mono, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.06em",
-                  padding: "7px 13px", borderRadius: 0, border: `2px solid ${on ? caseDef.color : c.lineStrong}`,
-                  background: on ? caseDef.color : "transparent", color: on ? "#0a0a0b" : c.muted }}>
+                style={{ cursor: "pointer", fontFamily: font.mono, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.06em", padding: "7px 13px", borderRadius: 0, border: `2px solid ${on ? color : c.lineStrong}`, background: on ? color : "transparent", color: on ? "#0a0a0b" : c.muted }}>
                 {l.label}
               </button>
             );
@@ -90,56 +147,11 @@ export default function CaseMap({ caseDef }) {
         style={{ height: "min(58vh, 520px)", width: "100%", border: `2px solid ${c.text}`, background: c.bgAlt }} />
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 12 }}>
-        <Legend layer={activeLayer} color={caseDef.color} />
+        <Legend layer={activeLayer} color={color} />
       </div>
       {err && <p style={{ marginTop: 10, fontFamily: font.mono, fontSize: 12, color: c.faint }}>No se pudieron cargar las teselas. El resto de la página funciona igual.</p>}
     </div>
   );
-}
-
-// Inicializa el mapa, fuentes y capas del caso. Devuelve { map, ready }.
-function maplibreInit(container, caseDef) {
-  const map = new maplibregl.Map({ container, style: STYLE, center: caseDef.center, zoom: caseDef.zoom, attributionControl: { compact: true } });
-  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-
-  const ready = new Promise((res, rej) => {
-    map.on("load", async () => {
-      try {
-        for (let i = 0; i < caseDef.layers.length; i++) {
-          const l = caseDef.layers[i];
-          const srcId = `${caseDef.id}-${l.key}`;
-          const visibility = i === 0 ? "visible" : "none";
-          map.addSource(srcId, { type: "geojson", data: l.embedded || EMPTY });
-
-          if (l.kind === "choropleth") {
-            map.addLayer({ id: srcId, type: "fill", source: srcId, layout: { visibility },
-              paint: { "fill-color": ["interpolate", ["linear"], ["get", l.prop], ...l.ramp], "fill-opacity": 0.45, "fill-outline-color": c.line } });
-          } else {
-            map.addLayer({ id: srcId, type: "circle", source: srcId, layout: { visibility },
-              paint: { "circle-radius": ["match", ["get", "status"], "confirmed", 8, "documented", 8, 6], "circle-color": caseDef.color,
-                "circle-opacity": ["match", ["get", "status"], "reported", 0.5, "disputed", 0.6, 0.92], "circle-stroke-width": 1.5, "circle-stroke-color": "#fff2" } });
-            wirePopup(map, srcId);
-          }
-
-          // Carga remota (con fallback al embedded ya pintado).
-          if (l.url) {
-            fetch(l.url).then((r) => (r.ok ? r.json() : null)).then((gj) => gj && map.getSource(srcId)?.setData(gj)).catch(() => {});
-          }
-          if (l.api) {
-            const loadHot = () => {
-              const b = map.getBounds();
-              fetchReports([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()])
-                .then((gj) => { if (gj.features.length) map.getSource(srcId)?.setData(gj); }).catch(() => {});
-            };
-            loadHot();
-            let t; map.on("moveend", () => { clearTimeout(t); t = setTimeout(loadHot, 350); });
-          }
-        }
-        res();
-      } catch (e) { rej(e); }
-    });
-  });
-  return { map, ready };
 }
 
 function wirePopup(map, layerId) {
@@ -161,19 +173,12 @@ function wirePopup(map, layerId) {
 function Legend({ layer, color }) {
   if (!layer) return null;
   if (layer.kind === "points") {
-    return (
-      <span style={legendStyle()}>
-        <span style={{ width: 14, height: 14, borderRadius: 999, background: color, border: `1px solid ${c.line}` }} /> Punto reportado · pulsa para detalle
-      </span>
-    );
+    return <span style={ls()}><span style={{ width: 14, height: 14, borderRadius: 999, background: color, border: `1px solid ${c.line}` }} /> Punto reportado · pulsa para detalle</span>;
+  }
+  if (layer.kind === "price") {
+    return <span style={ls()}><span style={{ fontFamily: font.mono, fontSize: 10, fontWeight: 700, color: "#0a0a0b", background: color, border: "2px solid #0a0a0b", padding: "2px 6px" }}>€</span> Ejemplos de precio (muestra) · pulsa el pin</span>;
   }
   const lo = layer.ramp[1], hi = layer.ramp[layer.ramp.length - 1];
-  return (
-    <span style={legendStyle()}>
-      <span style={{ width: 64, height: 12, background: `linear-gradient(90deg, ${lo}, ${hi})`, border: `1px solid ${c.line}` }} /> menos → más {layer.key === "housing" ? "presión" : "déficit"}
-    </span>
-  );
+  return <span style={ls()}><span style={{ width: 64, height: 12, background: `linear-gradient(90deg, ${lo}, ${hi})`, border: `1px solid ${c.line}` }} /> menos → más {layer.key === "housing" ? "presión" : "déficit"}</span>;
 }
-function legendStyle() {
-  return { display: "inline-flex", alignItems: "center", gap: 8, fontFamily: font.mono, fontSize: 12, letterSpacing: "0.04em", color: c.muted };
-}
+function ls() { return { display: "inline-flex", alignItems: "center", gap: 8, fontFamily: font.mono, fontSize: 12, letterSpacing: "0.04em", color: c.muted }; }
