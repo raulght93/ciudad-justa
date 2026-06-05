@@ -1,96 +1,98 @@
 #!/usr/bin/env node
-// Ingesta de la capa fría de VERDE desde geometría de zonas verdes (OSM/Urban
-// Atlas) para una ciudad. Etapa "raster-lite": calcula por celda
-//   · green_cover_pct   — % de la celda cubierto por verde (proxy de cubierta;
-//                          la cubierta ARBÓREA real exige NDVI/Urban Atlas → ⛏️)
-//   · green_within_300m — fracción de la celda a <300 m de un verde (3-30-300)
-// y produce el GeoJSON coropleta que consume el front.
+// Ingesta de capas frías desde geometría OSM para una ciudad:
+//   · VERDE     → green_within_300m (buffer 300 m) + green_cover_pct (verde ∩ celda)
+//   · SERVICIOS → service_deficit (15-min: % de categorías esenciales sin POI a <800 m)
+// Produce los GeoJSON coropleta que consume el front.
 //
-// Entrada: un FeatureCollection de polígonos de verde. Por defecto lee el cache
-// local pipeline/inputs/<city>-green.sample.geojson (ejecuta sin red). En
-// producción, sustituir por la descarga real de Overpass (ver README) → mismo
-// formato, este script no cambia.
+// Entrada (de fetch-osm.mjs, datos reales) con fallback a la muestra:
+//   inputs/<city>-green.geojson      (o -green.sample.geojson)
+//   inputs/<city>-pois.geojson       (opcional; si falta, no genera servicios)
 //
-// Uso:  node pipeline/ingest-osm.mjs [city]      (city = clave de cities.js)
+// Uso:  node ingest-osm.mjs [city]
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as turf from "@turf/turf";
-import { deficitScore } from "./lib/score.mjs";
+import { deficitScore, clamp01 } from "./lib/score.mjs";
 import { CITIES, DEFAULT_CITY } from "./cities.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const cityKey = process.argv[2] || DEFAULT_CITY;
 const city = CITIES[cityKey];
-if (!city) {
-  console.error(`Ciudad desconocida: ${cityKey}. Opciones: ${Object.keys(CITIES).join(", ")}`);
-  process.exit(1);
-}
+if (!city) { console.error(`Ciudad desconocida: ${cityKey}. Opciones: ${Object.keys(CITIES).join(", ")}`); process.exit(1); }
 
-const INPUT = resolve(__dirname, `inputs/${cityKey}-green.sample.geojson`);
-const OUTPUT = resolve(__dirname, `../apps/web/public/data/${cityKey}-green-deficit.geojson`);
-
-const green = JSON.parse(readFileSync(INPUT, "utf8"));
-const greens = green.features.filter((f) => f.geometry?.type?.includes("Polygon"));
-
-// Buffer de 300 m alrededor de todo el verde (acceso) → unión.
-let access = null;
-for (const g of greens) {
-  const buf = turf.buffer(g, 300, { units: "meters" });
-  access = access ? turf.union(access, buf) : buf;
-}
-
-const safeArea = (g) => {
-  try { return g ? turf.area(g) : 0; } catch { return 0; }
+const pick = (f) => {
+  const real = resolve(__dirname, `inputs/${cityKey}-${f}.geojson`);
+  const sample = resolve(__dirname, `inputs/${cityKey}-${f}.sample.geojson`);
+  return existsSync(real) ? { path: real, real: true } : existsSync(sample) ? { path: sample, real: false } : null;
 };
-const safeIntersect = (a, b) => {
-  try { return turf.intersect(a, b); } catch { return null; }
+const outPath = (f) => resolve(__dirname, `../apps/web/public/data/${cityKey}-${f}.geojson`);
+const grid = () => {
+  const [minLng, minLat, maxLng, maxLat] = city.bbox, step = city.cell, cells = [];
+  for (let lat = minLat; lat < maxLat - 1e-9; lat += step)
+    for (let lng = minLng; lng < maxLng - 1e-9; lng += step)
+      cells.push(turf.polygon([[[lng, lat], [lng + step, lat], [lng + step, lat + step], [lng, lat + step], [lng, lat]]]));
+  return cells;
 };
+const safeArea = (g) => { try { return g ? turf.area(g) : 0; } catch { return 0; } };
+const safeIntersect = (a, b) => { try { return turf.intersect(a, b); } catch { return null; } };
 
-const [minLng, minLat, maxLng, maxLat] = city.bbox;
-const step = city.cell;
-const features = [];
-let i = 0;
+mkdirSync(dirname(outPath("x")), { recursive: true });
+const cells = grid();
 
-for (let lat = minLat; lat < maxLat - 1e-9; lat += step) {
-  for (let lng = minLng; lng < maxLng - 1e-9; lng += step) {
-    const cell = turf.polygon([[
-      [lng, lat], [lng + step, lat], [lng + step, lat + step], [lng, lat + step], [lng, lat],
-    ]]);
+// ---------- VERDE ----------
+const gsrc = pick("green");
+if (gsrc) {
+  const green = JSON.parse(readFileSync(gsrc.path, "utf8"));
+  const greens = green.features.filter((f) => f.geometry?.type?.includes("Polygon"));
+  let access = null;
+  for (const g of greens) { const b = turf.buffer(g, 300, { units: "meters" }); access = access ? turf.union(access, b) : b; }
+
+  const features = cells.map((cell, i) => {
     const cellArea = turf.area(cell);
-
     let greenArea = 0;
     for (const g of greens) greenArea += safeArea(safeIntersect(cell, g));
     const cover = Math.min(100, (greenArea / cellArea) * 100);
-
     const within = access ? Math.min(1, safeArea(safeIntersect(cell, access)) / cellArea) : 0;
-
-    features.push({
-      type: "Feature",
-      geometry: cell.geometry,
-      properties: {
-        id: `${cityKey}-${String(i++).padStart(3, "0")}`,
-        green_cover_pct: Math.round(cover * 10) / 10,
-        green_within_300m: Math.round(within * 100) / 100,
-        green_deficit_score: deficitScore(cover, within),
-        detail: `${cover.toFixed(0)}% verde · ${Math.round(within * 100)}% a <300 m`,
-        canopy_proxy: true, // ⛏️ cubierta = proxy OSM; sustituir por NDVI/Urban Atlas
-      },
-    });
-  }
+    return { type: "Feature", geometry: cell.geometry, properties: {
+      id: `${cityKey}-${String(i).padStart(3, "0")}`,
+      green_cover_pct: Math.round(cover * 10) / 10, green_within_300m: Math.round(within * 100) / 100,
+      green_deficit_score: deficitScore(cover, within),
+      detail: `${cover.toFixed(0)}% verde · ${Math.round(within * 100)}% a <300 m`, canopy_proxy: true } };
+  });
+  writeFileSync(outPath("green-deficit"), JSON.stringify({ type: "FeatureCollection",
+    name: `Córdoba · déficit de verde (${gsrc.real ? "OSM real" : "muestra"})`,
+    _generated: { source: "ingest-osm.mjs", city: cityKey, rule: "3-30-300", greens: greens.length, real: gsrc.real, canopy: "proxy OSM (pendiente NDVI/Urban Atlas)" }, features }) + "\n");
+  console.log(`✓ verde: ${features.length} celdas (${greens.length} polígonos ${gsrc.real ? "OSM" : "muestra"}) → ${cityKey}-green-deficit.geojson`);
 }
 
-const fc = {
-  type: "FeatureCollection",
-  name: `ciudad-justa · capa fría · déficit de verde · ${city.name} (generado)`,
-  _generated: { source: "pipeline/ingest-osm.mjs", city: cityKey, rule: "3-30-300", cells: features.length, canopy: "proxy OSM (pendiente NDVI/Urban Atlas)" },
-  features,
-};
+// ---------- SERVICIOS (15-min) ----------
+const psrc = pick("pois");
+if (psrc) {
+  const pois = JSON.parse(readFileSync(psrc.path, "utf8")).features.filter((f) => f.geometry?.type === "Point");
+  const byCat = {};
+  for (const p of pois) (byCat[p.properties.cat] ||= []).push(p);
+  const cats = Object.keys(byCat);
+  const THRESH = 800; // m ≈ 10 min a pie
 
-mkdirSync(dirname(OUTPUT), { recursive: true });
-writeFileSync(OUTPUT, JSON.stringify(fc) + "\n");
-
-const worst = [...features].sort((a, b) => b.properties.green_deficit_score - a.properties.green_deficit_score)[0];
-console.log(`✓ ${city.name}: ${features.length} celdas → ${OUTPUT.replace(process.cwd() + "/", "")}`);
-console.log(`  peor déficit: ${worst.properties.green_deficit_score} (${worst.properties.detail})`);
+  const features = cells.map((cell, i) => {
+    const ctr = turf.centroid(cell);
+    let satisfied = 0; const missing = [];
+    for (const cat of cats) {
+      let near = false;
+      for (const p of byCat[cat]) { if (turf.distance(ctr, p, { units: "meters" }) <= THRESH) { near = true; break; } }
+      if (near) satisfied++; else missing.push(cat);
+    }
+    const deficit = clamp01(1 - satisfied / cats.length);
+    return { type: "Feature", geometry: cell.geometry, properties: {
+      id: `${cityKey}-svc-${String(i).padStart(3, "0")}`,
+      service_deficit: Math.round(deficit * 100) / 100,
+      detail: missing.length ? `falta: ${missing.join(", ")}` : "todo a <800 m" } };
+  });
+  writeFileSync(outPath("services-deficit"), JSON.stringify({ type: "FeatureCollection",
+    name: `Córdoba · déficit de servicios 15-min (${psrc.real ? "OSM real" : "muestra"})`,
+    _generated: { source: "ingest-osm.mjs", city: cityKey, pois: pois.length, cats, threshold_m: THRESH, real: psrc.real }, features }) + "\n");
+  const worst = [...features].sort((a, b) => b.properties.service_deficit - a.properties.service_deficit)[0];
+  console.log(`✓ servicios: ${features.length} celdas (${pois.length} POIs) → ${cityKey}-services-deficit.geojson · peor: ${worst.properties.service_deficit}`);
+}

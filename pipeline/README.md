@@ -9,23 +9,38 @@ sirve como estáticos. Coste de ejecución ≈ 0 y coste de servir ≈ 0 (R2 / P
 | Etapa | Estado | Detalle |
 |---|---|---|
 | **Scoring/transformación** | ✅ | `build-green-layer.mjs` + `lib/score.mjs`: indicadores por celda → coropleta con `green_deficit_score` (regla **3-30-300**). Sin deps. |
-| **Ingesta de geometría (OSM)** | ✅ | `ingest-osm.mjs` (turf): rejilla sobre la `bbox` de una ciudad (`cities.js`) → por celda calcula `green_within_300m` (buffer 300 m sobre el verde) y `green_cover_pct` (área de verde ∩ celda). Córdoba de piloto. |
-| **Cubierta arbórea REAL (raster)** | ⛏️ | Hoy `green_cover_pct` es un **proxy OSM** (`canopy_proxy: true`). La cubierta arbórea real exige **NDVI (Sentinel-2) / Urban Atlas Street Tree Layer** con GDAL (zonal stats por celda) → alimenta el mismo campo. (BACKLOG) |
+| **Descarga OSM real (a)** | ✅ | `fetch-osm.mjs` (Overpass): verde (polígonos) + POIs de servicios (salud/educación/comercio/transporte) de una ciudad → `inputs/<city>-green.geojson` y `-pois.geojson`. Córdoba: 1.152 polígonos + 849 POIs reales. |
+| **Ingesta verde (OSM)** | ✅ | `ingest-osm.mjs` (turf): por celda `green_within_300m` (buffer 300 m) + `green_cover_pct` (verde ∩ celda). Usa el dato real si existe, si no la muestra. |
+| **Capa de servicios 15-min (a)** | ✅ | `ingest-osm.mjs`: por celda `service_deficit` = % de categorías esenciales **sin POI a <800 m** (≈10 min). Córdoba real. |
+| **Cubierta arbórea REAL (b · raster)** | ⛏️ | Hoy `green_cover_pct` es un **proxy OSM** (`canopy_proxy: true`). La cubierta arbórea real exige **NDVI (Sentinel-2) / Urban Atlas Street Tree Layer** con GDAL (zonal stats por celda) → alimenta el mismo campo. Procedimiento abajo. |
+| **Vivienda real (c)** | ⛏️ | Málaga es muestra. Real: **Sistema Estatal de Índices de Precios de Alquiler (Mitma)** + **Atlas de renta (INE)** por sección censal + cartografía de secciones (INE). Sin scraping de portales (ToS). Procedimiento abajo. |
 | **Teselado PMTiles** | ⛏️ | A escala ciudad: `tippecanoe` → PMTiles en R2 en vez de GeoJSON. (BACKLOG) |
-| **Capa de servicios (15-min)** | ⛏️ | Misma forma: POIs OSM → accesibilidad a pie → score por celda. (BACKLOG) |
 
 ## Uso
 
 ```bash
-npm install                     # turf (solo para ingest-osm)
+npm install                     # turf (para ingest-osm)
 
-# A) Demo a partir de indicadores ya tabulados (CSV):
+# A) DATOS REALES desde OpenStreetMap (requiere red):
+node fetch-osm.mjs cordoba      # Overpass → inputs/cordoba-green.geojson + -pois.geojson
+node ingest-osm.mjs cordoba     # → public/data/cordoba-green-deficit.geojson + -services-deficit.geojson
+
+# (demo a partir de indicadores ya tabulados en CSV)
 node build-green-layer.mjs      # inputs/barcelona-green.sample.csv → public/data/green-deficit.geojson
-
-# B) Ingesta desde geometría de verde (OSM) por ciudad:
-node ingest-osm.mjs cordoba     # inputs/cordoba-green.sample.geojson → public/data/cordoba-green-deficit.geojson
-node ingest-osm.mjs murcia      # otras ciudades en cities.js
 ```
+
+### (b) Cubierta arbórea real (NDVI / Urban Atlas) — pendiente, requiere GDAL
+1. Descargar el **Street Tree Layer** o el land cover del FUA en Urban Atlas (land.copernicus.eu),
+   o una escena **Sentinel-2** y calcular NDVI.
+2. `gdalwarp`/`gdal_rasterize` a una rejilla y **zonal stats** por celda (`rasterstats`/`exactextract`)
+   → CSV `id,tree_canopy_pct` que sustituye al proxy en el campo `green_cover_pct`.
+
+### (c) Vivienda real — pendiente, fuentes oficiales (sin scraping)
+1. **Mitma · Sistema Estatal de Índices de Precios de Alquiler** (€/m² por sección/municipio) y/o
+   **INE · Atlas de distribución de renta de los hogares** por sección censal.
+2. Unir con la **cartografía de secciones censales del INE** (Shapefile) → `housing_pressure` por
+   polígono real (no rejilla). Los "pins de precio" sólo con **datos agregados con licencia**,
+   nunca listados individuales de portales (LSSI/ToS).
 
 El front consume el GeoJSON con *fallback*: si existe sustituye a los datos embebidos del mapa;
 si no, usa los de ejemplo (`apps/web/src/data/geo.js`). No rompe el build si falta.

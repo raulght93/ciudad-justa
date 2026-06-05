@@ -23,7 +23,6 @@ export const CASES = [
     layers: [
       { key: "hostile", label: "Hostil", kind: "points", embedded: HOSTILE_POINTS, api: true },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
-      { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services.example.geojson", prop: "service_deficit", ramp: RAMP_SERVICE, sample: true },
     ],
   },
   {
@@ -34,10 +33,11 @@ export const CASES = [
     color: c.green,
     center: [-4.7794, 37.8882],
     zoom: 12.4,
-    note: "Cuanto más rojo, menos sombra y verde. La ciudad más calurosa de España: aquí el verde es salud. Datos OSM + Ecologistas en Acción.",
+    note: "Cuanto más rojo, menos sombra/verde o más lejos quedan los servicios. La ciudad más calurosa de España: aquí el verde es salud. Datos reales de OpenStreetMap (+ Ecologistas en Acción).",
     stat: { value: "47,6 °C", label: "récord de calor · isla de calor por asfalto", source: "ecologistas" },
     layers: [
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/cordoba-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
+      { key: "service", label: "Servicios", kind: "choropleth", url: "/data/cordoba-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
     ],
   },
   {

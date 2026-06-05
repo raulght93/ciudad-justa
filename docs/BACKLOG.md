@@ -34,13 +34,16 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
-- **Pipeline — cubierta arbórea REAL (raster)**: la ingesta de geometría OSM ya está
-  (`pipeline/ingest-osm.mjs`, piloto Córdoba); `green_cover_pct` es hoy un **proxy OSM**. Falta
-  la cubierta arbórea real con **NDVI (Sentinel-2) / Urban Atlas STL + GDAL** (zonal stats). *Medio.*
-- **Datos de Córdoba — Ecologistas en Acción**: incorporar sus informes de arbolado/déficit de
-  sombra/calor como capa o validación local (ya citados en front + `cities.js`). Posible aliado.
-- **Verde real OSM**: sustituir `inputs/cordoba-green.sample.geojson` por la descarga real de
-  Overpass (query en `pipeline/README.md`).
+- **(b) Cubierta arbórea REAL (raster)**: la ingesta OSM (verde + servicios) ya es real para
+  Córdoba; `green_cover_pct` sigue siendo **proxy OSM**. Falta NDVI (Sentinel-2) / Urban Atlas STL
+  + GDAL (zonal stats). Procedimiento en `pipeline/README.md`. *Medio.*
+- **(c) Vivienda real (Málaga)**: sustituir la muestra por **Mitma (índice de alquiler)** + **INE
+  (Atlas de renta + secciones censales)**; pins de precio solo con datos agregados con licencia
+  (no scraping de portales).
+- **Ecologistas en Acción (Córdoba)**: integrar sus informes de arbolado/sombra como capa o
+  validación (ya citados en el front). Posible aliado.
+- **Servicios/verde en más ciudades**: `fetch-osm.mjs` + `ingest-osm.mjs` ya son por-ciudad
+  (Murcia, Vitoria… en `cities.js`).
 - **Pipeline — teselado PMTiles** (`tippecanoe`) y publicación a R2 para escala ciudad.
 - **Pipeline — capa de servicios (15-min)**: POIs OSM → accesibilidad a pie → score por celda
   (misma forma que la de verde).
@@ -70,9 +73,10 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Mapas "tres casos" (`MapsSection` + `CaseMap`): Barcelona (hostil + toggle verde), Córdoba
   (déficit de verde) y Málaga (vivienda, muestra). Bloques tipo dossier, mapa montado al entrar
   en viewport, toggle de capas, popup, leyenda; estética Contradiseño (kicker, numeral, sierra).
-- Ingesta de verde por ciudad (`pipeline/ingest-osm.mjs` + turf + `cities.js`): piloto **Córdoba**
-  (45 celdas, déficit 0.18→1) desde geometría OSM; `green_within_300m` + `green_cover_pct`.
-  Ecologistas en Acción citado como fuente/aliado local en el front (footer + capa verde).
+- Ingesta OSM REAL (`fetch-osm.mjs` Overpass + `ingest-osm.mjs` turf, `cities.js`): Córdoba con
+  **1.152 polígonos de verde + 849 POIs** reales → capas `green-deficit` (verde) y
+  `services-deficit` (15-min, <800 m). Córdoba muestra ahora Verde + Servicios reales en el front.
+  Ecologistas en Acción citado como fuente/aliado.
 - Rediseño de la front (estética "dossier cívico"): tipografía display + monospace, índices de
   sección, ticker de cifras, divisor de pinchos, copies reescritos.
 - Interfaz móvil dedicada: nav sticky translúcida + menú a pantalla completa + barra de acción

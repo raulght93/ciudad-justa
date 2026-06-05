@@ -35,11 +35,14 @@ La etapa de scoring ya está hecha; lo caro es la ingesta geoespacial.
 
 - **D1:** documentar fuentes y método exacto (Urban Atlas/SIOSE/NDVI) y **descargar 1 área
   pequeña a mano**. Barato.
-- **D2** ✅ (geometría OSM): `pipeline/ingest-osm.mjs` (turf) — rejilla por ciudad
-  (`pipeline/cities.js`, piloto **Córdoba**), `green_within_300m` (buffer 300 m) y
-  `green_cover_pct` por celda → GeoJSON. Fuentes locales: **Ecologistas en Acción (Córdoba)** +
-  OSM/Urban Atlas. *Pendiente D2b: cubierta arbórea REAL (NDVI/Urban Atlas + GDAL); hoy es proxy.*
-- **D3:** ampliar a la ciudad piloto + **teselado PMTiles** (tippecanoe) en R2.
+- **D2** ✅ (OSM real): `fetch-osm.mjs` (Overpass) baja verde (1.152 polígonos) + POIs (849)
+  reales de Córdoba; `ingest-osm.mjs` calcula `green_*` y `service_deficit` (15-min, <800 m) por
+  celda → GeoJSON reales. Fuentes: OSM + Ecologistas en Acción.
+- **D2b** ⛏️ (b): **cubierta arbórea REAL** (NDVI Sentinel-2 / Urban Atlas STL + GDAL zonal stats);
+  hoy `green_cover_pct` es proxy OSM. Procedimiento en `pipeline/README.md`.
+- **D-vivienda** ⛏️ (c): vivienda real desde **Mitma (índice de alquiler)** + **INE (Atlas de
+  renta + secciones censales)**; Málaga es muestra. Sin scraping de portales (ToS).
+- **D3:** **teselado PMTiles** (tippecanoe) en R2 a escala ciudad.
 - **D4:** automatizar en GitHub Action (recálculo trimestral).
 
 ## E · Backend social API→D1 (Fase 1) — lectura → escritura → votación → reputación → moderación
