@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "name": "Málaga · presión de vivienda (MUESTRA ilustrativa, NO datos reales)",
+  "_comment": "Polígonos aproximados de zonas de Málaga con un housing_pressure 0..1 inventado para maquetar la capa violeta. Sustituir por datos reales (INE, Índice de Precios del Alquiler, registros municipales). NO usar como dato.",
+  "features": [
+    { "type": "Feature", "properties": { "zona": "Centro Histórico / Soho", "housing_pressure": 0.95, "detail": "núcleo turístico · alquiler turístico" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.428,36.717],[-4.416,36.717],[-4.416,36.726],[-4.428,36.726],[-4.428,36.717]]] } },
+    { "type": "Feature", "properties": { "zona": "La Malagueta / Este", "housing_pressure": 0.86, "detail": "frente marítimo · segunda residencia" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.416,36.717],[-4.404,36.717],[-4.404,36.726],[-4.416,36.726],[-4.416,36.717]]] } },
+    { "type": "Feature", "properties": { "zona": "Teatinos", "housing_pressure": 0.62, "detail": "universidad · presión al alza" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.476,36.717],[-4.464,36.717],[-4.464,36.726],[-4.476,36.726],[-4.476,36.717]]] } },
+    { "type": "Feature", "properties": { "zona": "Carretera de Cádiz / Huelin", "housing_pressure": 0.48, "detail": "barrio obrero · tensión creciente" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.440,36.708],[-4.428,36.708],[-4.428,36.717],[-4.440,36.717],[-4.440,36.708]]] } },
+    { "type": "Feature", "properties": { "zona": "Cruz de Humilladero", "housing_pressure": 0.55, "detail": "desplazamiento de vecinos" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.452,36.717],[-4.440,36.717],[-4.440,36.726],[-4.452,36.726],[-4.452,36.717]]] } },
+    { "type": "Feature", "properties": { "zona": "Palma-Palmilla", "housing_pressure": 0.30, "detail": "rentas bajas · menor precio, mayor vulnerabilidad" },
+      "geometry": { "type": "Polygon", "coordinates": [[[-4.440,36.726],[-4.428,36.726],[-4.428,36.735],[-4.440,36.735],[-4.440,36.726]]] } }
+  ]
+}

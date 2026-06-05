@@ -67,6 +67,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Branding: favicon.svg + tarjeta social og-card.svg.
 - Pipeline de capa fría (scoring 3-30-300): `pipeline/build-green-layer.mjs` + `lib/score.mjs`
   → GeoJSON que el mapa consume con fallback.
+- Mapas "tres casos" (`MapsSection` + `CaseMap`): Barcelona (hostil + toggle verde), Córdoba
+  (déficit de verde) y Málaga (vivienda, muestra). Bloques tipo dossier, mapa montado al entrar
+  en viewport, toggle de capas, popup, leyenda; estética Contradiseño (kicker, numeral, sierra).
 - Ingesta de verde por ciudad (`pipeline/ingest-osm.mjs` + turf + `cities.js`): piloto **Córdoba**
   (45 celdas, déficit 0.18→1) desde geometría OSM; `green_within_300m` + `green_cover_pct`.
   Ecologistas en Acción citado como fuente/aliado local en el front (footer + capa verde).

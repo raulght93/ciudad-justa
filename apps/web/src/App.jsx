@@ -11,7 +11,7 @@ import Manifesto, { How } from "./components/Manifesto.jsx";
 import Housing from "./components/Housing.jsx";
 
 // MapLibre es pesado → su propio chunk, cargado al desplazarse.
-const MapSection = lazy(() => import("./components/MapSection.jsx"));
+const MapsSection = lazy(() => import("./components/MapsSection.jsx"));
 // Herramientas internas (rutas por hash) — chunks aparte.
 const ModPanel = lazy(() => import("./components/ModPanel.jsx"));
 const ReportPanel = lazy(() => import("./components/ReportPanel.jsx"));
@@ -50,8 +50,8 @@ export default function App() {
         <main>
           <Layers />
           <Sawtooth />
-          <Suspense fallback={<div style={{ padding: "80px 22px", textAlign: "center", color: c.faint, fontFamily: font.mono }}>Cargando mapa…</div>}>
-            <MapSection />
+          <Suspense fallback={<div style={{ padding: "80px 22px", textAlign: "center", color: c.faint, fontFamily: font.mono }}>Cargando mapas…</div>}>
+            <MapsSection />
           </Suspense>
           <How />
           <Manifesto />
