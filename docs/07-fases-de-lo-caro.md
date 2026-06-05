@@ -55,12 +55,18 @@ Cada subfase es pequeña y testeable; la D1 ya existe (`wrangler.toml`).
   (premia votos +1 y al autor, penaliza −1), acotada a [0.2, 5.0]; los pesos ya emitidos no se
   tocan (congelados). Solo liquida en la **primera** confirmación. 16 tests del Worker.
   *Pendiente: liquidación al rechazar (llega con E1e moderación).*
-- **E1d:** **subida de foto con blur-gate** en cliente + R2 (depende de C/DPIA antes de publicar).
+- **E1d** ✅ (gate): **blur-gate** en cliente (`lib/photoGate.js`) — política pura testeada
+  (sin detector → bloquea; con rostro → difumina; limpio → sube), reencode que quita EXIF,
+  difuminado por región; detector facial DESACOPLADO (FaceDetector del navegador, swappable por
+  MediaPipe/face-api.js). *Pendiente: UI de cámara/subida + R2, y DPIA antes de publicar datos
+  reales.*
 - **E1e** ✅: **moderación** — `POST /api/mod/reports/:id { action, note }` con acciones
   confirm/reject/document/dispute/restore, **autorización por rol** (moderator/admin), escritura
   en `moderation_log` (audit) y **liquidación de reputación** en transiciones terminales
-  (confirmar premia / rechazar penaliza, inversa). 22 tests del Worker. *Pendiente: auth real de
-  sesión (hoy por cabecera `x-device-id`) y la UI de moderación.*
+  (confirmar premia / rechazar penaliza, inversa). **Auth por token** (secreto compartido
+  `MOD_TOKEN` por cabecera `Bearer` + rol en BD) y **UI de moderación** (`#/mod`, `ModPanel`:
+  carga la cola por bbox y aplica acciones). 24 tests del Worker. *Pendiente: auth de sesión
+  completa (magic-link) en vez de secreto compartido.*
 
 > Principio: cada subfase entra con sus tests y por CI. Lo verdaderamente caro (workflow de
 > verificación completo, GDAL a escala, revisión jurídica, constitución) queda al final de su

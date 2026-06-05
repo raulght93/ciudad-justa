@@ -245,6 +245,23 @@ test("restaurar no liquida reputación pero sí registra", async () => {
   assert.equal(db.log.filter((s) => /UPDATE users SET reputation/.test(s.sql)).length, 0);
 });
 
+test("con MOD_TOKEN configurado, sin Bearer correcto → 401", async () => {
+  const res = await worker.fetch(
+    mod("r1", { action: "reject" }, { "x-device-id": "mod1" }),
+    { DB: mockDB({ role: "moderator", report: { status: "reported" } }), MOD_TOKEN: "s3cret" }
+  );
+  assert.equal(res.status, 401);
+});
+
+test("con MOD_TOKEN configurado y Bearer correcto + rol → 200", async () => {
+  const res = await worker.fetch(
+    mod("r1", { action: "document" }, { "x-device-id": "mod1", authorization: "Bearer s3cret" }),
+    { DB: mockDB({ role: "moderator", report: { status: "confirmed" } }), MOD_TOKEN: "s3cret" }
+  );
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).status, "documented");
+});
+
 test("OPTIONS → CORS", async () => {
   const res = await worker.fetch(req("/api/reports", { method: "OPTIONS" }), {});
   assert.equal(res.headers.get("access-control-allow-origin"), "*");

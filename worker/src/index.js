@@ -234,8 +234,15 @@ export default {
       }
       if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
 
-      // Autorización por rol (moderador/admin). Auth real (sesión) en fase posterior.
+      // Autorización (E1e auth): secreto compartido por cabecera Bearer +
+      // rol en BD (defensa en profundidad). Si MOD_TOKEN está configurado, el
+      // token es obligatorio — no basta con declarar un rol desde el cliente.
       const device = request.headers.get("x-device-id") || "anon";
+      if (env.MOD_TOKEN) {
+        const auth = request.headers.get("authorization") || "";
+        const tok = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+        if (tok !== env.MOD_TOKEN) return json({ error: "token de moderación inválido" }, 401);
+      }
       const actor = await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(device).first();
       if (!actor || (actor.role !== "moderator" && actor.role !== "admin")) {
         return json({ error: "requiere rol de moderación" }, 403);

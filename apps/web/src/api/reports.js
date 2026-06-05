@@ -23,3 +23,24 @@ export async function fetchReports(bbox, opts = {}) {
   }
   return gj;
 }
+
+/**
+ * Acción de moderación. POST /api/mod/reports/:id { action, note }
+ * Requiere token (Bearer MOD_TOKEN) y, opcionalmente, id de dispositivo (para el audit log).
+ * @param {string} id  reportId
+ * @param {string} action  confirm|reject|document|dispute|restore
+ * @param {{ note?: string, token?: string, device?: string }} [opts]
+ */
+export async function moderate(id, action, opts = {}) {
+  const headers = { "content-type": "application/json" };
+  if (opts.token) headers.authorization = `Bearer ${opts.token}`;
+  if (opts.device) headers["x-device-id"] = opts.device;
+  const res = await fetch(`${API_URL}/api/mod/reports/${encodeURIComponent(id)}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ action, note: opts.note }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `mod ${res.status}`);
+  return body;
+}

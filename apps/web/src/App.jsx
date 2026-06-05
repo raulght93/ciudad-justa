@@ -1,5 +1,5 @@
 // apps/web/src/App.jsx
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { c, font } from "./styles/tokens.js";
 import { DirectionProvider } from "./context/Direction.jsx";
 import Nav from "./components/Nav.jsx";
@@ -12,8 +12,32 @@ import Housing from "./components/Housing.jsx";
 
 // MapLibre es pesado → su propio chunk, cargado al desplazarse.
 const MapSection = lazy(() => import("./components/MapSection.jsx"));
+// Panel de moderación (interno, ruta #/mod) — chunk aparte.
+const ModPanel = lazy(() => import("./components/ModPanel.jsx"));
+
+// Mini-router por hash: solo distingue la herramienta interna de moderación.
+function useHashRoute() {
+  const get = () => (typeof window !== "undefined" ? window.location.hash.replace(/^#/, "") : "");
+  const [route, setRoute] = useState(get);
+  useEffect(() => {
+    const on = () => setRoute(get());
+    window.addEventListener("hashchange", on);
+    return () => window.removeEventListener("hashchange", on);
+  }, []);
+  return route;
+}
 
 export default function App() {
+  const route = useHashRoute();
+  if (route === "/mod") {
+    return (
+      <DirectionProvider>
+        <Suspense fallback={<div style={{ padding: "60px 22px", color: c.faint, fontFamily: font.mono }}>Cargando…</div>}>
+          <ModPanel />
+        </Suspense>
+      </DirectionProvider>
+    );
+  }
   return (
     <DirectionProvider>
       <div style={{ background: c.bg, color: c.text, fontFamily: font.sans, minHeight: "100vh" }}>
