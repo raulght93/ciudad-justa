@@ -44,3 +44,27 @@ export async function moderate(id, action, opts = {}) {
   if (!res.ok) throw new Error(body.error || `mod ${res.status}`);
   return body;
 }
+
+/** Crea un reporte. POST /api/reports → { id, status, categories, geohash } */
+export async function submitReport({ lat, lng, categories, description, device }) {
+  const headers = { "content-type": "application/json" };
+  if (device) headers["x-device-id"] = device;
+  const res = await fetch(`${API_URL}/api/reports`, {
+    method: "POST", headers, body: JSON.stringify({ lat, lng, categories, description }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `report ${res.status}`);
+  return body;
+}
+
+/** Sube la foto (YA difuminada en cliente). POST /api/reports/:id/photo */
+export async function uploadPhoto(id, blob, { device } = {}) {
+  const headers = { "content-type": blob.type || "image/jpeg" };
+  if (device) headers["x-device-id"] = device;
+  const res = await fetch(`${API_URL}/api/reports/${encodeURIComponent(id)}/photo`, {
+    method: "POST", headers, body: blob,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `photo ${res.status}`);
+  return body;
+}

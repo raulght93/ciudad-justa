@@ -36,7 +36,7 @@ function HeroCartel() {
     <header id="top" className="riso-grain" style={{ position: "relative", overflow: "hidden", maxWidth: maxW, margin: "0 auto",
       padding: "clamp(40px,7vw,88px) 22px clamp(40px,6vw,72px)", textAlign: "center" }}>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 26 }}><Kicker color={c.yellow}>{HERO.kicker}</Kicker></div>
-      <h1 style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "clamp(3.2rem,11vw,9.5rem)",
+      <h1 className="offset-print" style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "clamp(3.2rem,11vw,9.5rem)",
         lineHeight: 0.92, letterSpacing: "0.02em", wordSpacing: "0.04em", margin: "0 auto", maxWidth: "14ch", position: "relative", zIndex: 1, color: c.text }}>
         {HERO.line1}<br />{HERO.line2pre}<span style={{ color: c.accent }}>{HERO.line2accent}</span>{HERO.line2post}
       </h1>

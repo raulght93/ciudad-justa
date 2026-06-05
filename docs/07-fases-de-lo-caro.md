@@ -55,11 +55,13 @@ Cada subfase es pequeña y testeable; la D1 ya existe (`wrangler.toml`).
   (premia votos +1 y al autor, penaliza −1), acotada a [0.2, 5.0]; los pesos ya emitidos no se
   tocan (congelados). Solo liquida en la **primera** confirmación. 16 tests del Worker.
   *Pendiente: liquidación al rechazar (llega con E1e moderación).*
-- **E1d** ✅ (gate): **blur-gate** en cliente (`lib/photoGate.js`) — política pura testeada
-  (sin detector → bloquea; con rostro → difumina; limpio → sube), reencode que quita EXIF,
-  difuminado por región; detector facial DESACOPLADO (FaceDetector del navegador, swappable por
-  MediaPipe/face-api.js). *Pendiente: UI de cámara/subida + R2, y DPIA antes de publicar datos
-  reales.*
+- **E1d** ✅: **blur-gate** en cliente (`lib/photoGate.js`) — política pura testeada (sin detector
+  → bloquea; con rostro → difumina; limpio → sube), reencode que quita EXIF, difuminado por
+  región; detector facial DESACOPLADO (FaceDetector del navegador, swappable por MediaPipe/
+  face-api.js). **UI de reporte** (`#/reportar`, `ReportPanel`: foto→gate→ubicación→categorías→
+  envío) + **R2** (`POST /api/reports/:id/photo`, bucket `ciudad-justa-photos`, `photos.blurred`
+  invariante). 28 tests del Worker. *Pendiente: enchufar detector real si el navegador no trae
+  FaceDetector; DPIA + entidad antes de abrir al público con datos reales (sigue siendo preview).*
 - **E1e** ✅: **moderación** — `POST /api/mod/reports/:id { action, note }` con acciones
   confirm/reject/document/dispute/restore, **autorización por rol** (moderator/admin), escritura
   en `moderation_log` (audit) y **liquidación de reputación** en transiciones terminales

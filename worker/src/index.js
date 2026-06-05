@@ -271,6 +271,34 @@ export default {
       return json({ id: reportId, status: newStatus, action });
     }
 
+    // POST /api/reports/:id/photo  — imagen YA difuminada en cliente (E1d + R2).
+    // El servidor no puede verificar el difuminado; el gate del cliente es la
+    // garantía y la columna photos.blurred (CHECK = 1) lo asienta como invariante.
+    const photoMatch = pathname.match(/^\/api\/reports\/([^/]+)\/photo$/);
+    if (photoMatch && request.method === "POST") {
+      const reportId = decodeURIComponent(photoMatch[1]);
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+      if (!env.PHOTOS) return json({ error: "R2 no vinculado" }, 501);
+
+      const ct = request.headers.get("content-type") || "";
+      if (!ct.startsWith("image/")) return json({ error: "se espera una imagen" }, 415);
+      const buf = await request.arrayBuffer();
+      if (buf.byteLength === 0) return json({ error: "imagen vacía" }, 400);
+      if (buf.byteLength > 5_000_000) return json({ error: "imagen demasiado grande (máx 5 MB)" }, 413);
+
+      const report = await env.DB.prepare("SELECT id FROM reports WHERE id = ?").bind(reportId).first();
+      if (!report) return json({ error: "reporte no encontrado" }, 404);
+
+      const photoId = crypto.randomUUID();
+      const key = `reports/${reportId}/${photoId}.${ct.includes("png") ? "png" : "jpg"}`;
+      await env.PHOTOS.put(key, buf, { httpMetadata: { contentType: ct } });
+      await env.DB.prepare(
+        "INSERT INTO photos (id, report_id, r2_key, blurred, created_at) VALUES (?, ?, ?, 1, ?)"
+      ).bind(photoId, reportId, key, Date.now()).run();
+
+      return json({ id: photoId, r2_key: key }, 201);
+    }
+
     return json({ error: "not found" }, 404);
   },
 };

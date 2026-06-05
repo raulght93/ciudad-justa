@@ -20,9 +20,12 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
   primero.
 - **Bootstrap de moderación** operativo: curación manual + moderadores semilla (`06 §6.4`).
 - **Política de takedown** y términos de uso publicados (`06 §6.3`).
-- **Blur-gate E1d**: política + pipeline ✅ (`lib/photoGate.js`). Pendiente **UI de cámara/subida
-  + R2** y enchufar un detector real (MediaPipe/face-api.js) si el navegador no trae FaceDetector;
-  DPIA antes de publicar (`03 §3.6`, `07 §E`).
+- **Blur-gate E1d** ✅: política + pipeline (`lib/photoGate.js`), UI `#/reportar` y subida a R2.
+  Pendiente: enchufar un **detector real** (MediaPipe/face-api.js) como *fallback* si el navegador
+  no trae FaceDetector (hoy, sin FaceDetector el gate bloquea); **DPIA + entidad** antes de abrir
+  al público con datos reales (`03 §3.6`, `06`, `07 §E`).
+- **Crear bucket R2**: `wrangler r2 bucket create ciudad-justa-photos` (binding `PHOTOS` ya en
+  wrangler.toml). Servir/lifecycle de fotos pendiente.
 - **API Worker → D1**: E1a–E1e ✅ (lectura, escritura, votación, reputación, moderación con auth
   por token + UI `#/mod`). Pendiente **auth de sesión completa** (magic-link) en vez del secreto
   compartido `MOD_TOKEN` (`07 §E`).

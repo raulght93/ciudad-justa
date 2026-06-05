@@ -262,6 +262,43 @@ test("con MOD_TOKEN configurado y Bearer correcto + rol → 200", async () => {
   assert.equal((await res.json()).status, "documented");
 });
 
+// ---- E1d: subida de foto a R2 ----
+
+const img = (bytes, ct = "image/jpeg") =>
+  req("/api/reports/r1/photo", { method: "POST", headers: { "content-type": ct }, body: bytes });
+
+test("POST photo sin R2 vinculado → 501", async () => {
+  const res = await worker.fetch(img(new Uint8Array([1, 2, 3])), { DB: mockDB({ report: { id: "r1" } }) });
+  assert.equal(res.status, 501);
+});
+
+test("POST photo con content-type no imagen → 415", async () => {
+  const res = await worker.fetch(
+    req("/api/reports/r1/photo", { method: "POST", headers: { "content-type": "text/plain" }, body: "x" }),
+    { DB: mockDB({ report: { id: "r1" } }), PHOTOS: { put: async () => {} } }
+  );
+  assert.equal(res.status, 415);
+});
+
+test("POST photo demasiado grande → 413", async () => {
+  const res = await worker.fetch(img(new Uint8Array(5_000_001)), { DB: mockDB({ report: { id: "r1" } }), PHOTOS: { put: async () => {} } });
+  assert.equal(res.status, 413);
+});
+
+test("POST photo válida → 201, guarda en R2 e inserta fila", async () => {
+  const puts = [];
+  const db = mockDB({ report: { id: "r1" } });
+  const res = await worker.fetch(img(new Uint8Array([1, 2, 3, 4])), {
+    DB: db,
+    PHOTOS: { put: async (key, body, meta) => puts.push({ key, meta }) },
+  });
+  assert.equal(res.status, 201);
+  const body = await res.json();
+  assert.match(body.r2_key, /^reports\/r1\/.+\.jpg$/);
+  assert.equal(puts.length, 1, "guardado en R2");
+  assert.ok(db.log.some((s) => /INSERT INTO photos/.test(s.sql) && /blurred, created_at\) VALUES \(\?, \?, \?, 1,/.test(s.sql)), "inserta con blurred=1");
+});
+
 test("OPTIONS → CORS", async () => {
   const res = await worker.fetch(req("/api/reports", { method: "OPTIONS" }), {});
   assert.equal(res.headers.get("access-control-allow-origin"), "*");

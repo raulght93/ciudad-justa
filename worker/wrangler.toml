@@ -9,7 +9,8 @@ binding = "DB"
 database_name = "ciudad-justa"
 database_id = "68796e1e-33fb-42d5-8f15-7d0d23c0e018"
 
-# R2 para fotos difuminadas (fase 1):
-# [[r2_buckets]]
-# binding = "PHOTOS"
-# bucket_name = "ciudad-justa-photos"
+# R2 para fotos difuminadas (E1d). Crear el bucket antes:
+#   wrangler r2 bucket create ciudad-justa-photos
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "ciudad-justa-photos"

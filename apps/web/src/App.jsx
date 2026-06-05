@@ -12,8 +12,9 @@ import Housing from "./components/Housing.jsx";
 
 // MapLibre es pesado → su propio chunk, cargado al desplazarse.
 const MapSection = lazy(() => import("./components/MapSection.jsx"));
-// Panel de moderación (interno, ruta #/mod) — chunk aparte.
+// Herramientas internas (rutas por hash) — chunks aparte.
 const ModPanel = lazy(() => import("./components/ModPanel.jsx"));
+const ReportPanel = lazy(() => import("./components/ReportPanel.jsx"));
 
 // Mini-router por hash: solo distingue la herramienta interna de moderación.
 function useHashRoute() {
@@ -29,11 +30,12 @@ function useHashRoute() {
 
 export default function App() {
   const route = useHashRoute();
-  if (route === "/mod") {
+  const Tool = route === "/mod" ? ModPanel : route === "/reportar" ? ReportPanel : null;
+  if (Tool) {
     return (
       <DirectionProvider>
         <Suspense fallback={<div style={{ padding: "60px 22px", color: c.faint, fontFamily: font.mono }}>Cargando…</div>}>
-          <ModPanel />
+          <Tool />
         </Suspense>
       </DirectionProvider>
     );
