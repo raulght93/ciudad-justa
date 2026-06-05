@@ -1,0 +1,222 @@
+/* ============================================================================
+   CIUDAD JUSTA · DESIGN SYSTEM  —  "CONTRADISEÑO"
+   Dark riso-punk / activist-forensic foundation.
+   Counter-design against exclusion by design.
+   ----------------------------------------------------------------------------
+   The original POC was "noche cívica": navy, Fraunces serif, ocre, soft.
+   This system breaks with that: near-black "ink paper", flat fluorescent
+   signal inks (risograph overprint), condensed poster type, machine mono,
+   sawtooth + coordinate + registration motifs, hard mechanical motion.
+   Accessibility is a red line (project value): all token pairings below meet
+   WCAG 2.1 AA (≥4.5:1 body, ≥3:1 large/UI) on their intended surface.
+   ========================================================================== */
+
+/* ---- Webfonts (Google Fonts, all open-source / OFL).
+   Self-host for production: download Anton, Space Grotesk, Space Mono and
+   swap these @import lines for local @font-face. See README → VISUAL FOUNDATIONS. */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  /* ===== INK (surfaces — "black paper") ===== */
+  --ink-900: #0a0a0b;   /* page background */
+  --ink-850: #0f0f11;   /* alt section background */
+  --ink-800: #141416;   /* raised panel */
+  --ink-700: #1a1a1d;   /* card */
+  --ink-600: #232327;   /* card hover / elevated */
+  --ink-500: #2e2e33;   /* strong hairline / inset */
+
+  /* ===== PAPER (inverted poster blocks) ===== */
+  --paper:     #f3efe4;  /* warm newsprint white */
+  --paper-dim: #e2ddd0;  /* paper shadow / secondary */
+
+  /* ===== FOREGROUND on ink ===== */
+  --fg-1: #f4f1ea;  /* primary text        — 17.4:1 on ink-900 */
+  --fg-2: #b7b3a8;  /* secondary / muted   — 8.4:1  on ink-900 */
+  --fg-3: #8a867c;  /* faint / metadata    — 4.7:1  on ink-900 (large/UI) */
+
+  /* ===== SIGNAL INKS (risograph fluorescents) ===== */
+  --signal-red:    #ff3b12;  /* BRAND PRIMARY · alarm · hostile layer */
+  --signal-red-ink:#e02e0a;  /* pressed / on-paper red */
+  --signal-yellow: #ffe000;  /* SECONDARY SIGNAL · highlight · marquee */
+  --signal-cyan:   #00e5ff;  /* services layer · cool counterpoint */
+
+  /* ===== LAYER COLORS (data legend — reinterpreted, punchier) ===== */
+  --layer-hostile: #ff3b12;  /* arquitectura hostil */
+  --layer-green:   #2fe08a;  /* déficit de verde   */
+  --layer-service: #00e5ff;  /* servicios 15-min   */
+  --layer-housing: #b084ff;  /* precio vivienda (próx.) */
+
+  /* contrast-safe text tints of layer colors for small text on ink */
+  --layer-hostile-tx: #ff6a48;
+  --layer-green-tx:   #45e89a;
+  --layer-service-tx: #4cecff;
+  --layer-housing-tx: #c4a3ff;
+
+  /* ===== LINES ===== */
+  --line:        rgba(244,241,234,0.12);
+  --line-soft:   rgba(244,241,234,0.07);
+  --line-strong: #2e2e33;
+  --line-ink:    #0a0a0b;  /* hairline on paper blocks */
+
+  /* ===== TYPE FAMILIES ===== */
+  --display: 'Anton', 'Arial Narrow', Impact, sans-serif;       /* condensed poster */
+  --grotesk: 'Space Grotesk', system-ui, -apple-system, sans-serif; /* body + UI */
+  --mono:    'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace; /* labels / coords */
+
+  /* ===== TYPE SCALE (fluid, poster-grade) ===== */
+  --t-mega:  clamp(3.4rem, 13vw, 11rem);    /* hero broken headline */
+  --t-h1:    clamp(2.6rem, 7vw, 5.5rem);
+  --t-h2:    clamp(2rem, 4.5vw, 3.4rem);
+  --t-h3:    clamp(1.3rem, 2.4vw, 1.9rem);
+  --t-lead:  clamp(1.05rem, 1.6vw, 1.35rem);
+  --t-body:  1.0625rem;   /* 17px */
+  --t-small: 0.875rem;    /* 14px */
+  --t-label: 0.75rem;     /* 12px mono kicker */
+  --t-micro: 0.6875rem;   /* 11px */
+
+  /* ===== SPACING (4px base, mechanical steps) ===== */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --sp-9: 96px; --sp-10: 128px;
+
+  /* ===== RADII (near-zero — raw / cut, not soft) ===== */
+  --r-0: 0px;     /* default: hard corners */
+  --r-1: 2px;     /* inputs */
+  --r-2: 4px;     /* small chips */
+  --r-pill: 999px;/* only for tags / status dots */
+
+  /* ===== BORDERS ===== */
+  --bd:      1px solid var(--line);
+  --bd-hard: 2px solid var(--fg-1);   /* poster frame */
+  --bd-ink:  2px solid var(--ink-900);
+
+  /* ===== ELEVATION (flat — riso has no soft shadow; uses HARD offset) ===== */
+  --shadow-hard:  6px 6px 0 0 var(--signal-red);   /* poster block drop */
+  --shadow-hard-y:6px 6px 0 0 var(--signal-yellow);
+  --shadow-cut:   0 0 0 1px var(--line-strong);    /* inset hairline */
+
+  /* ===== MAX WIDTH ===== */
+  --maxw: 1240px;
+
+  /* ===== MOTION (crudo y mecánico — stepped, no soft easing) ===== */
+  --ease-mech: steps(6, end);
+  --ease-snap: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 80ms;
+  --dur: 160ms;
+}
+
+/* ===========================================================================
+   SEMANTIC ELEMENT DEFAULTS (drop-in: these style raw HTML in the system)
+   =========================================================================== */
+.cj {
+  background: var(--ink-900);
+  color: var(--fg-1);
+  font-family: var(--grotesk);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cj h1, .cj .display {
+  font-family: var(--display);
+  font-weight: 400;              /* Anton ships single weight */
+  font-size: var(--t-h1);
+  line-height: 0.86;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.cj .mega { font-size: var(--t-mega); line-height: 0.82; }
+
+.cj h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: var(--t-h2);
+  line-height: 0.96;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.cj h3 {
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: var(--t-h3);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.cj p { margin: 0; max-width: 62ch; text-wrap: pretty; }
+.cj .lead { font-size: var(--t-lead); line-height: 1.5; color: var(--fg-2); }
+.cj a { color: var(--signal-yellow); text-underline-offset: 3px; }
+
+/* Kicker / label — machine mono, tracked caps. The system's connective tissue. */
+.cj .kicker {
+  font-family: var(--mono);
+  font-size: var(--t-label);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* ===========================================================================
+   MOTIFS / TEXTURE UTILITIES
+   =========================================================================== */
+
+/* Risograph grain — fixed fractal-noise overlay. Multiply-ish via low opacity. */
+.riso-grain::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Off-register / misprint — chromatic double-print on display type. */
+.offset-print {
+  text-shadow:
+    2px 0 0 var(--signal-cyan),
+   -2px 0 0 var(--signal-red);
+}
+
+/* Sawtooth rule — the "pinchos" motif as divider/texture (reinterpreted, bold). */
+.sawtooth {
+  height: 14px;
+  width: 100%;
+  background:
+    linear-gradient(135deg, var(--signal-red) 50%, transparent 50%) 0 0 / 14px 14px repeat-x;
+}
+.sawtooth--ink {
+  background:
+    linear-gradient(135deg, var(--ink-900) 50%, transparent 50%) 0 0 / 14px 14px repeat-x;
+}
+
+/* Coordinate / registration crosshair (forensic-cartographic accent). */
+.reg-mark {
+  position: relative; width: 18px; height: 18px; flex: 0 0 auto;
+}
+.reg-mark::before, .reg-mark::after {
+  content: ""; position: absolute; background: var(--signal-red);
+}
+.reg-mark::before { left: 8px; top: 0; width: 2px; height: 18px; }
+.reg-mark::after  { top: 8px; left: 0; height: 2px; width: 18px; }
+
+/* Hard-cut focus ring (accessibility, on-brand). */
+.cj :focus-visible {
+  outline: 3px solid var(--signal-yellow);
+  outline-offset: 2px;
+}
+
+/* Mechanical marquee (ticker). Paused for reduced-motion. */
+@keyframes cj-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.cj-marquee { animation: cj-marquee 28s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cj-marquee { animation: none; }
+  .cj *, .cj *::before, .cj *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

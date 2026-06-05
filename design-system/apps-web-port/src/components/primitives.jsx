@@ -3,7 +3,6 @@
 
 import { useId, useState } from "react";
 import { c, font, radius, maxW, kicker as kickerBase } from "../styles/tokens.js";
-import { SOURCES } from "../data/content.js";
 
 // ---- Iconos (geometría Lucide, stroke 2.25) ----
 const ICONS = {
@@ -48,20 +47,6 @@ export function Brand({ size = 30, stacked = false, color = c.text }) {
       <span style={{ fontFamily: font.display, textTransform: "uppercase", lineHeight: 0.82, fontSize: size * 0.62, color, letterSpacing: "0.01em" }}>
         {stacked ? <>Ciudad<br /><span style={{ color: c.accent }}>Justa</span></> : <>Ciudad <span style={{ color: c.accent }}>Justa</span></>}
       </span>
-    </a>
-  );
-}
-
-// Etiqueta-fuente clicable (mono, forense) que enlaza a la bibliografía.
-export function SourceTag({ id }) {
-  const s = SOURCES[id];
-  if (!s) return null;
-  return (
-    <a href={s.url} target="_blank" rel="noopener noreferrer" title={s.label}
-      style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: font.mono,
-        fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: c.faint,
-        textDecoration: "none", borderBottom: `1px solid ${c.lineStrong}`, paddingBottom: 2 }}>
-      <Icon name="arrowUpRight" size={12} /> Fuente: {s.label}
     </a>
   );
 }

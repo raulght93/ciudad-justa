@@ -1,0 +1,52 @@
+/* apps/web/src/styles/contradiseno.css
+   Importa este archivo UNA vez en src/main.jsx:  import "./styles/contradiseno.css";
+   Trae las fuentes, los motivos (sierra, grano, misregistro, marca de registro),
+   la marquesina, el anillo de foco accesible y la entrada mecánica.
+   Todo respeta prefers-reduced-motion (línea roja del proyecto). */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root { color-scheme: dark; }
+
+/* Skip link accesible */
+.cj-skip { position: absolute; left: -999px; top: 8px; background: #ffe000; color: #0a0a0b;
+  padding: 10px 16px; font-family: 'Space Mono', monospace; font-weight: 700; z-index: 200; }
+.cj-skip:focus { left: 8px; }
+
+/* Foco visible (accesibilidad, on-brand) */
+:focus-visible { outline: 3px solid #ffe000; outline-offset: 2px; }
+
+/* Grano risográfico — overlay fractal-noise */
+.riso-grain { position: relative; }
+.riso-grain::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.5; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Misregistro / doble impresión sobre el display */
+.offset-print { text-shadow: 2px 0 0 #00e5ff, -2px 0 0 #ff3b12; }
+
+/* Marquesina mecánica (ticker) */
+@keyframes cj-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.cj-marquee { animation: cj-marquee 28s linear infinite; }
+
+/* Entrada mecánica — sólo transforma; la opacidad nunca baja (siempre visible) */
+@keyframes cj-rise { from { transform: translateY(12px); } to { transform: none; } }
+.cj-reveal { animation: cj-rise 320ms cubic-bezier(0.2,0,0,1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cj-marquee, .cj-reveal { animation: none !important; }
+  *, *::before, *::after { transition-duration: 0.001ms !important; }
+}
+
+/* Responsive: nav colapsa a hamburguesa; hero editorial a una columna */
+@media (max-width: 940px) {
+  .cj-navlinks { display: none !important; }
+  .cj-navburger { display: inline-flex !important; }
+}
+@media (max-width: 720px) {
+  .cj-hero-grid { grid-template-columns: 1fr !important; }
+  .cj-hero-grid > div:last-child { justify-content: flex-start !important; }
+}

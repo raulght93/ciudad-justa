@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0}
+  body{background:var(--ink-900);padding:28px;box-sizing:border-box}
+  .row{display:flex;align-items:center;gap:36px}
+  .markwrap{display:flex;align-items:center;gap:16px}
+  .word{font-family:var(--display);font-size:34px;text-transform:uppercase;letter-spacing:.01em;color:var(--fg-1);line-height:.86}
+  .word .b{color:var(--signal-red)}
+  .variants{display:flex;gap:24px;align-items:flex-end;margin-left:auto}
+  .chip{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .chip .cap{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3)}
+  .onpaper{background:var(--paper);padding:14px;}
+</style>
+</head>
+<body class="cj">
+  <div class="row">
+    <div class="markwrap">
+      <!-- Pin cortado por una raya DIAGONAL; las dos mitades, desalineadas (cizalla). -->
+      <svg width="60" height="76" viewBox="-3 -6 56 72" aria-label="Ciudad Justa">
+        <defs>
+          <clipPath id="tlA"><polygon points="-12,-12 62,-12 62,11 -12,46"/></clipPath>
+          <clipPath id="brA"><polygon points="-12,46 62,11 62,84 -12,84"/></clipPath>
+        </defs>
+        <path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#00e5ff" transform="translate(2.6,2.2)" opacity="0.85"/>
+        <g transform="translate(2.6,-3.8)"><g clip-path="url(#tlA)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g>
+        <g transform="translate(-2.6,3.8)"><g clip-path="url(#brA)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g>
+      </svg>
+      <div class="word">CIUDAD<br><span class="b">JUSTA</span></div>
+    </div>
+    <div class="variants">
+      <div class="chip">
+        <svg width="42" height="53" viewBox="-3 -6 56 72"><defs><clipPath id="tlB"><polygon points="-12,-12 62,-12 62,11 -12,46"/></clipPath><clipPath id="brB"><polygon points="-12,46 62,11 62,84 -12,84"/></clipPath></defs><g transform="translate(2.6,-3.8)"><g clip-path="url(#tlB)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g><g transform="translate(-2.6,3.8)"><g clip-path="url(#brB)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g></svg>
+        <span class="cap">Solo / red</span>
+      </div>
+      <div class="chip">
+        <svg width="42" height="53" viewBox="-3 -6 56 72"><defs><clipPath id="tlC"><polygon points="-12,-12 62,-12 62,11 -12,46"/></clipPath><clipPath id="brC"><polygon points="-12,46 62,11 62,84 -12,84"/></clipPath></defs><g transform="translate(2.6,-3.8)"><g clip-path="url(#tlC)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#f4f1ea"/></g></g><g transform="translate(-2.6,3.8)"><g clip-path="url(#brC)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#f4f1ea"/></g></g></svg>
+        <span class="cap">Mono</span>
+      </div>
+      <div class="chip onpaper">
+        <svg width="42" height="53" viewBox="-3 -6 56 72"><defs><clipPath id="tlD"><polygon points="-12,-12 62,-12 62,11 -12,46"/></clipPath><clipPath id="brD"><polygon points="-12,46 62,11 62,84 -12,84"/></clipPath></defs><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#00e5ff" transform="translate(2.6,2.2)" opacity="0.85"/><g transform="translate(2.6,-3.8)"><g clip-path="url(#tlD)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g><g transform="translate(-2.6,3.8)"><g clip-path="url(#brD)"><path d="M24 2C11.3 2 2 11 2 23.4 2 39 24 57 24 57S46 39 46 23.4C46 11 36.7 2 24 2Z" fill="#ff3b12"/></g></g></svg>
+        <span class="cap" style="color:#0a0a0b">On paper</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

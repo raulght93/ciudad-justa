@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0}
+  body{background:var(--ink-900);padding:26px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px}
+  .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn{font-family:var(--grotesk);font-weight:700;font-size:15px;border:2px solid transparent;padding:13px 22px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;letter-spacing:.01em}
+  .primary{background:var(--signal-red);color:#0a0a0b}
+  .ghost{background:transparent;color:var(--fg-1);border-color:var(--fg-1)}
+  .yellow{background:var(--signal-yellow);color:#0a0a0b}
+  .link{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--signal-yellow);border-bottom:2px solid var(--signal-yellow);padding-bottom:2px;text-decoration:none}
+  .cap{font-family:var(--mono);font-size:10px;color:var(--fg-3);letter-spacing:.1em;width:90px}
+</style>
+</head>
+<body class="cj">
+  <div class="row"><span class="cap">PRIMARY</span><a class="btn primary">VER EL MAPA →</a><a class="btn yellow">REPORTAR ▲</a></div>
+  <div class="row"><span class="cap">GHOST</span><a class="btn ghost">POR QUÉ IMPORTA</a><a class="btn ghost" style="opacity:.55">DESHABILITADO</a></div>
+  <div class="row"><span class="cap">TEXT</span><a class="link">↗ Fuente: ISGlobal</a></div>
+</body>
+</html>

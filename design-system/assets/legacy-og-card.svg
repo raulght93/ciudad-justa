@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Ciudad Justa">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1420"></stop>
+      <stop offset="1" stop-color="#0b0e14"></stop>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.15" cy="0" r="0.8">
+      <stop offset="0" stop-color="#ef4444" stop-opacity="0.18"></stop>
+      <stop offset="1" stop-color="#ef4444" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"></rect>
+  <rect width="1200" height="630" fill="url(#glow)"></rect>
+
+  
+  <g transform="translate(80 70)">
+    <rect width="44" height="44" rx="10" fill="#161d2b" stroke="#f4a259" stroke-width="2"></rect>
+    <rect x="11" y="22" width="22" height="4" rx="2" fill="#f4a259"></rect>
+    <rect x="20" y="15" width="4" height="13" rx="2" fill="#ef4444"></rect>
+    <text x="60" y="31" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="3" fill="#f4a259">CIUDAD JUSTA · ESPAÑA</text>
+  </g>
+
+  
+  <text x="80" y="300" font-family="Georgia, &#39;Times New Roman&#39;, serif" font-size="92" font-weight="900" fill="#eef2f9" letter-spacing="-2">La exclusión que el</text>
+  <text x="80" y="400" font-family="Georgia, &#39;Times New Roman&#39;, serif" font-size="92" font-weight="900" letter-spacing="-2"><tspan fill="#f4a259">diseño urbano</tspan><tspan fill="#eef2f9"> esconde.</tspan></text>
+
+  <text x="80" y="470" font-family="Inter, system-ui, sans-serif" font-size="30" fill="#9aa6bd">
+    Arquitectura hostil · déficit de verde · falta de servicios en ciudades españolas.
+  </text>
+
+  
+  <g transform="translate(80 530)" font-family="Inter, system-ui, sans-serif" font-size="24" fill="#9aa6bd">
+    <circle cx="10" cy="-8" r="10" fill="#ef4444"></circle><text x="30" y="0">Hostil</text>
+    <circle cx="190" cy="-8" r="10" fill="#34d399"></circle><text x="210" y="0">Verde</text>
+    <circle cx="360" cy="-8" r="10" fill="#60a5fa"></circle><text x="380" y="0">Servicios</text>
+    <circle cx="585" cy="-8" r="10" fill="#a78bfa"></circle><text x="605" y="0">Vivienda (próx.)</text>
+  </g>
+</svg>

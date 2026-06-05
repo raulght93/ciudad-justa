@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0}
+  body{background:var(--ink-900);padding:24px;box-sizing:border-box;display:flex;gap:20px;align-items:flex-end}
+  .u{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .box{width:90px;height:64px;background:var(--ink-700);border:1px solid var(--line-strong)}
+  .cap{font-family:var(--mono);font-size:10px;color:var(--fg-2);letter-spacing:.04em;text-align:center}
+  .cap b{color:var(--fg-1)}
+  .note{font-family:var(--grotesk);font-size:13px;color:var(--fg-3);max-width:30ch;line-height:1.5;margin-left:6px}
+</style>
+</head>
+<body class="cj">
+  <div class="u"><div class="box" style="border-radius:0"></div><div class="cap"><b>r-0</b><br>0px · default</div></div>
+  <div class="u"><div class="box" style="border-radius:2px"></div><div class="cap"><b>r-1</b><br>2px · inputs</div></div>
+  <div class="u"><div class="box" style="border-radius:4px"></div><div class="cap"><b>r-2</b><br>4px · chips</div></div>
+  <div class="u"><div class="box" style="border-radius:999px;width:64px"></div><div class="cap"><b>pill</b><br>tags / dots</div></div>
+  <p class="note">Esquinas duras por defecto: la causa pide aristas, no suavidad. El radio sólo aparece en pastillas de estado.</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0}
+  body{background:var(--ink-900);padding:0;box-sizing:border-box}
+  .stack{display:flex;flex-direction:column}
+  .band{padding:18px 24px}
+  .lab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--fg-3);text-transform:uppercase}
+</style>
+</head>
+<body class="cj">
+  <div class="stack">
+    <div class="band"><div class="lab">Sawtooth · red — divisor / motivo "pinchos"</div></div>
+    <div class="sawtooth"></div>
+    <div class="band" style="background:var(--paper)"><div class="lab" style="color:#0a0a0b">Sawtooth · ink — sobre papel</div></div>
+    <div class="sawtooth sawtooth--ink"></div>
+    <div class="band"><div class="lab">Doble fila — banda de textura</div></div>
+    <div class="sawtooth"></div>
+    <div class="sawtooth" style="transform:scaleY(-1)"></div>
+  </div>
+</body>
+</html>

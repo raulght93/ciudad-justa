@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0}
+  body{background:var(--ink-900);padding:0;box-sizing:border-box;display:flex}
+  .paper{flex:1;background:var(--paper);color:#0a0a0b;padding:22px;box-sizing:border-box}
+  .paper .display{font-family:var(--display);font-size:40px;text-transform:uppercase;line-height:.86}
+  .paper .display em{color:var(--signal-red-ink);font-style:normal}
+  .paper p{font-family:var(--grotesk);font-size:14px;color:#3a382f;margin-top:10px;max-width:34ch}
+  .meta{display:flex;gap:18px;margin-top:16px}
+  .meta span{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#0a0a0b}
+  .ink{width:150px;background:var(--ink-900);color:var(--fg-2);padding:22px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:6px}
+  .ink b{font-family:var(--mono);font-size:11px;color:var(--fg-1);letter-spacing:.1em}
+  .ink small{font-family:var(--mono);font-size:10px;color:var(--fg-3)}
+</style>
+</head>
+<body class="cj">
+  <div class="paper">
+    <div class="display">Papel<br><em>impreso.</em></div>
+    <p>Bloques invertidos: tinta negra sobre blanco prensa cálido. Usado para citas, manifiesto y carteles.</p>
+    <div class="meta"><span>PAPER #F3EFE4</span><span>INK #0A0A0B</span></div>
+  </div>
+  <div class="ink">
+    <b>16.9 : 1</b><small>ink sobre paper</small>
+    <b style="margin-top:10px">WCAG AAA</b><small>texto normal ✓</small>
+  </div>
+</body>
+</html>
