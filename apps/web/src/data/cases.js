@@ -33,7 +33,7 @@ export const CASES = [
     color: c.green,
     center: [-4.7794, 37.8882],
     zoom: 12.4,
-    note: "Cuanto más rojo, menos sombra/verde o más lejos quedan los servicios. La ciudad más calurosa de España: aquí el verde es salud. Datos reales de OpenStreetMap (+ Ecologistas en Acción).",
+    note: "Cuanto más rojo, menos copa de árbol/verde o más lejos quedan los servicios. La ciudad más calurosa de España: aquí el verde es salud. Cubierta arbórea real del Urban Atlas (Copernicus) + servicios de OpenStreetMap + Ecologistas en Acción.",
     stat: { value: "47,6 °C", label: "récord de calor · isla de calor por asfalto", source: "ecologistas" },
     layers: [
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/cordoba-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },

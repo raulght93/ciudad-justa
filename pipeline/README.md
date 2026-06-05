@@ -12,7 +12,7 @@ sirve como estáticos. Coste de ejecución ≈ 0 y coste de servir ≈ 0 (R2 / P
 | **Descarga OSM real (a)** | ✅ | `fetch-osm.mjs` (Overpass): verde (polígonos) + POIs de servicios (salud/educación/comercio/transporte) de una ciudad → `inputs/<city>-green.geojson` y `-pois.geojson`. Córdoba: 1.152 polígonos + 849 POIs reales. |
 | **Ingesta verde (OSM)** | ✅ | `ingest-osm.mjs` (turf): por celda `green_within_300m` (buffer 300 m) + `green_cover_pct` (verde ∩ celda). Usa el dato real si existe, si no la muestra. |
 | **Capa de servicios 15-min (a)** | ✅ | `ingest-osm.mjs`: por celda `service_deficit` = % de categorías esenciales **sin POI a <800 m** (≈10 min). Córdoba real. |
-| **Cubierta arbórea REAL (b · raster)** | ⛏️ | Hoy `green_cover_pct` es un **proxy OSM** (`canopy_proxy: true`). La cubierta arbórea real exige **NDVI (Sentinel-2) / Urban Atlas Street Tree Layer** con GDAL (zonal stats por celda) → alimenta el mismo campo. Procedimiento abajo. |
+| **Cubierta arbórea REAL (b)** | ✅ | `ingest-canopy.mjs`: lee el **Urban Atlas Street Tree Layer** (vector FlatGeobuf `.fgb`, EPSG:3035), reproyecta (proj4) y calcula `tree_canopy_pct` por celda → recalcula el déficit (`canopy_proxy: false`). Sin GDAL ni QGIS. Córdoba 0–29 %, Málaga hechas. |
 | **Vivienda real (c)** | ⛏️ | Málaga es muestra. Real: **Sistema Estatal de Índices de Precios de Alquiler (Mitma)** + **Atlas de renta (INE)** por sección censal + cartografía de secciones (INE). Sin scraping de portales (ToS). Procedimiento abajo. |
 | **Teselado PMTiles** | ⛏️ | A escala ciudad: `tippecanoe` → PMTiles en R2 en vez de GeoJSON. (BACKLOG) |
 
@@ -21,26 +21,43 @@ sirve como estáticos. Coste de ejecución ≈ 0 y coste de servir ≈ 0 (R2 / P
 ```bash
 npm install                     # turf (para ingest-osm)
 
-# A) DATOS REALES desde OpenStreetMap (requiere red):
-node fetch-osm.mjs cordoba      # Overpass → inputs/cordoba-green.geojson + -pois.geojson
-node ingest-osm.mjs cordoba     # → public/data/cordoba-green-deficit.geojson + -services-deficit.geojson
+# Orden completo para una ciudad (datos reales):
+node fetch-osm.mjs cordoba      # 1) Overpass → inputs/cordoba-green.geojson + -pois.geojson  (necesita red)
+node ingest-osm.mjs cordoba     # 2) → public/data/cordoba-green-deficit.geojson (+ -services-deficit)
+node ingest-canopy.mjs cordoba  # 3) copa arbórea REAL (Urban Atlas STL en inputs/treemaps/) → reescribe el déficit
 
 # (demo a partir de indicadores ya tabulados en CSV)
 node build-green-layer.mjs      # inputs/barcelona-green.sample.csv → public/data/green-deficit.geojson
 ```
 
-### (b) Cubierta arbórea real (NDVI / Urban Atlas) — pendiente, requiere GDAL
-1. Descargar el **Street Tree Layer** o el land cover del FUA en Urban Atlas (land.copernicus.eu),
-   o una escena **Sentinel-2** y calcular NDVI.
-2. `gdalwarp`/`gdal_rasterize` a una rejilla y **zonal stats** por celda (`rasterstats`/`exactextract`)
-   → CSV `id,tree_canopy_pct` que sustituye al proxy en el campo `green_cover_pct`.
+> Orden importa: `ingest-osm` deja `green_within_300m` (acceso) y un proxy de copa;
+> `ingest-canopy` sustituye el proxy por la copa real del Urban Atlas y recalcula el déficit.
+> Si re-ejecutas `ingest-osm`, vuelve a poner el proxy → relanza `ingest-canopy` después.
+
+### (b) Cubierta arbórea real (Urban Atlas STL) — ✅ ya automatizado
+1. **Descargar** el *Urban Atlas — Street Tree Layer 2021* del FUA en
+   <https://land.copernicus.eu/en/products/urban-atlas/street-tree-layer-2021> (alta gratuita).
+2. **Descomprimir** la carpeta de la ciudad en `pipeline/inputs/treemaps/` (gitignored). El script
+   busca dentro el archivo `*_STL_*.fgb`.
+3. `node ingest-canopy.mjs <city>` — listo. (Detecta la ciudad por el nombre de la carpeta.)
+
+No hace falta QGIS/GDAL: el STL es **vector** (FlatGeobuf), se lee con `flatgeobuf`, se reproyecta
+de EPSG:3035 con `proj4` y se suma el área de copa por celda con `turf`.
 
 ### (c) Vivienda real — pendiente, fuentes oficiales (sin scraping)
-1. **Mitma · Sistema Estatal de Índices de Precios de Alquiler** (€/m² por sección/municipio) y/o
-   **INE · Atlas de distribución de renta de los hogares** por sección censal.
-2. Unir con la **cartografía de secciones censales del INE** (Shapefile) → `housing_pressure` por
-   polígono real (no rejilla). Los "pins de precio" sólo con **datos agregados con licencia**,
-   nunca listados individuales de portales (LSSI/ToS).
+Dónde ir a por los datos (todo descarga gratuita):
+1. **Alquiler · Mitma** — *Sistema Estatal de Índices de Precios del Alquiler de Vivienda*
+   (€/m²/mes por **municipio y sección censal**). Buscar "SEIPAV" o vía
+   <https://www.transportes.gob.es> → Vivienda → Índice de alquiler (descargable en CSV/XLSX).
+2. **Renta · INE** — *Atlas de distribución de renta de los hogares* (renta media por **sección
+   censal**), en <https://www.ine.es> → Mercado laboral/Renta → Atlas (CSV por sección).
+3. **Geometría · INE** — *Cartografía de secciones censales* (Shapefile/GeoPackage) en
+   <https://www.ine.es> → Productos y servicios → Cartografía → "Seccionado censal".
+4. **Unir**: pegar (1)/(2) a (3) por el **código de sección** (`CUSEC`) → polígonos con
+   `housing_pressure` real (normalizar a 0..1). Reproyectar a WGS84 si hace falta (proj4, como en
+   `ingest-canopy.mjs`). Se podría escribir un `ingest-housing.mjs` análogo cuando tengas los CSV.
+5. **Pins de precio**: sólo con **datos agregados con licencia** (p. ej. medias por zona), nunca
+   raspando listados individuales de portales (Idealista/Booking lo prohíben — LSSI/ToS).
 
 El front consume el GeoJSON con *fallback*: si existe sustituye a los datos embebidos del mapa;
 si no, usa los de ejemplo (`apps/web/src/data/geo.js`). No rompe el build si falta.

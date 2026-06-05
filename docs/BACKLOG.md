@@ -34,9 +34,6 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 
 ## 🟡 Mejora continua / piezas simples (candidatas a avanzar ya)
 
-- **(b) Cubierta arbórea REAL (raster)**: la ingesta OSM (verde + servicios) ya es real para
-  Córdoba; `green_cover_pct` sigue siendo **proxy OSM**. Falta NDVI (Sentinel-2) / Urban Atlas STL
-  + GDAL (zonal stats). Procedimiento en `pipeline/README.md`. *Medio.*
 - **(c) Vivienda real (Málaga)**: sustituir la muestra por **Mitma (índice de alquiler)** + **INE
   (Atlas de renta + secciones censales)**; pins de precio solo con datos agregados con licencia
   (no scraping de portales).
@@ -73,6 +70,9 @@ priorizan piezas simples que aporten valor. Orden dentro de cada bloque ≈ prio
 - Mapas "tres casos" (`MapsSection` + `CaseMap`): Barcelona (hostil + toggle verde), Córdoba
   (déficit de verde) y Málaga (vivienda, muestra). Bloques tipo dossier, mapa montado al entrar
   en viewport, toggle de capas, popup, leyenda; estética Contradiseño (kicker, numeral, sierra).
+- Cubierta arbórea REAL (b) (`ingest-canopy.mjs`): Urban Atlas Street Tree Layer (FlatGeobuf,
+  EPSG:3035) → `tree_canopy_pct` por celda + recálculo del déficit. Córdoba (0–29%) y Málaga.
+  Sin GDAL/QGIS (flatgeobuf + proj4 + turf).
 - Ingesta OSM REAL (`fetch-osm.mjs` Overpass + `ingest-osm.mjs` turf, `cities.js`): Córdoba con
   **1.152 polígonos de verde + 849 POIs** reales → capas `green-deficit` (verde) y
   `services-deficit` (15-min, <800 m). Córdoba muestra ahora Verde + Servicios reales en el front.

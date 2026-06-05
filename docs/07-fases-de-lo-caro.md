@@ -38,8 +38,9 @@ La etapa de scoring ya está hecha; lo caro es la ingesta geoespacial.
 - **D2** ✅ (OSM real): `fetch-osm.mjs` (Overpass) baja verde (1.152 polígonos) + POIs (849)
   reales de Córdoba; `ingest-osm.mjs` calcula `green_*` y `service_deficit` (15-min, <800 m) por
   celda → GeoJSON reales. Fuentes: OSM + Ecologistas en Acción.
-- **D2b** ⛏️ (b): **cubierta arbórea REAL** (NDVI Sentinel-2 / Urban Atlas STL + GDAL zonal stats);
-  hoy `green_cover_pct` es proxy OSM. Procedimiento en `pipeline/README.md`.
+- **D2b** ✅ (b): **cubierta arbórea REAL** vía `ingest-canopy.mjs` — lee el Urban Atlas Street
+  Tree Layer (vector FlatGeobuf, EPSG:3035), reproyecta (proj4) y suma copa por celda (turf) →
+  `tree_canopy_pct` real + recálculo del déficit. Córdoba (0–29%) y Málaga hechas. Sin GDAL/QGIS.
 - **D-vivienda** ⛏️ (c): vivienda real desde **Mitma (índice de alquiler)** + **INE (Atlas de
   renta + secciones censales)**; Málaga es muestra. Sin scraping de portales (ToS).
 - **D3:** **teselado PMTiles** (tippecanoe) en R2 a escala ciudad.
