@@ -8,6 +8,7 @@ import { HOSTILE_POINTS, GREEN_DEFICIT } from "./geo.js";
 const RAMP_GREEN = [0, c.green, 0.5, "#d9c64a", 1, c.hostile]; // déficit de verde
 const RAMP_SERVICE = [0, c.service, 0.5, "#d9c64a", 1, c.hostile]; // déficit de servicios (15-min)
 const RAMP_HOUSING = [0, "#2a2433", 0.5, c.housing, 1, c.hostile]; // presión de vivienda
+const RAMP_INDEX = [0, "#241a1f", 0.5, "#9c2a18", 1, c.hostile]; // índice combinado de exclusión
 
 export const CASES = [
   {
@@ -24,6 +25,9 @@ export const CASES = [
       { key: "hostile", label: "Hostil", kind: "points", embedded: HOSTILE_POINTS, api: true },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/barcelona-green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
+      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/barcelona-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
+      { key: "income", label: "Renta", kind: "choropleth", url: "/data/barcelona-income.geojson", prop: "housing_vuln", ramp: RAMP_HOUSING },
+      { key: "index", label: "Índice", kind: "choropleth", url: "/data/barcelona-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
     ],
   },
   {
@@ -40,6 +44,7 @@ export const CASES = [
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/cordoba-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/cordoba-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
       { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/cordoba-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
+      { key: "index", label: "Índice", kind: "choropleth", url: "/data/cordoba-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
     ],
   },
   {
@@ -57,6 +62,7 @@ export const CASES = [
       { key: "income", label: "Renta", kind: "choropleth", url: "/data/malaga-income.geojson", prop: "housing_vuln", ramp: RAMP_HOUSING },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/malaga-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/malaga-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
+      { key: "index", label: "Índice", kind: "choropleth", url: "/data/malaga-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
       { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
     ],
   },

@@ -45,9 +45,9 @@
   .cj-card:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 0 var(--cardc, #ff3b12); }
 }
 
-/* Rejilla de tarjetas responsive: una columna en móvil. */
-.cj-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-@media (max-width: 640px) { .cj-grid { grid-template-columns: 1fr; } }
+/* Rejilla de tarjetas responsive: una columna en móvil/plegable. */
+.cj-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+@media (max-width: 768px) { .cj-grid { grid-template-columns: 1fr !important; } }
 
 /* Columnas con filete entre ellas → en móvil se apilan con filete inferior. */
 @media (max-width: 640px) {
@@ -63,9 +63,12 @@
   *, *::before, *::after { transition-duration: 0.001ms !important; }
 }
 
-/* Menú móvil como <dialog> nativo (focus trap + Escape + backdrop gratis). */
-dialog.cj-menu { border: 0; padding: 0; margin: 0; width: 100%; height: 100%;
-  max-width: 100vw; max-height: 100dvh; background: #0a0a0b; color: #f4f1ea; }
+/* Menú móvil como <dialog> nativo (focus trap + Escape + backdrop gratis).
+   Ocupa el viewport REAL (100dvh) y hace scroll si el contenido no cabe → el
+   aspa de cierre y los botones nunca se cortan. */
+dialog.cj-menu { position: fixed; inset: 0; border: 0; padding: 0; margin: 0;
+  width: 100%; height: 100dvh; max-width: none; max-height: none;
+  overflow-y: auto; background: #0a0a0b; color: #f4f1ea; }
 dialog.cj-menu[open] { display: flex; flex-direction: column; }
 dialog.cj-menu::backdrop { background: rgba(10,10,11,0.92); }
 

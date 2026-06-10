@@ -11,7 +11,7 @@ export default function MapsSection() {
     <div id="mapa" style={{ borderTop: `1px solid ${c.line}`, background: c.bgAlt }}>
       <div style={{ maxWidth: maxW, margin: "0 auto", padding: "clamp(56px,9vw,110px) 22px 0" }}>
         <SectionHead n="02" kicker="El mapa" title="Tres ciudades, tres exclusiones"
-          lead="La misma injusticia con tres caras. Barcelona la sufre en el mobiliario; Córdoba, en la falta de sombra; Málaga, en el precio del techo." />
+          lead="La misma injusticia con tres caras. Barcelona la sufre en el mobiliario; Córdoba, en la falta de sombra; Málaga, en el precio del techo. Conmuta las capas —o cruza el Índice— para ver si caen en los mismos barrios." />
         <KeyStrip />
       </div>
 
@@ -41,8 +41,10 @@ export default function MapsSection() {
       ))}
 
       <p style={{ maxWidth: maxW, margin: "0 auto", padding: "0 22px clamp(40px,6vw,72px)", fontFamily: font.mono, fontSize: 11.5, color: c.faint, lineHeight: 1.6 }}>
-        Capa caliente (hostil) desde reportes validados · capas frías desde Urban Atlas / NDVI / OSM
-        precalculadas. La capa de vivienda es una muestra hasta incorporar datos reales (ver docs).
+        Capa caliente (hostil) desde reportes validados · capas frías desde Urban Atlas / OSM / INE /
+        SERPAVI (verde, copa arbórea, servicios 15-min, alquiler €/m² y renta). El Índice cruza las
+        capas objetivas (verde + servicios + vivienda) por barrio; deja fuera la hostil, sesgada por
+        participación. Solo los pins de precio son ejemplos ilustrativos.
       </p>
     </div>
   );

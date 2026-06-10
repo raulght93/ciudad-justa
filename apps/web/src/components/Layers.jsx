@@ -7,15 +7,15 @@ import { Section, SectionHead, Reveal, SourceTag, Icon } from "./primitives.jsx"
 function LayerCard({ l, i }) {
   const [open, setOpen] = useState(false);
   return (
-    <Reveal i={i} style={{ height: "100%" }}>
-      <article className="cj-card" style={{ position: "relative", height: "100%", background: c.surface, border: `1px solid ${c.line}`,
-        borderTop: `4px solid ${l.color}`, padding: 26, overflow: "hidden", display: "flex", flexDirection: "column", "--cardc": l.color }}>
-        <span aria-hidden style={{ position: "absolute", top: -14, right: 4, fontFamily: font.display, fontSize: "clamp(78px,14vw,130px)", lineHeight: 1, color: l.color, opacity: 0.07, pointerEvents: "none" }}>{l.tag}</span>
+    <Reveal i={i}>
+      <article className="cj-card" style={{ position: "relative", background: c.surface, border: `1px solid ${c.line}`,
+        borderTop: `4px solid ${l.color}`, padding: 26, display: "flex", flexDirection: "column", "--cardc": l.color }}>
+        <span aria-hidden style={{ position: "absolute", top: 8, right: 10, fontFamily: font.display, fontSize: "clamp(56px,11vw,104px)", lineHeight: 1, color: l.color, opacity: 0.06, pointerEvents: "none" }}>{l.tag}</span>
         <div style={{ fontFamily: font.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: l.color, display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 16 }}>{l.icon}</span> Capa {l.tag}
         </div>
         <h3 style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "1.9rem", lineHeight: 0.92, margin: "14px 0 0", color: c.text }}>{l.title}</h3>
-        <p style={{ color: c.muted, lineHeight: 1.55, marginTop: 12, flex: 1 }}>{l.short}</p>
+        <p style={{ color: c.muted, lineHeight: 1.55, marginTop: 12 }}>{l.short}</p>
         <div style={{ fontFamily: font.mono, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: c.faint, marginTop: 16 }}>{l.layer}</div>
         <button onClick={() => setOpen(o => !o)} aria-expanded={open} style={{ marginTop: 16, alignSelf: "flex-start", background: "transparent", cursor: "pointer",
           border: `2px solid ${open ? l.color : c.lineStrong}`, color: open ? l.color : c.muted, fontFamily: font.mono, fontSize: 11, fontWeight: 700,

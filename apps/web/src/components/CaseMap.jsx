@@ -180,7 +180,8 @@ function Legend({ layer, color }) {
     return <span style={ls()}><span style={{ fontFamily: font.mono, fontSize: 10, fontWeight: 700, color: "#0a0a0b", background: color, border: "2px solid #0a0a0b", padding: "2px 6px" }}>€</span> Ejemplos de precio (muestra) · pulsa el pin</span>;
   }
   const lo = layer.ramp[1], hi = layer.ramp[layer.ramp.length - 1];
-  const word = layer.key === "housing" ? "presión" : layer.key === "income" ? "vulnerabilidad (menor renta)" : layer.key === "rent" ? "€/m² alquiler" : "déficit";
+  const WORDS = { housing: "presión", income: "vulnerabilidad (menor renta)", rent: "€/m² alquiler", index: "exclusión combinada" };
+  const word = WORDS[layer.key] || "déficit";
   return <span style={ls()}><span style={{ width: 64, height: 12, background: `linear-gradient(90deg, ${lo}, ${hi})`, border: `1px solid ${c.line}` }} /> menos → más {word}</span>;
 }
 function ls() { return { display: "inline-flex", alignItems: "center", gap: 8, fontFamily: font.mono, fontSize: 12, letterSpacing: "0.04em", color: c.muted }; }

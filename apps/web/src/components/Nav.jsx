@@ -66,25 +66,26 @@ export default function Nav() {
         <Icon name="menu" size={20} />
       </button>
 
-      <dialog ref={dialogRef} className="cj-menu" aria-label="Índice" onClose={() => setOpen(false)} style={{ padding: "16px 22px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Brand size={30} />
-          <button onClick={() => setOpen(false)} aria-label="Cerrar índice" style={{ background: "transparent", border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer" }}>
+      <dialog ref={dialogRef} className="cj-menu" aria-label="Índice" onClose={() => setOpen(false)}
+        style={{ padding: "14px 22px calc(18px + env(safe-area-inset-bottom)) 22px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flex: "0 0 auto" }}>
+          <Brand size={28} />
+          <button onClick={() => setOpen(false)} aria-label="Cerrar índice" style={{ background: "transparent", border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer", flex: "0 0 auto" }}>
             <Icon name="x" size={20} />
           </button>
         </div>
-        <ul style={{ listStyle: "none", margin: "auto 0", padding: 0, display: "grid", gap: 2 }}>
+        <ul style={{ listStyle: "none", margin: "20px 0 0", padding: 0, display: "grid", gap: 2 }}>
           {NAV.map((s) => (
             <li key={s.id}>
               <a href={`#${s.id}`} onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "baseline", gap: 14,
-                textDecoration: "none", padding: "12px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
+                textDecoration: "none", padding: "11px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
                 <span style={{ fontFamily: font.mono, fontSize: 13, color: c.accent, fontWeight: 700 }}>{s.n}</span>
-                <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "2rem", color: c.text }}>{s.label}</span>
+                <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "clamp(1.5rem,6vw,2rem)", lineHeight: 1, color: c.text }}>{s.label}</span>
               </a>
             </li>
           ))}
         </ul>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}><DirectionToggle /></div>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: 24 }}><DirectionToggle /></div>
       </dialog>
     </nav>
   );
