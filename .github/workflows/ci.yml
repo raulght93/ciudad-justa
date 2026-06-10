@@ -35,3 +35,17 @@ jobs:
         with:
           node-version: "22"
       - run: node --test
+
+  pipeline:
+    name: Pipeline (test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # Tests de helpers puros (score/parse): no requieren las deps geo (turf, etc.).
+      - run: node --test test/*.test.mjs

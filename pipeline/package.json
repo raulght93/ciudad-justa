@@ -6,7 +6,8 @@
   "description": "Pipeline batch de capas frías (datos abiertos → GeoJSON/PMTiles estáticos).",
   "scripts": {
     "build:green": "node build-green-layer.mjs",
-    "ingest": "node ingest-osm.mjs"
+    "ingest": "node ingest-osm.mjs",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "@turf/turf": "^6.5.0",

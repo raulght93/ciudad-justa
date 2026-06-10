@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 import * as shapefile from "shapefile";
 import * as turf from "@turf/turf";
 import proj4 from "proj4";
+import { cusec10, toNumberEs } from "./lib/parse.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const [csvId, prefix, outName] = process.argv.slice(2);
@@ -37,14 +38,12 @@ const lines = readFileSync(INC, "utf8").split(/\r?\n/);
 for (const line of lines) {
   const col = line.split("\t");
   if (col.length < 6) continue;
-  const sec = col[2]; // "2906701001 Málaga sección 01001"
-  const m = sec.match(/^(\d{10})/);
-  if (!m) continue;                                   // solo filas de sección
+  const cusec = cusec10(col[2]);                      // "2906701001 Málaga sección 01001"
+  if (!cusec) continue;                               // solo filas de sección
   if (col[3] !== "Renta neta media por persona") continue;
   if (col[4] !== "2023") continue;                    // último año disponible
-  const val = col[5].replace(/"/g, "").replace(/\./g, "").trim();
-  if (!val) continue;                                 // suprimido por privacidad
-  income[m[1]] = parseInt(val, 10);
+  const v = toNumberEs(col[5]);
+  if (Number.isFinite(v) && v > 0) income[cusec] = v; // si está suprimido por privacidad, NaN → fuera
 }
 console.log(`Renta: ${Object.keys(income).length} secciones con dato (CSV ${csvId})`);
 

@@ -18,6 +18,7 @@ import * as shapefile from "shapefile";
 import * as turf from "@turf/turf";
 import proj4 from "proj4";
 import XLSX from "xlsx";
+import { cusec10, toNumberEs } from "./lib/parse.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -49,8 +50,8 @@ if (secIdx < 0 || rentIdx < 0) { console.error(`No encuentro columnas (CUSEC=${s
 
 const rent = {};
 for (const r of dataRows) {
-  const cusec = String(r[secIdx] ?? "").trim().match(/\d{10}/)?.[0];
-  const v = typeof r[rentIdx] === "number" ? r[rentIdx] : parseFloat(String(r[rentIdx] ?? "").replace(",", "."));
+  const cusec = cusec10(r[secIdx]);
+  const v = toNumberEs(r[rentIdx]);
   if (cusec && Number.isFinite(v) && v > 0) rent[cusec] = v;
 }
 console.log(`SERPAVI: ${Object.keys(rent).length} secciones con ${RENT_COL} (€/m²·mes)`);
