@@ -85,7 +85,10 @@ export default function Nav() {
             </li>
           ))}
         </ul>
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "auto", paddingTop: 24 }}><DirectionToggle /></div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center", marginTop: "auto", paddingTop: 24 }}>
+          <Button href="#/reportar" icon="arrowRight" onClick={() => setOpen(false)} style={{ width: "100%", justifyContent: "center" }}>Reportar una barrera</Button>
+          <DirectionToggle />
+        </div>
       </dialog>
     </nav>
   );

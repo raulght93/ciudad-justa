@@ -67,8 +67,11 @@
    Ocupa el viewport REAL (100dvh) y hace scroll si el contenido no cabe → el
    aspa de cierre y los botones nunca se cortan. */
 dialog.cj-menu { position: fixed; inset: 0; border: 0; padding: 0; margin: 0;
-  width: 100%; height: 100dvh; max-width: none; max-height: none;
-  overflow-y: auto; background: #0a0a0b; color: #f4f1ea; }
+  width: 100vw; max-width: 100vw;
+  height: 100vh; height: 100dvh;            /* 100vh = respaldo si no hay dvh (Samsung Internet viejo) */
+  max-height: 100vh; max-height: 100dvh;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  background: #0a0a0b; color: #f4f1ea; }
 dialog.cj-menu[open] { display: flex; flex-direction: column; }
 dialog.cj-menu::backdrop { background: rgba(10,10,11,0.92); }
 

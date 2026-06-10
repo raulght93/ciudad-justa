@@ -76,7 +76,11 @@ export default function CaseMap({ caseDef }) {
     let map;
     try {
       map = new maplibregl.Map({ container: elRef.current, style: STYLE, center: caseDef.center, zoom: caseDef.zoom,
-        attributionControl: { compact: true }, cooperativeGestures: true });
+        attributionControl: { compact: true }, cooperativeGestures: true,
+        locale: {
+          "CooperativeGesturesHandler.MobileHelpText": "Usa dos dedos para mover el mapa",
+          "CooperativeGesturesHandler.WindowsHelpText": "Usa Ctrl + rueda para hacer zoom",
+        } });
       mapRef.current = map;
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
       map.on("error", () => setErr(true));

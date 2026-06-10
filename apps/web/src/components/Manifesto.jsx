@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { c, font, maxW } from "../styles/tokens.js";
 import { MANIFESTO, HOW } from "../data/content.js";
-import { Section, SectionHead, Reveal, Sawtooth, Icon } from "./primitives.jsx";
+import { Section, SectionHead, Reveal, Sawtooth, Icon, Button } from "./primitives.jsx";
 
 export default function Manifesto() {
   const [open, setOpen] = useState(false);
@@ -56,6 +56,12 @@ export function How() {
           </Reveal>
         ))}
       </ol>
+      <Reveal>
+        <div style={{ marginTop: 26, display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
+          <Button href="#/reportar" icon="arrowRight">Reportar una barrera</Button>
+          <span style={{ fontFamily: font.mono, fontSize: 12, color: c.faint, letterSpacing: "0.04em" }}>demo · escribe en la API del proyecto</span>
+        </div>
+      </Reveal>
     </Section>
   );
 }
