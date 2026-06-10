@@ -69,9 +69,10 @@ npm test                                       # vitest: datos + render + axe (a
 npm run build                                  # producción → dist/ (Cloudflare Pages)
 
 # Worker (requiere wrangler) — D1 ya creada (ver wrangler.toml)
-cd worker && node --test                                  # 28 tests, sin deps
+cd worker && node --test                                  # 29 tests, sin deps
 npx wrangler d1 execute ciudad-justa --remote --file=../db/schema.sql   # esquema (idempotente)
-npx wrangler d1 execute ciudad-justa --remote --file=../db/seed.sql     # seed curado (demo)
+npx wrangler d1 execute ciudad-justa --remote --file=../db/migrations/0001-add-report-type.sql  # columna type (si la D1 ya existía)
+npx wrangler d1 execute ciudad-justa --remote --file=../db/seed.sql     # seed curado (demo, con tipos)
 npx wrangler r2 bucket create ciudad-justa-photos          # fotos (binding PHOTOS)
 npx wrangler secret put MOD_TOKEN                          # token de moderación (#/mod)
 npx wrangler deploy

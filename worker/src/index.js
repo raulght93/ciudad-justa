@@ -10,6 +10,9 @@ const CATEGORIES = new Set([
   "surface", "surveillance", "light_sound", "ghost_amenity",
 ]);
 
+// Tipos de exclusión (espejo del CHECK de reports.type).
+const TYPES = new Set(["hostile", "climate", "housing", "service"]);
+
 // Umbrales de transición de estado por score (docs/04 §4.4). Configurables.
 const UNDER_REVIEW_AT = 2; // score ≥ → entra en cola de revisión
 const CONFIRM_AT = 5; //       score ≥ → confirmado por la comunidad
@@ -109,7 +112,7 @@ export default {
 
       // D1: consulta espacial por bounding-box (índice idx_reports_bbox).
       let sql =
-        "SELECT id,lat,lng,status,description,score FROM reports " +
+        "SELECT id,lat,lng,type,status,description,score FROM reports " +
         "WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?";
       const args = [minLat, maxLat, minLng, maxLng];
       if (status) {
@@ -126,7 +129,7 @@ export default {
         features: (results || []).map((r) => ({
           type: "Feature",
           geometry: { type: "Point", coordinates: [r.lng, r.lat] },
-          properties: { id: r.id, status: r.status, description: r.description, score: r.score },
+          properties: { id: r.id, type: r.type || "hostile", status: r.status, description: r.description, score: r.score },
         })),
       });
     }
@@ -140,7 +143,8 @@ export default {
       if (body.lat < -90 || body.lat > 90 || body.lng < -180 || body.lng > 180) {
         return json({ error: "lat/lng fuera de rango" }, 400);
       }
-      // Categorías: filtra a las válidas de la taxonomía.
+      // Tipo de exclusión (default hostil) + categorías válidas de la taxonomía.
+      const reportType = TYPES.has(body.type) ? body.type : "hostile";
       const categories = Array.isArray(body.categories)
         ? [...new Set(body.categories.filter((k) => CATEGORIES.has(k)))]
         : [];
@@ -159,9 +163,9 @@ export default {
           "INSERT OR IGNORE INTO users (id, role, reputation, created_at) VALUES (?, 'user', 1.0, ?)"
         ).bind(device, now),
         env.DB.prepare(
-          "INSERT INTO reports (id, lat, lng, geohash, status, taxonomy_version, score, description, created_by, created_at, updated_at) " +
-          "VALUES (?, ?, ?, ?, 'reported', 1, 0, ?, ?, ?, ?)"
-        ).bind(id, body.lat, body.lng, gh, body.description ?? null, device, now, now),
+          "INSERT INTO reports (id, lat, lng, type, geohash, status, taxonomy_version, score, description, created_by, created_at, updated_at) " +
+          "VALUES (?, ?, ?, ?, ?, 'reported', 1, 0, ?, ?, ?, ?)"
+        ).bind(id, body.lat, body.lng, reportType, gh, body.description ?? null, device, now, now),
         ...categories.map((k) =>
           env.DB.prepare(
             "INSERT INTO report_categories (report_id, category_key) VALUES (?, ?)"
@@ -170,7 +174,7 @@ export default {
       ];
       await env.DB.batch(stmts);
 
-      return json({ id, status: "reported", categories, geohash: gh }, 201);
+      return json({ id, status: "reported", type: reportType, categories, geohash: gh }, 201);
     }
 
     // POST /api/reports/:id/vote  { value: +1 | -1 }   (E1b — votación ponderada)

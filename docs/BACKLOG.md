@@ -19,9 +19,6 @@ Orden = prioridad dentro de cada bloque.
 
 ## 🟠 Para la Fase 1 social (cuando se decida abrir)
 
-- **Persistir el `type` de reporte en D1** (columna `reports.type`) + **renderizar los tipos por
-  color en el mapa** (hoy el selector tipo→subtipo es front; la capa hostil pinta todo rojo).
-  Requiere schema + worker + re-aplicar schema a D1.
 - **Auth de sesión real** (magic-link) en vez del secreto compartido `MOD_TOKEN` de moderación.
 - **Decisión: plataforma propia vs. contribuir a Arrels** (`02 §2.3 bis`) — explorar colaboración.
 - **R2**: `wrangler r2 bucket create ciudad-justa-photos` + política de retención/servido de fotos.
@@ -59,7 +56,10 @@ Orden = prioridad dentro de cada bloque.
 - **A11y/móvil**: rejilla 1-col ≤768px, cards sin recorte, menú `<dialog>` nativo (flujo bloque +
   ✕ sticky + `100svh` con scroll → no se corta; focus trap + Escape + backdrop), foco visible,
   `prefers-reduced-motion`, reveal por scroll, gestos del mapa en español.
-- **Reporte (demo)**: selector tipo global → subtipo con color por tipo (hostil/verde/clima/
+- **Reporte (demo)**: selector tipo global → subtipo con color por tipo (hostil/clima+verde/
   vivienda/servicios), preview de foto (con fallback si el navegador no difumina) y zona
   (barrio·ciudad) por geocodificación inversa (OSM/Nominatim).
+- **Tipos de reporte persistidos**: `reports.type` en D1 (schema + migración 0001 + worker
+  GET/POST + tests) y **puntos del mapa coloreados por tipo** (match en CaseMap) con leyenda y
+  popup por tipo. Falta reaplicar la migración en la D1 desplegada + redeploy.
 - **SEO/branding**: favicon + `og-card.svg` (estética nueva) + Open Graph/Twitter.

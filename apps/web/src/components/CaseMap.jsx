@@ -25,6 +25,8 @@ const STYLE = {
   layers: [{ id: "carto", type: "raster", source: "carto" }],
 };
 const STATUS_LABEL = { reported: "Sin verificar", under_review: "En revisión", confirmed: "Confirmado", disputed: "En discusión", documented: "Documentado", rejected: "Descartado" };
+const TYPE_LABEL = { hostile: "Hostil", climate: "Clima y verde", housing: "Vivienda", service: "Servicios" };
+const TYPE_COLOR = { hostile: c.hostile, climate: c.green, housing: c.housing, service: c.service };
 const EMPTY = { type: "FeatureCollection", features: [] };
 
 export default function CaseMap({ caseDef }) {
@@ -100,7 +102,10 @@ export default function CaseMap({ caseDef }) {
             map.on("mousemove", id, (e) => { map.getCanvas().style.cursor = "pointer"; const p = e.features[0].properties; hover.setLngLat(e.lngLat).setHTML(`<div style="font-family:${font.mono};font-size:11px;color:#111"><strong>${p.barrio || p.zona || p.cusec || ""}</strong><br>${p.detail || ""}</div>`).addTo(map); });
             map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; hover.remove(); });
           } else {
-            map.addLayer({ id, type: "circle", source: id, layout: { visibility }, paint: { "circle-radius": ["match", ["get", "status"], "confirmed", 8, "documented", 8, 6], "circle-color": color, "circle-opacity": ["match", ["get", "status"], "reported", 0.5, "disputed", 0.6, 0.92], "circle-stroke-width": 1.5, "circle-stroke-color": "#fff2" } });
+            map.addLayer({ id, type: "circle", source: id, layout: { visibility }, paint: {
+              "circle-radius": ["match", ["get", "status"], "confirmed", 8, "documented", 8, 6],
+              "circle-color": ["match", ["get", "type"], "climate", c.green, "housing", c.housing, "service", c.service, "hostile", c.hostile, color],
+              "circle-opacity": ["match", ["get", "status"], "reported", 0.5, "disputed", 0.6, 0.92], "circle-stroke-width": 1.5, "circle-stroke-color": "#fff2" } });
             wirePopup(map, id);
           }
           if (l.url) fetch(l.url).then((r) => (r.ok ? r.json() : null)).then((gj) => gj && map.getSource(id)?.setData(gj)).catch(() => {});
@@ -166,10 +171,12 @@ function wirePopup(map, layerId) {
   map.on("click", layerId, (e) => {
     const p = e.features[0].properties;
     const cats = Array.isArray(p.categories) ? p.categories : JSON.parse(p.categories || "[]");
+    const tcol = TYPE_COLOR[p.type] || c.accentDeep;
     popup.setLngLat(e.lngLat).setHTML(
       `<div style="font-family:${font.sans};max-width:220px">
-         <strong style="color:${c.accentDeep}">${STATUS_LABEL[p.status] || p.status}</strong>
-         <div style="margin-top:4px;color:#111">${p.description || ""}</div>
+         <span style="font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;background:${tcol};color:#0a0a0b;padding:2px 6px">${TYPE_LABEL[p.type] || "Hostil"}</span>
+         <strong style="color:#111;margin-left:6px">${STATUS_LABEL[p.status] || p.status}</strong>
+         <div style="margin-top:5px;color:#111">${p.description || ""}</div>
          <div style="margin-top:6px;font-size:11px;color:#666">${cats.join(" · ")}</div>
        </div>`).addTo(map);
   });
@@ -178,7 +185,15 @@ function wirePopup(map, layerId) {
 function Legend({ layer, color }) {
   if (!layer) return null;
   if (layer.kind === "points") {
-    return <span style={ls()}><span style={{ width: 14, height: 14, borderRadius: 999, background: color, border: `1px solid ${c.line}` }} /> Punto reportado · pulsa para detalle</span>;
+    return (
+      <span style={ls()}>
+        {Object.entries(TYPE_COLOR).map(([k, col]) => (
+          <span key={k} style={{ display: "inline-flex", alignItems: "center", gap: 5, marginRight: 12 }}>
+            <span style={{ width: 11, height: 11, borderRadius: 999, background: col, border: `1px solid ${c.line}` }} /> {TYPE_LABEL[k]}
+          </span>
+        ))}
+      </span>
+    );
   }
   if (layer.kind === "price") {
     return <span style={ls()}><span style={{ fontFamily: font.mono, fontSize: 10, fontWeight: 700, color: "#0a0a0b", background: color, border: "2px solid #0a0a0b", padding: "2px 6px" }}>€</span> Ejemplos de precio (muestra) · pulsa el pin</span>;

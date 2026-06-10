@@ -22,14 +22,19 @@ export const HOSTILE_POINTS = {
     f(2.1712, 41.3812, "confirmed", ["ghost_amenity"], "Aseo público clausurado sin alternativa"),
     f(2.1870, 41.3940, "disputed", ["barrier"], "Maceteros alineados que bloquean el resguardo"),
     f(2.1583, 41.3835, "confirmed", ["spikes"], "Pinchos en alféizar a la altura de la calle"),
+    // Otros tipos de exclusión (cada uno con su color en el mapa).
+    f(2.1640, 41.3865, "confirmed", ["sin_arbolado"], "Plaza dura sin un solo árbol", "climate"),
+    f(2.1805, 41.3848, "reported", ["isla_calor"], "Asfalto recalentado, sin sombra a mediodía", "climate"),
+    f(2.1700, 41.3905, "confirmed", ["alquiler_alto"], "Bloque con alquileres disparados", "housing"),
+    f(2.1882, 41.3905, "reported", ["sin_salud"], "Sin farmacia ni transporte a 15 min", "service"),
   ],
 };
 
-function f(lng, lat, status, categories, description) {
+function f(lng, lat, status, categories, description, type = "hostile") {
   return {
     type: "Feature",
     geometry: { type: "Point", coordinates: [lng, lat] },
-    properties: { status, categories, description },
+    properties: { type, status, categories, description },
   };
 }
 

@@ -167,9 +167,8 @@ export const REPORT_TYPES = [
     ["anti_lie_down", "Anti-tumbado"], ["anti_sit", "Anti-sentarse"], ["spikes", "Pinchos"],
     ["barrier", "Barreras"], ["surface", "Superficie"], ["surveillance", "Vigilancia"],
     ["light_sound", "Luz / sonido"], ["ghost_amenity", "Amenidad fantasma"] ] },
-  { key: "green", label: "Falta de árboles / verde", color: c.green, subtypes: [
-    ["sin_arbolado", "Sin arbolado"], ["sin_sombra", "Sin sombra"], ["parque_lejos", "Parque lejos"], ["tala", "Tala reciente"] ] },
-  { key: "climate", label: "Calor / clima", color: c.yellow, subtypes: [
+  { key: "climate", label: "Clima y verde", color: c.green, subtypes: [
+    ["sin_arbolado", "Falta de árboles"], ["sin_sombra", "Sin sombra"], ["parque_lejos", "Parque lejos"], ["tala", "Tala reciente"],
     ["temp_alta", "Temperatura elevada"], ["isla_calor", "Isla de calor"], ["sin_fuentes", "Sin fuentes de agua"], ["asfalto", "Todo asfalto"] ] },
   { key: "housing", label: "Alquiler abusivo", color: c.housing, subtypes: [
     ["alquiler_alto", "Precio desorbitado"], ["subida", "Subida abusiva"], ["turistificacion", "Turistificación"], ["desahucio", "Desahucio / acoso"] ] },

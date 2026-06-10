@@ -48,13 +48,14 @@ test("GET /api/reports con bbox pero sin D1 → 501", async () => {
 
 test("GET /api/reports devuelve GeoJSON desde D1 con consulta bbox", async () => {
   const db = mockDB([
-    { id: "r1", lat: 41.38, lng: 2.17, status: "confirmed", description: "Banco", score: 3 },
+    { id: "r1", lat: 41.38, lng: 2.17, type: "climate", status: "confirmed", description: "Banco", score: 3 },
   ]);
   const res = await worker.fetch(req("/api/reports?bbox=2.1,41.3,2.2,41.4&status=confirmed"), { DB: db });
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.type, "FeatureCollection");
   assert.deepEqual(body.features[0].geometry.coordinates, [2.17, 41.38]);
+  assert.equal(body.features[0].properties.type, "climate");
   const q = db.log[0];
   assert.match(q.sql, /lat BETWEEN \? AND \?/);
   assert.match(q.sql, /status = \?/);
@@ -98,6 +99,13 @@ test("POST /api/reports inserta reporte + categorías + usuario y devuelve 201",
   // El usuario anónimo viene de la cabecera.
   const userStmt = db.log.find((s) => /INSERT OR IGNORE INTO users/.test(s.sql));
   assert.equal(userStmt.args[0], "dev-123");
+});
+
+test("POST /api/reports guarda el type válido y cae a 'hostile' si es inválido", async () => {
+  const ok = await (await worker.fetch(post({ lat: 41.38, lng: 2.17, type: "climate" }), { DB: mockDB() })).json();
+  assert.equal(ok.type, "climate");
+  const bad = await (await worker.fetch(post({ lat: 41.38, lng: 2.17, type: "inventado" }), { DB: mockDB() })).json();
+  assert.equal(bad.type, "hostile");
 });
 
 // ---- E1b: votación ----

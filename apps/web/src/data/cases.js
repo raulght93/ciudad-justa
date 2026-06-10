@@ -22,7 +22,7 @@ export const CASES = [
     note: "Bancos mínimos, pinchos, amenidades fantasma: diseño planificado para expulsar. Pulsa un punto.",
     stat: { value: "1.288", label: "barreras en el mapa de Arrels", source: "arrels" },
     layers: [
-      { key: "hostile", label: "Hostil", kind: "points", embedded: HOSTILE_POINTS, api: true },
+      { key: "hostile", label: "Reportes", kind: "points", embedded: HOSTILE_POINTS, api: true },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/barcelona-green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
       { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/barcelona-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },

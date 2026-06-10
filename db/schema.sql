@@ -16,11 +16,13 @@ CREATE TABLE IF NOT EXISTS users (
   created_at  INTEGER NOT NULL
 );
 
--- Reportes: un punto de arquitectura hostil.
+-- Reportes: un punto de exclusión (hostil/clima/vivienda/servicios).
 CREATE TABLE IF NOT EXISTS reports (
   id               TEXT PRIMARY KEY,
   lat              REAL NOT NULL,
   lng              REAL NOT NULL,
+  type             TEXT NOT NULL DEFAULT 'hostile'
+                     CHECK (type IN ('hostile','climate','housing','service')),
   geohash          TEXT NOT NULL,          -- para clustering/dedupe barato
   status           TEXT NOT NULL DEFAULT 'reported'
                      CHECK (status IN ('reported','under_review','confirmed',
@@ -37,6 +39,7 @@ CREATE TABLE IF NOT EXISTS reports (
 CREATE INDEX IF NOT EXISTS idx_reports_bbox    ON reports(lat, lng);
 CREATE INDEX IF NOT EXISTS idx_reports_geohash ON reports(geohash);
 CREATE INDEX IF NOT EXISTS idx_reports_status  ON reports(status);
+CREATE INDEX IF NOT EXISTS idx_reports_type    ON reports(type);
 
 -- Categorías por reporte (N:M). category_key valida contra la taxonomía (docs/04 §4.2).
 CREATE TABLE IF NOT EXISTS report_categories (
