@@ -64,6 +64,19 @@ function blurBoxes(ctx, canvas, boxes, pad = 0.25) {
   }
 }
 
+// Solo reencoda (quita EXIF) sin detección — para la PREVIEW de demo cuando el
+// navegador no trae FaceDetector. Marca unverified: hay que difuminar a mano
+// antes de publicar.
+export async function stripOnly(file) {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  canvas.getContext("2d").drawImage(bitmap, 0, 0);
+  const blob = await new Promise((res) => canvas.toBlob(res, "image/jpeg", 0.85));
+  return { blob, blurred: false, facesFound: 0, unverified: true };
+}
+
 // Prepara una foto para subir respetando el gate. Lanza GateBlocked si no se
 // puede garantizar que no se expone a nadie.
 export async function prepareForUpload(file, opts = {}) {

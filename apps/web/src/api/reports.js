@@ -46,11 +46,11 @@ export async function moderate(id, action, opts = {}) {
 }
 
 /** Crea un reporte. POST /api/reports → { id, status, categories, geohash } */
-export async function submitReport({ lat, lng, categories, description, device }) {
+export async function submitReport({ lat, lng, type, categories, description, device }) {
   const headers = { "content-type": "application/json" };
   if (device) headers["x-device-id"] = device;
   const res = await fetch(`${API_URL}/api/reports`, {
-    method: "POST", headers, body: JSON.stringify({ lat, lng, categories, description }),
+    method: "POST", headers, body: JSON.stringify({ lat, lng, type, categories, description }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error || `report ${res.status}`);

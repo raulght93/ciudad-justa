@@ -19,6 +19,9 @@ Orden = prioridad dentro de cada bloque.
 
 ## 🟠 Para la Fase 1 social (cuando se decida abrir)
 
+- **Persistir el `type` de reporte en D1** (columna `reports.type`) + **renderizar los tipos por
+  color en el mapa** (hoy el selector tipo→subtipo es front; la capa hostil pinta todo rojo).
+  Requiere schema + worker + re-aplicar schema a D1.
 - **Auth de sesión real** (magic-link) en vez del secreto compartido `MOD_TOKEN` de moderación.
 - **Decisión: plataforma propia vs. contribuir a Arrels** (`02 §2.3 bis`) — explorar colaboración.
 - **R2**: `wrangler r2 bucket create ciudad-justa-photos` + política de retención/servido de fotos.
@@ -53,6 +56,10 @@ Orden = prioridad dentro de cada bloque.
 - **Backend** (Worker + D1): GET/POST reports, voto ponderado, reputación, moderación con token,
   R2 de fotos; blur-gate en cliente; conectado a la front (capa hostil viva + CTA `#/reportar`).
 - **Tests**: 20 front (datos, Hero, axe) + 22 worker; **CI** (test+build) y **deploy del Worker**.
-- **A11y/móvil**: rejilla 1-col ≤768px, cards sin recorte, menú `<dialog>` nativo a `100dvh` con
-  scroll (focus trap + Escape + backdrop), foco visible, `prefers-reduced-motion`, reveal por scroll.
+- **A11y/móvil**: rejilla 1-col ≤768px, cards sin recorte, menú `<dialog>` nativo (flujo bloque +
+  ✕ sticky + `100svh` con scroll → no se corta; focus trap + Escape + backdrop), foco visible,
+  `prefers-reduced-motion`, reveal por scroll, gestos del mapa en español.
+- **Reporte (demo)**: selector tipo global → subtipo con color por tipo (hostil/verde/clima/
+  vivienda/servicios), preview de foto (con fallback si el navegador no difumina) y zona
+  (barrio·ciudad) por geocodificación inversa (OSM/Nominatim).
 - **SEO/branding**: favicon + `og-card.svg` (estética nueva) + Open Graph/Twitter.

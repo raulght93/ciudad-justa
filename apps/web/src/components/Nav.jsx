@@ -66,28 +66,29 @@ export default function Nav() {
         <Icon name="menu" size={20} />
       </button>
 
-      <dialog ref={dialogRef} className="cj-menu" aria-label="Índice" onClose={() => setOpen(false)}
-        style={{ padding: "14px 22px calc(18px + env(safe-area-inset-bottom)) 22px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flex: "0 0 auto" }}>
-          <Brand size={28} />
-          <button onClick={() => setOpen(false)} aria-label="Cerrar índice" style={{ background: "transparent", border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer", flex: "0 0 auto" }}>
-            <Icon name="x" size={20} />
-          </button>
-        </div>
-        <ul style={{ listStyle: "none", margin: "20px 0 0", padding: 0, display: "grid", gap: 2 }}>
-          {NAV.map((s) => (
-            <li key={s.id}>
-              <a href={`#${s.id}`} onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "baseline", gap: 14,
-                textDecoration: "none", padding: "11px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
-                <span style={{ fontFamily: font.mono, fontSize: 13, color: c.accent, fontWeight: 700 }}>{s.n}</span>
-                <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "clamp(1.5rem,6vw,2rem)", lineHeight: 1, color: c.text }}>{s.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center", marginTop: "auto", paddingTop: 24 }}>
-          <Button href="#/reportar" icon="arrowRight" onClick={() => setOpen(false)} style={{ width: "100%", justifyContent: "center" }}>Reportar una barrera</Button>
-          <DirectionToggle />
+      <dialog ref={dialogRef} className="cj-menu" aria-label="Índice" onClose={() => setOpen(false)}>
+        <div style={{ padding: "0 22px calc(28px + env(safe-area-inset-bottom))" }}>
+          <div className="cj-menu-top">
+            <Brand size={28} />
+            <button onClick={() => setOpen(false)} aria-label="Cerrar índice" style={{ background: c.bg, border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer" }}>
+              <Icon name="x" size={20} />
+            </button>
+          </div>
+          <ul style={{ listStyle: "none", margin: "12px 0 0", padding: 0, display: "grid", gap: 2 }}>
+            {NAV.map((s) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`} onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "baseline", gap: 14,
+                  textDecoration: "none", padding: "11px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
+                  <span style={{ fontFamily: font.mono, fontSize: 13, color: c.accent, fontWeight: 700 }}>{s.n}</span>
+                  <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "clamp(1.5rem,6vw,2rem)", lineHeight: 1, color: c.text }}>{s.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "center", marginTop: 28 }}>
+            <Button href="#/reportar" icon="arrowRight" onClick={() => setOpen(false)} style={{ width: "100%", justifyContent: "center" }}>Reportar una barrera</Button>
+            <DirectionToggle />
+          </div>
         </div>
       </dialog>
     </nav>

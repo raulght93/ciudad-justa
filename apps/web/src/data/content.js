@@ -161,6 +161,22 @@ export const LAYERS = [
   },
 ];
 
+// Tipos de reporte: tipo global → subtipos, cada tipo con su color de capa.
+export const REPORT_TYPES = [
+  { key: "hostile", label: "Arquitectura hostil", color: c.hostile, subtypes: [
+    ["anti_lie_down", "Anti-tumbado"], ["anti_sit", "Anti-sentarse"], ["spikes", "Pinchos"],
+    ["barrier", "Barreras"], ["surface", "Superficie"], ["surveillance", "Vigilancia"],
+    ["light_sound", "Luz / sonido"], ["ghost_amenity", "Amenidad fantasma"] ] },
+  { key: "green", label: "Falta de árboles / verde", color: c.green, subtypes: [
+    ["sin_arbolado", "Sin arbolado"], ["sin_sombra", "Sin sombra"], ["parque_lejos", "Parque lejos"], ["tala", "Tala reciente"] ] },
+  { key: "climate", label: "Calor / clima", color: c.yellow, subtypes: [
+    ["temp_alta", "Temperatura elevada"], ["isla_calor", "Isla de calor"], ["sin_fuentes", "Sin fuentes de agua"], ["asfalto", "Todo asfalto"] ] },
+  { key: "housing", label: "Alquiler abusivo", color: c.housing, subtypes: [
+    ["alquiler_alto", "Precio desorbitado"], ["subida", "Subida abusiva"], ["turistificacion", "Turistificación"], ["desahucio", "Desahucio / acoso"] ] },
+  { key: "service", label: "Pocos servicios", color: c.service, subtypes: [
+    ["sin_salud", "Sin salud"], ["sin_transporte", "Sin transporte"], ["sin_comercio", "Sin comercio"], ["sin_escuela", "Sin escuela"] ] },
+];
+
 // Cómo funciona (3 pasos).
 export const HOW = [
   { n: 1, t: "Detecta", d: "Fotografías el objeto —nunca a la persona—. El rostro se difumina en tu móvil antes de subir nada; si no se puede, no se sube." },
