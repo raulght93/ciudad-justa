@@ -1,7 +1,7 @@
 // apps/web/src/components/primitives.jsx
 // Primitivas del sistema "Contradiseño" como módulos ES (estilos inline + tokens).
 
-import { useId, useState } from "react";
+import { useId, useState, useEffect, useRef } from "react";
 import { c, font, radius, maxW, kicker as kickerBase } from "../styles/tokens.js";
 import { SOURCES } from "../data/content.js";
 
@@ -116,8 +116,29 @@ export function Sawtooth({ flip = false, color = c.accent }) {
     background: `linear-gradient(135deg, ${color} 50%, transparent 50%) 0 0 / 14px 14px repeat-x` }} />;
 }
 
-export function Reveal({ children, as: Tag = "div", style }) {
-  return <Tag className="cj-reveal" style={style}>{children}</Tag>;
+// Entrada al hacer scroll: añade la animación sólo cuando el elemento entra en
+// viewport (más dinámico que animar todo al montar) y escalona con `i`. La
+// opacidad nunca baja (siempre legible); sólo transforma. Respeta reduced-motion.
+export function Reveal({ children, as: Tag = "div", style, i = 0 }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || typeof IntersectionObserver === "undefined") { setShown(true); return; }
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setShown(true); io.disconnect(); } }),
+      { rootMargin: "0px 0px -8% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <Tag ref={ref} className={shown ? "cj-reveal" : "cj-reveal-pre"} style={{ "--i": i, ...style }}>
+      {children}
+    </Tag>
+  );
 }
 
 export function Section({ id, children, style, bg }) {

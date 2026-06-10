@@ -45,9 +45,9 @@ export function How() {
   return (
     <Section id="como">
       <SectionHead n="03" kicker="Cómo funciona" title="Detecta, valida, revierte" color={c.yellow} />
-      <ol style={{ listStyle: "none", padding: 0, margin: "38px 0 0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", border: `2px solid ${c.text}`, background: c.surface }}>
+      <ol className="cj-divcol" style={{ listStyle: "none", padding: 0, margin: "38px 0 0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", border: `2px solid ${c.text}`, background: c.surface }}>
         {HOW.map((s, i) => (
-          <Reveal key={s.n} as="li" style={{ borderRight: i < HOW.length - 1 ? `2px solid ${c.text}` : "none" }}>
+          <Reveal key={s.n} as="li" i={i} style={{ borderRight: i < HOW.length - 1 ? `2px solid ${c.text}` : "none" }}>
             <div style={{ padding: 28, height: "100%" }}>
               <div style={{ fontFamily: font.display, fontSize: "3.4rem", lineHeight: 0.85, color: c.accent }}>{String(s.n).padStart(2, "0")}</div>
               <h3 style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "1.7rem", margin: "12px 0 0", color: c.text }}>{s.t}</h3>

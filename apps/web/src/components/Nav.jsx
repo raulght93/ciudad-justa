@@ -1,6 +1,6 @@
 // apps/web/src/components/Nav.jsx
 import { useEffect, useState } from "react";
-import { c, font, radius } from "../styles/tokens.js";
+import { c, font } from "../styles/tokens.js";
 import { NAV } from "../data/content.js";
 import { useDirection } from "../context/Direction.jsx";
 import { Brand, Button, Icon } from "./primitives.jsx";
@@ -33,6 +33,12 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <nav aria-label="Principal" style={{ position: "sticky", top: 0, zIndex: 50, display: "flex", alignItems: "center",

@@ -75,7 +75,8 @@ export default function CaseMap({ caseDef }) {
     if (!visible || !elRef.current || mapRef.current) return;
     let map;
     try {
-      map = new maplibregl.Map({ container: elRef.current, style: STYLE, center: caseDef.center, zoom: caseDef.zoom, attributionControl: { compact: true } });
+      map = new maplibregl.Map({ container: elRef.current, style: STYLE, center: caseDef.center, zoom: caseDef.zoom,
+        attributionControl: { compact: true }, cooperativeGestures: true });
       mapRef.current = map;
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
       map.on("error", () => setErr(true));

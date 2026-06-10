@@ -12,7 +12,7 @@ function rich(text) {
 
 function StatStrip({ flush }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    <div className="cj-divcol" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
       border: `2px solid ${c.text}`, marginTop: flush ? 0 : 48, background: c.bgAlt }}>
       {KEY_STATS.map((s, i) => {
         const decimals = Number.isInteger(s.value) ? 0 : 1;

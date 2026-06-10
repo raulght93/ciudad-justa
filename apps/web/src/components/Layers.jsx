@@ -4,13 +4,13 @@ import { c, font } from "../styles/tokens.js";
 import { LAYERS } from "../data/content.js";
 import { Section, SectionHead, Reveal, SourceTag, Icon } from "./primitives.jsx";
 
-function LayerCard({ l }) {
+function LayerCard({ l, i }) {
   const [open, setOpen] = useState(false);
   return (
-    <Reveal style={{ height: "100%" }}>
-      <article style={{ position: "relative", height: "100%", background: c.surface, border: `1px solid ${c.line}`,
-        borderTop: `4px solid ${l.color}`, padding: 26, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        <span aria-hidden style={{ position: "absolute", top: -26, right: 2, fontFamily: font.display, fontSize: 150, lineHeight: 1, color: l.color, opacity: 0.08, pointerEvents: "none" }}>{l.tag}</span>
+    <Reveal i={i} style={{ height: "100%" }}>
+      <article className="cj-card" style={{ position: "relative", height: "100%", background: c.surface, border: `1px solid ${c.line}`,
+        borderTop: `4px solid ${l.color}`, padding: 26, overflow: "hidden", display: "flex", flexDirection: "column", "--cardc": l.color }}>
+        <span aria-hidden style={{ position: "absolute", top: -14, right: 4, fontFamily: font.display, fontSize: "clamp(78px,14vw,130px)", lineHeight: 1, color: l.color, opacity: 0.07, pointerEvents: "none" }}>{l.tag}</span>
         <div style={{ fontFamily: font.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: l.color, display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 16 }}>{l.icon}</span> Capa {l.tag}
         </div>
@@ -43,8 +43,8 @@ export default function Layers() {
     <Section id="capas">
       <SectionHead n="01" kicker="Las capas" title="Tres mapas de una misma injusticia"
         lead="El barrio que pierde el verde suele perder también los servicios y llenarse de mobiliario que expulsa. Los superponemos para que se vea junto." />
-      <div style={{ marginTop: 44, display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-        {LAYERS.map((l) => <LayerCard key={l.id} l={l} />)}
+      <div className="cj-grid" style={{ marginTop: 44 }}>
+        {LAYERS.map((l, i) => <LayerCard key={l.id} l={l} i={i} />)}
       </div>
     </Section>
   );

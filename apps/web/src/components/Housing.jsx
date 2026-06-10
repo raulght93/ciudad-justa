@@ -16,7 +16,7 @@ export default function Housing() {
       <Reveal>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginTop: 36 }}>
           {HOUSING.metrics.map((m) => (
-            <div key={m.label} style={{ position: "relative", background: c.panel, border: `1px dashed ${col}80`, padding: 22 }}>
+            <div key={m.label} className="cj-card" style={{ position: "relative", background: c.panel, border: `1px dashed ${col}80`, padding: 22, "--cardc": col }}>
               <div style={{ fontFamily: font.display, fontSize: "3rem", lineHeight: 0.9, color: col }}>{m.value}</div>
               <div style={{ marginTop: 10, color: c.muted, lineHeight: 1.4, fontSize: 14.5 }}>{m.label}</div>
               {m.todo && <span style={{ position: "absolute", top: 14, right: 14, fontFamily: font.mono, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: col, border: `1px solid ${col}80`, borderRadius: 999, padding: "3px 9px" }}>Pronto</span>}

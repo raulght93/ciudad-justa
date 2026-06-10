@@ -6,8 +6,9 @@ import { TICKER } from "../data/content.js";
 export function Ticker() {
   const items = [...TICKER, ...TICKER];
   return (
-    <div aria-label="Cifras del proyecto" style={{ overflow: "hidden", borderTop: `2px solid ${c.text}`, borderBottom: `2px solid ${c.text}`, background: c.yellow, padding: "11px 0" }}>
-      <div className="cj-marquee" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
+    <div role="img" aria-label="Banda de cifras del proyecto" style={{ overflow: "hidden", borderTop: `2px solid ${c.text}`, borderBottom: `2px solid ${c.text}`, background: c.yellow, padding: "11px 0" }}>
+      {/* Decorativo (texto duplicado para el bucle): se oculta a lectores de pantalla. */}
+      <div className="cj-marquee" aria-hidden="true" style={{ display: "flex", whiteSpace: "nowrap", width: "max-content" }}>
         {items.map((t, i) => (
           <span key={i} style={{ fontFamily: font.mono, fontSize: 13, fontWeight: 700, color: "#0a0a0b", padding: "0 26px",
             display: "inline-flex", alignItems: "center", gap: 26, textTransform: "uppercase", letterSpacing: "0.04em" }}>
