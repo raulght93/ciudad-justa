@@ -27,10 +27,12 @@ describe("integridad del contenido", () => {
     expect(ids).toEqual(expect.arrayContaining(["hostile", "green", "service"]));
   });
 
-  it("las métricas de vivienda son placeholders (área de expansión, no inventadas)", () => {
+  it("las métricas de vivienda son reales y citan una fuente existente", () => {
+    expect(HOUSING.metrics.length).toBeGreaterThan(0);
     for (const m of HOUSING.metrics) {
-      expect(m.todo).toBe(true);
-      expect(m.value).toBe("—");
+      expect(m.todo, "ya no es WIP").toBeUndefined();
+      expect(m.value).not.toBe("—");
+      expect(SOURCES[m.source], `fuente '${m.source}'`).toBeDefined();
     }
   });
 

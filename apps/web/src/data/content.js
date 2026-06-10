@@ -168,18 +168,18 @@ export const HOW = [
   { n: 3, t: "Revierte", d: "Documentar para visibilizar, visibilizar para presionar. El final feliz es un pincho menos y un árbol más." },
 ];
 
-// Área de expansión: la barrera del precio de la vivienda.
+// La barrera del precio de la vivienda — capa con datos reales (SERPAVI + INE).
 export const HOUSING = {
   color: c.housing,
-  kicker: "Próxima capa · en preparación",
+  kicker: "Alquiler y renta · datos reales",
   title: "El precio de la vivienda",
   lead: "El banco con pinchos te echa de la acera. El precio de la vivienda te echa de la ciudad entera.",
-  body: "La arquitectura hostil es el síntoma que se ve; el coste de la vivienda, la barrera que lo explica. Preparamos una capa para cartografiar la presión del alquiler en España —esfuerzo sobre la renta, desplazamiento de vecinos, turistificación, vivienda vacía— y cruzarla con las otras tres: ¿son los mismos barrios los que pierden el verde, los servicios y, encima, el techo?",
+  body: "La arquitectura hostil es el síntoma que se ve; el coste de la vivienda, la barrera que lo explica. Ya está en el mapa: alquiler €/m²·mes real por barrio (SERPAVI/Mitma) y renta por sección (INE) en Málaga y Córdoba. La pregunta deja de ser retórica: ¿son los mismos barrios los que pierden el verde, los servicios y, encima, el techo? Cruza las capas y míralo.",
   rightLink: { k: "Anclaje", v: "Derecho a la vivienda · art. 47 de la Constitución" },
+  cta: { label: "Ver en el mapa", href: "#mapa" },
   metrics: [
-    { value: "—", label: "% de la renta que se va en alquiler", todo: true },
-    { value: "—", label: "barrios en riesgo de desplazamiento", todo: true },
-    { value: "—", label: "vivienda vacía frente a demanda", todo: true },
+    { value: "20,9 €/m²", label: "alquiler máximo por barrio en Málaga — casi ×4 sobre el más barato", source: "serpavi" },
+    { value: "5,7×", label: "brecha de renta entre las secciones más rica y más pobre de Málaga", source: "ine" },
+    { value: "10,6 €/m²", label: "alquiler máximo por barrio en Córdoba (de 3,8 a 10,6)", source: "serpavi" },
   ],
-  note: "Cifras pendientes de incorporar con fuentes verificadas (INE, Índice de Precios del Alquiler, registros municipales). Esta sección es un marcador de expansión, no contenido cerrado.",
 };
