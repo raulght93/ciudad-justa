@@ -28,12 +28,38 @@ export function decideGate({ detectorAvailable, faces }) {
 }
 
 // --- Detector facial desacoplado ---
+// (1) Shape Detection API nativa del navegador (rápida, sin descargas).
 export function getFaceDetector() {
   if (typeof window !== "undefined" && "FaceDetector" in window) {
     const det = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 12 });
     return { available: true, detect: (src) => det.detect(src) };
   }
   return { available: false, detect: async () => [] };
+}
+
+let _detector; // cache del detector resuelto
+// Cadena: API nativa → MediaPipe (lazy, modelo desde CDN) → no disponible.
+export async function getDetector() {
+  if (_detector) return _detector;
+  const native = getFaceDetector();
+  if (native.available) { _detector = native; return _detector; }
+  try {
+    const { FilesetResolver, FaceDetector } = await import("@mediapipe/tasks-vision");
+    const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm");
+    const fd = await FaceDetector.createFromOptions(vision, {
+      baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite" },
+      runningMode: "IMAGE",
+    });
+    _detector = {
+      available: true,
+      detect: (canvas) => (fd.detect(canvas).detections || []).map((d) => ({
+        boundingBox: { x: d.boundingBox.originX, y: d.boundingBox.originY, width: d.boundingBox.width, height: d.boundingBox.height },
+      })),
+    };
+  } catch {
+    _detector = { available: false, detect: async () => [] };
+  }
+  return _detector;
 }
 
 // --- Pipeline (navegador): reencoda (quita EXIF) → detecta → difumina → blob ---
@@ -80,7 +106,7 @@ export async function stripOnly(file) {
 // Prepara una foto para subir respetando el gate. Lanza GateBlocked si no se
 // puede garantizar que no se expone a nadie.
 export async function prepareForUpload(file, opts = {}) {
-  const detector = opts.detector || getFaceDetector();
+  const detector = opts.detector || (await getDetector());
   const { canvas, ctx } = await toCanvas(file);
 
   let faces = [];

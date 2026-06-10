@@ -52,10 +52,11 @@ export default function ReportPanel() {
   async function onPhoto(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setMsg(null);
+    setMsg("Analizando rostros…");
     try {
       const r = await prepareForUpload(file);
       setPhoto({ url: URL.createObjectURL(r.blob), blob: r.blob, blurred: r.blurred, facesFound: r.facesFound });
+      setMsg(null);
     } catch (err) {
       if (err instanceof GateBlocked && err.reason === "no-detector") {
         // Navegador sin detección de rostros: preview de demo (EXIF fuera), avisa.
