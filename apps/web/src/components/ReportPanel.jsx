@@ -92,10 +92,6 @@ export default function ReportPanel() {
     setBusy(false);
   }
 
-  const chip = (on, color) => ({ cursor: "pointer", fontFamily: font.mono, fontSize: 12, textTransform: "uppercase",
-    letterSpacing: "0.06em", padding: "8px 12px", borderRadius: 0, border: `2px solid ${on ? color : c.lineStrong}`,
-    background: on ? color : "transparent", color: on ? "#0a0a0b" : c.muted });
-
   return (
     <div style={{ background: c.bg, color: c.text, fontFamily: font.sans, minHeight: "100vh" }}>
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "28px 22px 80px" }}>
@@ -112,17 +108,38 @@ export default function ReportPanel() {
           fotografía el <strong style={{ color: c.text }}>objeto</strong>, no a las personas.
         </p>
 
-        {/* 1 · Tipo (global) → subtipo */}
-        <div style={field()}>1 · Qué reportas
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
-            {REPORT_TYPES.map((t) => (
-              <button key={t.key} onClick={() => pickType(t.key)} aria-pressed={type === t.key} style={chip(type === t.key, t.color)}>{t.label}</button>
-            ))}
+        {/* 1 · Qué reportas — tipo general (botones con color) → detalle (subtipo) */}
+        <div style={field()}>1 · Qué reportas</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 8, marginTop: 10 }}>
+          {REPORT_TYPES.map((t) => {
+            const on = type === t.key;
+            return (
+              <button key={t.key} onClick={() => pickType(t.key)} aria-pressed={on}
+                style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", textAlign: "left",
+                  padding: "12px 14px", borderRadius: 0, border: `2px solid ${on ? t.color : c.lineStrong}`,
+                  background: on ? t.color : "transparent", color: on ? "#0a0a0b" : c.text }}>
+                <span aria-hidden style={{ width: 13, height: 13, flex: "0 0 auto", background: on ? "#0a0a0b" : t.color }} />
+                <span style={{ fontFamily: font.sans, fontWeight: 700, fontSize: 14 }}>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ marginTop: 16, paddingLeft: 14, borderLeft: `3px solid ${col}` }}>
+          <div style={{ fontFamily: font.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: c.faint }}>
+            Detalle · {typeDef.label} <span style={{ color: c.lineStrong }}>· opcional</span>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-            {typeDef.subtypes.map(([k, label]) => (
-              <button key={k} onClick={() => toggleSub(k)} aria-pressed={subs.includes(k)} style={chip(subs.includes(k), col)}>{label}</button>
-            ))}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 10 }}>
+            {typeDef.subtypes.map(([k, label]) => {
+              const on = subs.includes(k);
+              return (
+                <button key={k} onClick={() => toggleSub(k)} aria-pressed={on}
+                  style={{ cursor: "pointer", fontFamily: font.mono, fontSize: 11.5, textTransform: "uppercase", letterSpacing: "0.04em",
+                    padding: "6px 12px", borderRadius: 999, border: `1.5px solid ${on ? col : c.lineStrong}`,
+                    background: on ? col : "transparent", color: on ? "#0a0a0b" : c.muted }}>
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 

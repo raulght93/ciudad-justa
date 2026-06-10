@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "name": "Córdoba · ejemplos de precios (MUESTRA ilustrativa, NO listados reales)",
+  "_comment": "Precios inventados de orden realista para Córdoba (2026) para maquetar los pins. NO usar como dato ni señalar inmuebles.",
+  "features": [
+    { "type": "Feature", "properties": { "price": "750 €/mes", "kind": "alquiler", "detail": "Centro / Judería · 2 hab" }, "geometry": { "type": "Point", "coordinates": [-4.7790, 37.8790] } },
+    { "type": "Feature", "properties": { "price": "680 €/mes", "kind": "alquiler", "detail": "Ciudad Jardín · 3 hab" }, "geometry": { "type": "Point", "coordinates": [-4.7960, 37.8830] } },
+    { "type": "Feature", "properties": { "price": "560 €/mes", "kind": "alquiler", "detail": "Poniente · 3 hab" }, "geometry": { "type": "Point", "coordinates": [-4.8050, 37.8870] } },
+    { "type": "Feature", "properties": { "price": "480 €/mes", "kind": "alquiler", "detail": "Sector Sur · renta baja, alta vulnerabilidad" }, "geometry": { "type": "Point", "coordinates": [-4.7770, 37.8700] } }
+  ]
+}

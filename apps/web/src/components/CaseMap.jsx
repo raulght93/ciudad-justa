@@ -42,20 +42,22 @@ export default function CaseMap({ caseDef }) {
 
   function clearMarkers() { markersRef.current.forEach((m) => m.remove()); markersRef.current = []; }
 
-  async function addPriceMarkers(layer) {
+  // Pins de precio (ejemplos) que acompañan a la coropleta de alquiler. Color
+  // vivienda (violeta) independientemente del color del caso.
+  async function addPriceMarkers(key, url) {
     const map = mapRef.current;
-    if (!map) return;
-    let fc = dataRef.current[layer.key];
+    if (!map || !url) return;
+    let fc = dataRef.current[key];
     if (!fc) {
-      try { fc = await (await fetch(layer.url)).json(); dataRef.current[layer.key] = fc; } catch { return; }
+      try { fc = await (await fetch(url)).json(); dataRef.current[key] = fc; } catch { return; }
     }
     for (const f of fc.features) {
       const el = document.createElement("div");
-      el.style.cssText = `font-family:${font.mono};font-size:12px;font-weight:700;color:#0a0a0b;background:${color};border:2px solid #0a0a0b;padding:4px 8px;white-space:nowrap;cursor:pointer;box-shadow:2px 2px 0 0 #0a0a0b`;
+      el.style.cssText = `font-family:${font.mono};font-size:12px;font-weight:700;color:#0a0a0b;background:${c.housing};border:2px solid #0a0a0b;padding:4px 8px;white-space:nowrap;cursor:pointer;box-shadow:2px 2px 0 0 #0a0a0b`;
       el.textContent = f.properties.price;
       const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(
         `<div style="font-family:${font.sans};max-width:230px">
-           <strong style="color:${c.housingTx || color}">${f.properties.price}</strong>
+           <strong style="color:${c.housingTx}">${f.properties.price}</strong>
            <span style="font-size:11px;color:#666"> · ${f.properties.kind || ""}</span>
            <div style="margin-top:4px;color:#111">${f.properties.detail || ""}</div>
            <div style="margin-top:6px;font-size:10px;color:#999">muestra ilustrativa · no es un listado real</div>
@@ -92,10 +94,6 @@ export default function CaseMap({ caseDef }) {
         caseDef.layers.forEach((l, i) => {
           const id = `${caseDef.id}-${l.key}`;
           const visibility = i === 0 ? "visible" : "none";
-          if (l.kind === "price") {
-            if (i === 0) addPriceMarkers(l); // por defecto solo si es la primera capa
-            return; // los precios son marcadores HTML, no capas de estilo
-          }
           map.addSource(id, { type: "geojson", data: l.embedded || EMPTY });
           if (l.kind === "choropleth") {
             map.addLayer({ id, type: "fill", source: id, layout: { visibility }, paint: { "fill-color": ["interpolate", ["linear"], ["get", l.prop], ...l.ramp], "fill-opacity": 0.45, "fill-outline-color": c.line } });
@@ -114,6 +112,7 @@ export default function CaseMap({ caseDef }) {
             loadHot();
             let t; map.on("moveend", () => { clearTimeout(t); t = setTimeout(loadHot, 350); });
           }
+          if (l.pins && i === 0) addPriceMarkers(l.key, l.pins); // pins de la capa por defecto
         });
       });
     } catch { setErr(true); }
@@ -127,12 +126,11 @@ export default function CaseMap({ caseDef }) {
     if (!map) return;
     clearMarkers();
     for (const l of caseDef.layers) {
-      if (l.kind === "price") continue;
       const id = `${caseDef.id}-${l.key}`;
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", l.key === key ? "visible" : "none");
     }
     const al = caseDef.layers.find((l) => l.key === key);
-    if (al?.kind === "price") addPriceMarkers(al);
+    if (al?.pins) addPriceMarkers(al.key, al.pins);
   }
 
   const activeLayer = caseDef.layers.find((l) => l.key === active);

@@ -25,7 +25,7 @@ export const CASES = [
       { key: "hostile", label: "Reportes", kind: "points", embedded: HOSTILE_POINTS, api: true },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/barcelona-green-deficit.geojson", embedded: GREEN_DEFICIT, prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/barcelona-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
-      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/barcelona-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
+      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/barcelona-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING, pins: "/data/barcelona-listings.example.geojson" },
       { key: "income", label: "Renta", kind: "choropleth", url: "/data/barcelona-income.geojson", prop: "housing_vuln", ramp: RAMP_HOUSING },
       { key: "index", label: "Índice", kind: "choropleth", url: "/data/barcelona-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
     ],
@@ -43,7 +43,7 @@ export const CASES = [
     layers: [
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/cordoba-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/cordoba-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
-      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/cordoba-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
+      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/cordoba-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING, pins: "/data/cordoba-listings.example.geojson" },
       { key: "index", label: "Índice", kind: "choropleth", url: "/data/cordoba-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
     ],
   },
@@ -58,12 +58,11 @@ export const CASES = [
     note: "Alquiler €/m²·mes REAL por barrio (SERPAVI/Mitma 2024): de 5,3 a 20,9 €/m² — casi ×4 entre el barrio más caro y el más barato. Cruza con renta (INE), verde y servicios reales. Los pins son ejemplos ilustrativos.",
     stat: { value: "20,9 €/m²", label: "alquiler máx. por barrio (×4 sobre el más barato; SERPAVI 2024)", source: "serpavi" },
     layers: [
-      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/malaga-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING },
+      { key: "rent", label: "Alquiler", kind: "choropleth", url: "/data/malaga-rent.geojson", prop: "rent_norm", ramp: RAMP_HOUSING, pins: "/data/malaga-listings.example.geojson" },
       { key: "income", label: "Renta", kind: "choropleth", url: "/data/malaga-income.geojson", prop: "housing_vuln", ramp: RAMP_HOUSING },
       { key: "green", label: "Verde", kind: "choropleth", url: "/data/malaga-green-deficit.geojson", prop: "green_deficit_score", ramp: RAMP_GREEN },
       { key: "service", label: "Servicios", kind: "choropleth", url: "/data/malaga-services-deficit.geojson", prop: "service_deficit", ramp: RAMP_SERVICE },
       { key: "index", label: "Índice", kind: "choropleth", url: "/data/malaga-injustice.geojson", prop: "injustice", ramp: RAMP_INDEX },
-      { key: "listings", label: "Ejemplos", kind: "price", url: "/data/malaga-listings.example.geojson" },
     ],
   },
 ];

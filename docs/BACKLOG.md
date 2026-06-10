@@ -56,9 +56,11 @@ Orden = prioridad dentro de cada bloque.
 - **A11y/móvil**: rejilla 1-col ≤768px, cards sin recorte, menú `<dialog>` nativo (flujo bloque +
   ✕ sticky + `100svh` con scroll → no se corta; focus trap + Escape + backdrop), foco visible,
   `prefers-reduced-motion`, reveal por scroll, gestos del mapa en español.
-- **Reporte (demo)**: selector tipo global → subtipo con color por tipo (hostil/clima+verde/
-  vivienda/servicios), preview de foto (con fallback si el navegador no difumina) y zona
-  (barrio·ciudad) por geocodificación inversa (OSM/Nominatim).
+- **Reporte (demo)**: "Qué reportas" rediseñado — tipo general (botones con swatch de color) y
+  subtipo (pills anidadas bajo filete del color) bien diferenciados; preview de foto (con fallback
+  si el navegador no difumina) y zona (barrio·ciudad) por geocodificación inversa (OSM/Nominatim).
+- **Alquiler + ejemplos unificados** en el mapa: la capa "Alquiler" muestra coropleta €/m² +
+  pins de precio juntos, en las 3 ciudades (Málaga, Córdoba, Barcelona).
 - **Tipos de reporte persistidos**: `reports.type` en D1 (schema + migración 0001 + worker
   GET/POST + tests) y **puntos del mapa coloreados por tipo** (match en CaseMap) con leyenda y
   popup por tipo. Falta reaplicar la migración en la D1 desplegada + redeploy.

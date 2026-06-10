@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "name": "Barcelona · ejemplos de precios (MUESTRA ilustrativa, NO listados reales)",
+  "_comment": "Precios inventados de orden realista para Barcelona (2026) para maquetar los pins. NO usar como dato ni señalar inmuebles.",
+  "features": [
+    { "type": "Feature", "properties": { "price": "1.700 €/mes", "kind": "alquiler", "detail": "Eixample · 2 hab" }, "geometry": { "type": "Point", "coordinates": [2.1620, 41.3880] } },
+    { "type": "Feature", "properties": { "price": "1.450 €/mes", "kind": "alquiler", "detail": "Gràcia · 2 hab" }, "geometry": { "type": "Point", "coordinates": [2.1560, 41.4030] } },
+    { "type": "Feature", "properties": { "price": "1.300 €/mes", "kind": "alquiler", "detail": "Ciutat Vella / Raval · 1 hab" }, "geometry": { "type": "Point", "coordinates": [2.1690, 41.3800] } },
+    { "type": "Feature", "properties": { "price": "950 €/mes", "kind": "alquiler", "detail": "Nou Barris · 3 hab" }, "geometry": { "type": "Point", "coordinates": [2.1780, 41.4420] } }
+  ]
+}
