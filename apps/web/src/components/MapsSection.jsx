@@ -19,7 +19,7 @@ export default function MapsSection() {
         <div key={cs.id}>
           {i > 0 && <Sawtooth color={cs.color} />}
           <section style={{ position: "relative", maxWidth: maxW, margin: "0 auto", padding: "clamp(40px,6vw,72px) 22px", overflow: "hidden" }}>
-            <span aria-hidden style={{ position: "absolute", top: "-2vw", right: 8, fontFamily: font.display, fontSize: "clamp(7rem,22vw,18rem)", lineHeight: 1, color: cs.color, opacity: 0.06, pointerEvents: "none" }}>{cs.n}</span>
+            <span aria-hidden className="cj-ghost" data-ghost={cs.n} style={{ position: "absolute", top: "-2vw", right: 8, fontFamily: font.display, fontSize: "clamp(7rem,22vw,18rem)", lineHeight: 1, "--cj-ghost-color": cs.color }} />
             <Reveal>
               <div style={{ fontFamily: font.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: cs.color, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 Caso {cs.n} <span aria-hidden style={{ width: 28, height: 2, background: cs.color }} />

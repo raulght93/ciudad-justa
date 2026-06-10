@@ -89,3 +89,13 @@ dialog.cj-menu::backdrop { background: rgba(10,10,11,0.92); }
   .cj-hero-grid { grid-template-columns: 1fr !important; }
   .cj-hero-grid > div:last-child { justify-content: flex-start !important; }
 }
+
+/* Numerales/letras fantasma puramente decorativos: el glifo va en ::before
+   (vía data-ghost) para que no sea un nodo de texto real con bajo contraste.
+   El color de marca se pasa con --cj-ghost-color; opacidad muy baja a propósito. */
+.cj-ghost { pointer-events: none; user-select: none; }
+.cj-ghost::before {
+  content: attr(data-ghost);
+  color: var(--cj-ghost-color, currentColor);
+  opacity: 0.06;
+}

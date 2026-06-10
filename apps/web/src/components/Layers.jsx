@@ -10,7 +10,7 @@ function LayerCard({ l, i }) {
     <Reveal i={i}>
       <article className="cj-card" style={{ position: "relative", background: c.surface, border: `1px solid ${c.line}`,
         borderTop: `4px solid ${l.color}`, padding: 26, display: "flex", flexDirection: "column", "--cardc": l.color }}>
-        <span aria-hidden style={{ position: "absolute", top: 8, right: 10, fontFamily: font.display, fontSize: "clamp(56px,11vw,104px)", lineHeight: 1, color: l.color, opacity: 0.06, pointerEvents: "none" }}>{l.tag}</span>
+        <span aria-hidden className="cj-ghost" data-ghost={l.tag} style={{ position: "absolute", top: 8, right: 10, fontFamily: font.display, fontSize: "clamp(56px,11vw,104px)", lineHeight: 1, "--cj-ghost-color": l.color }} />
         <div style={{ fontFamily: font.mono, fontSize: 12, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: l.color, display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 16 }}>{l.icon}</span> Capa {l.tag}
         </div>
