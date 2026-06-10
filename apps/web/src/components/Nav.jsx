@@ -1,5 +1,5 @@
 // apps/web/src/components/Nav.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { c, font } from "../styles/tokens.js";
 import { NAV } from "../data/content.js";
 import { useDirection } from "../context/Direction.jsx";
@@ -27,17 +27,19 @@ export function DirectionToggle() {
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [solid, setSolid] = useState(false);
+  const dialogRef = useRef(null);
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [open]);
+  // <dialog> nativo: showModal() da focus trap + Escape + backdrop. onClose sincroniza estado.
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const d = dialogRef.current;
+    if (!d) return;
+    if (open && !d.open) d.showModal();
+    else if (!open && d.open) d.close();
   }, [open]);
 
   return (
@@ -64,29 +66,26 @@ export default function Nav() {
         <Icon name="menu" size={20} />
       </button>
 
-      {open && (
-        <div role="dialog" aria-modal="true" style={{ position: "fixed", inset: 0, zIndex: 100, background: c.bg,
-          display: "flex", flexDirection: "column", padding: "16px 22px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Brand size={30} />
-            <button onClick={() => setOpen(false)} aria-label="Cerrar" style={{ background: "transparent", border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer" }}>
-              <Icon name="x" size={20} />
-            </button>
-          </div>
-          <ul style={{ listStyle: "none", margin: "auto 0", padding: 0, display: "grid", gap: 2 }}>
-            {NAV.map((s) => (
-              <li key={s.id}>
-                <a href={`#${s.id}`} onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "baseline", gap: 14,
-                  textDecoration: "none", padding: "12px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
-                  <span style={{ fontFamily: font.mono, fontSize: 13, color: c.accent, fontWeight: 700 }}>{s.n}</span>
-                  <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "2rem", color: c.text }}>{s.label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}><DirectionToggle /></div>
+      <dialog ref={dialogRef} className="cj-menu" aria-label="Índice" onClose={() => setOpen(false)} style={{ padding: "16px 22px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Brand size={30} />
+          <button onClick={() => setOpen(false)} aria-label="Cerrar índice" style={{ background: "transparent", border: `2px solid ${c.lineStrong}`, color: c.text, padding: 9, cursor: "pointer" }}>
+            <Icon name="x" size={20} />
+          </button>
         </div>
-      )}
+        <ul style={{ listStyle: "none", margin: "auto 0", padding: 0, display: "grid", gap: 2 }}>
+          {NAV.map((s) => (
+            <li key={s.id}>
+              <a href={`#${s.id}`} onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "baseline", gap: 14,
+                textDecoration: "none", padding: "12px 0", borderBottom: `1px solid ${c.lineSoft}` }}>
+                <span style={{ fontFamily: font.mono, fontSize: 13, color: c.accent, fontWeight: 700 }}>{s.n}</span>
+                <span style={{ fontFamily: font.display, textTransform: "uppercase", fontSize: "2rem", color: c.text }}>{s.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}><DirectionToggle /></div>
+      </dialog>
     </nav>
   );
 }
