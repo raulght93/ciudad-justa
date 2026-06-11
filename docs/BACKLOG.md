@@ -10,9 +10,10 @@ Orden = prioridad dentro de cada bloque.
 
 1. **Entidad jurídica (B3)** + **revisión legal (B2)** de los borradores (`docs/legal/`): LSSI,
    honor (LO 1/1982), RGPD. Sin esto, no se señalan propiedades concretas (`06 §6.2`, §6.7).
-2. **DPIA / EIPD** redactada (tratamiento de imágenes; `06 §6.6`, `03 §3.6`).
-3. **Detector facial real** en el blur-gate como *fallback* si el navegador no trae `FaceDetector`
-   (hoy, sin él, el gate **bloquea** la subida — seguro pero limitante). MediaPipe/face-api.js.
+2. **DPIA / EIPD**: ✅ borrador completo redactado (`docs/legal/dpia-borrador.md`, metodología
+   AEPD: descripción, base legal, riesgos R-1…R-10, medidas M-1…M-10, riesgo residual, plan de
+   acción). **Pendiente: validación jurídica (B2)** y cerrar M-7 (ofuscar coordenadas sensibles).
+3. ✅ **Detector facial real** en el blur-gate (MediaPipe lazy como *fallback* de `FaceDetector`).
 4. **Bootstrap de moderación** (curación + moderadores semilla) y **takedown** publicado (`06 §6.4`).
 5. **Re-ejecutar la verificación adversarial** completa de las 25 afirmaciones (review C4) y
    **contrastar con Arrels** la fecha/cifra del recuento (1.288). *Caro* → al fijar publicación.
