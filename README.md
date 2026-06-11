@@ -74,7 +74,9 @@ npx wrangler d1 execute ciudad-justa --remote --file=../db/schema.sql   # esquem
 npx wrangler d1 execute ciudad-justa --remote --file=../db/migrations/0001-add-report-type.sql  # columna type (si la D1 ya existía)
 npx wrangler d1 execute ciudad-justa --remote --file=../db/migrations/0002-auth-sessions.sql    # sessions + login_tokens (auth magic-link)
 npx wrangler d1 execute ciudad-justa --remote --file=../db/seed.sql     # seed curado (demo, con tipos)
-npx wrangler r2 bucket create ciudad-justa-photos          # fotos (binding PHOTOS)
+npx wrangler r2 bucket create ciudad-justa-photos          # fotos difuminadas (binding PHOTOS)
+#   Subida: POST /api/reports/:id/photo · Servido: GET /api/photos/<key> (R2 no es público)
+#   Retención: cron diario (wrangler.toml [triggers]) purga fotos de reportes retirados >30 d.
 npx wrangler secret put MOD_TOKEN                          # token legacy de moderación (#/mod) — fallback
 
 # Auth de moderación por enlace mágico (magic-link). El email se envía con Resend:

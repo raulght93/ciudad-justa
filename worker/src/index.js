@@ -99,6 +99,8 @@ const json = (data, status = 200) =>
 // que se conserva como fallback. Ver docs/06 §6.4 y backlog 🟠. ---
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 días
 const LOGIN_TTL_MS = 15 * 60 * 1000; // 15 min
+// EIPD/DPIA §1.6: la foto difuminada se purga 30 días después de retirarse el reporte.
+const PHOTO_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 
 const opaqueToken = () =>
   (crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "");
@@ -144,6 +146,32 @@ async function resolveActor(env, request) {
   const device = request.headers.get("x-device-id") || "anon";
   const u = await env.DB.prepare("SELECT id, role FROM users WHERE id = ?").bind(device).first();
   return u ? { id: u.id, role: u.role } : null;
+}
+
+// Retención/lifecycle (EIPD/DPIA §1.6): borra de R2 + BD las fotos de reportes
+// RETIRADOS (status 'rejected') hace más de 30 días, y limpia tokens/sesiones
+// caducados. Idempotente; se invoca desde el cron `scheduled`. Devuelve un recuento.
+export async function runRetention(env, now = Date.now()) {
+  const counts = { photos: 0, tokens: 0, sessions: 0 };
+  if (!env.DB) return counts;
+  const cutoff = now - PHOTO_RETENTION_MS;
+  const stale = await env.DB
+    .prepare(
+      "SELECT p.id AS pid, p.r2_key AS key FROM photos p JOIN reports r ON r.id = p.report_id " +
+      "WHERE r.status = 'rejected' AND r.updated_at < ?"
+    )
+    .bind(cutoff)
+    .all();
+  for (const row of stale?.results || []) {
+    if (env.PHOTOS) await env.PHOTOS.delete(row.key);
+    await env.DB.prepare("DELETE FROM photos WHERE id = ?").bind(row.pid).run();
+    counts.photos++;
+  }
+  const t = await env.DB.prepare("DELETE FROM login_tokens WHERE expires_at < ?").bind(now).run();
+  const s = await env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now).run();
+  counts.tokens = t?.meta?.changes ?? 0;
+  counts.sessions = s?.meta?.changes ?? 0;
+  return counts;
 }
 
 export default {
@@ -428,6 +456,31 @@ export default {
       return json({ id: photoId, r2_key: key }, 201);
     }
 
+    // GET /api/photos/<key>  — sirve la foto difuminada desde R2 (R2 no es público).
+    const serveMatch = pathname.match(/^\/api\/photos\/(.+)$/);
+    if (serveMatch && request.method === "GET") {
+      if (!env.PHOTOS) return json({ error: "R2 no vinculado" }, 501);
+      const key = decodeURIComponent(serveMatch[1]);
+      // Solo claves bajo el prefijo gestionado (evita traversal/lecturas arbitrarias).
+      if (!key.startsWith("reports/") || key.includes("..")) {
+        return json({ error: "clave inválida" }, 400);
+      }
+      const obj = await env.PHOTOS.get(key);
+      if (!obj) return json({ error: "foto no encontrada" }, 404);
+      return new Response(obj.body, {
+        headers: {
+          "content-type": obj.httpMetadata?.contentType || "image/jpeg",
+          "cache-control": "public, max-age=86400",
+          "access-control-allow-origin": "*",
+        },
+      });
+    }
+
     return json({ error: "not found" }, 404);
+  },
+
+  // Cron: retención de fotos + limpieza de tokens/sesiones (ver wrangler.toml [triggers]).
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runRetention(env));
   },
 };

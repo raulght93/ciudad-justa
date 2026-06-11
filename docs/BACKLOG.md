@@ -24,8 +24,11 @@ Orden = prioridad dentro de cada bloque.
   `login_tokens` en D1, login por email en `ModPanel`, sesión de 30 días como Bearer. `MOD_TOKEN`
   queda como fallback. **Pendiente operativo:** poner `RESEND_API_KEY` y aplicar la migración 0002.
 - **Decisión: plataforma propia vs. contribuir a Arrels** (`02 §2.3 bis`) — explorar colaboración.
-- **R2**: `wrangler r2 bucket create ciudad-justa-photos` + política de retención/servido de fotos.
-- **Lifecycle de fotos** y panel de moderación enlazado desde la app (hoy `#/mod` por hash + token).
+- **R2**: ✅ servido (`GET /api/photos/<key>`, R2 no es público) + **retención** en código
+  (`runRetention` + cron diario: purga fotos de reportes retirados >30 d y limpia tokens/sesiones
+  caducados, EIPD §1.6). **Pendiente operativo:** `wrangler r2 bucket create ciudad-justa-photos`.
+- **Lifecycle de fotos** ✅ (ver arriba). Panel de moderación enlazado desde la app: aún por
+  enlazar en la UI pública (hoy `#/mod` por hash, ya con login magic-link).
 
 ## 🟡 Mejora continua (piezas simples)
 

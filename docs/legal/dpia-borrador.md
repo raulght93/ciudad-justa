@@ -75,7 +75,7 @@ expulsión o el acoso de personas (ver línea roja en `00`).
 
 | Dato | Conservación propuesta | Criterio |
 |---|---|---|
-| Foto difuminada | Mientras el reporte esté publicado; purga a los 30 días de su retirada | Minimización |
+| Foto difuminada | Mientras el reporte esté publicado; purga a los 30 días de su retirada (✅ cron `runRetention`) | Minimización |
 | Reporte (datos no-imagen) | Mientras tenga valor divulgativo; revisión anual | Finalidad |
 | Email de cuenta | Hasta que se solicite baja | Consentimiento/relación |
 | Logs operativos | ≤ 90 días | Seguridad |
