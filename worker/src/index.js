@@ -95,6 +95,57 @@ const json = (data, status = 200) =>
     headers: { "content-type": "application/json", "access-control-allow-origin": "*" },
   });
 
+// --- Auth de moderación (magic-link). Sustituye al secreto compartido MOD_TOKEN,
+// que se conserva como fallback. Ver docs/06 §6.4 y backlog 🟠. ---
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 días
+const LOGIN_TTL_MS = 15 * 60 * 1000; // 15 min
+
+const opaqueToken = () =>
+  (crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "");
+
+// Envía el enlace mágico por email vía Resend. Devuelve true si se envió.
+// Si no hay RESEND_API_KEY configurada, no envía (el caller decide el fallback dev).
+async function sendMagicLink(env, email, url) {
+  if (!env.RESEND_API_KEY) return false;
+  const from = env.MAIL_FROM || "Ciudad Justa <login@ciudad-justa.org>";
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [email],
+      subject: "Tu enlace de acceso · Ciudad Justa",
+      html:
+        `<p>Entra al panel de moderación de Ciudad Justa:</p>` +
+        `<p><a href="${url}">${url}</a></p>` +
+        `<p>Caduca en 15 minutos y solo sirve una vez. Si no lo pediste, ignora este correo.</p>`,
+    }),
+  }).catch(() => null);
+  return !!(res && res.ok);
+}
+
+// Resuelve el actor autorizado de una petición: (1) sesión magic-link por Bearer,
+// (2) fallback legacy MOD_TOKEN + rol por x-device-id. Devuelve {id, role} | null.
+async function resolveActor(env, request) {
+  const auth = request.headers.get("authorization") || "";
+  const bearer = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (bearer && env.DB) {
+    const s = await env.DB
+      .prepare("SELECT user_id, role, expires_at FROM sessions WHERE token = ?")
+      .bind(bearer)
+      .first();
+    if (s && s.expires_at > Date.now()) return { id: s.user_id, role: s.role };
+  }
+  // Fallback legacy: si MOD_TOKEN está configurado, el Bearer debe coincidir.
+  if (env.MOD_TOKEN && bearer !== env.MOD_TOKEN) return null;
+  const device = request.headers.get("x-device-id") || "anon";
+  const u = await env.DB.prepare("SELECT id, role FROM users WHERE id = ?").bind(device).first();
+  return u ? { id: u.id, role: u.role } : null;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -105,7 +156,7 @@ export default {
         headers: {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "GET,POST,OPTIONS",
-          "access-control-allow-headers": "content-type",
+          "access-control-allow-headers": "content-type, authorization, x-device-id",
         },
       });
     }
@@ -240,6 +291,72 @@ export default {
       return json({ id: reportId, score, status, settled: justConfirmed });
     }
 
+    // POST /api/auth/magic  { email }  — solicita enlace mágico (solo moderadores/admin).
+    if (pathname === "/api/auth/magic" && request.method === "POST") {
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+      const body = await request.json().catch(() => null);
+      const email = String(body?.email ?? "").trim().toLowerCase();
+      if (!email || !email.includes("@")) return json({ error: "email requerido" }, 400);
+
+      // Anti-enumeración: respondemos {ok:true} siempre. Solo emitimos enlace si el
+      // email pertenece a un usuario con rol de moderación.
+      const u = await env.DB
+        .prepare("SELECT id, role FROM users WHERE email = ?")
+        .bind(email)
+        .first();
+      let devLink = null;
+      if (u && (u.role === "moderator" || u.role === "admin")) {
+        const token = opaqueToken();
+        const now = Date.now();
+        await env.DB
+          .prepare(
+            "INSERT INTO login_tokens (token, user_id, expires_at, used, created_at) VALUES (?, ?, ?, 0, ?)"
+          )
+          .bind(token, u.id, now + LOGIN_TTL_MS, now)
+          .run();
+        const base = env.APP_ORIGIN || url.origin;
+        const link = `${base}/#/mod?token=${token}`;
+        const sent = await sendMagicLink(env, email, link);
+        // En desarrollo, si no hay proveedor de email, devolvemos el enlace para poder probar.
+        if (!sent && env.AUTH_DEV_RETURN_LINK === "1") devLink = link;
+      }
+      return json({ ok: true, ...(devLink ? { devLink } : {}) });
+    }
+
+    // POST /api/auth/verify  { token }  — canjea el enlace por una sesión.
+    if (pathname === "/api/auth/verify" && request.method === "POST") {
+      if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
+      const body = await request.json().catch(() => null);
+      const token = String(body?.token ?? "").trim();
+      if (!token) return json({ error: "token requerido" }, 400);
+
+      const lt = await env.DB
+        .prepare("SELECT user_id, expires_at, used FROM login_tokens WHERE token = ?")
+        .bind(token)
+        .first();
+      if (!lt || lt.used || lt.expires_at < Date.now()) {
+        return json({ error: "enlace inválido o caducado" }, 401);
+      }
+      const u = await env.DB
+        .prepare("SELECT id, role, handle FROM users WHERE id = ?")
+        .bind(lt.user_id)
+        .first();
+      if (!u) return json({ error: "usuario no encontrado" }, 404);
+
+      const session = opaqueToken();
+      const now = Date.now();
+      const expiresAt = now + SESSION_TTL_MS;
+      await env.DB.batch([
+        env.DB.prepare("UPDATE login_tokens SET used = 1 WHERE token = ?").bind(token),
+        env.DB
+          .prepare(
+            "INSERT INTO sessions (token, user_id, role, expires_at, created_at) VALUES (?, ?, ?, ?, ?)"
+          )
+          .bind(session, u.id, u.role, expiresAt, now),
+      ]);
+      return json({ session, role: u.role, handle: u.handle ?? null, expires_at: expiresAt });
+    }
+
     // POST /api/mod/reports/:id  { action, note? }   (E1e — moderación)
     const modMatch = pathname.match(/^\/api\/mod\/reports\/([^/]+)$/);
     if (modMatch && request.method === "POST") {
@@ -251,19 +368,14 @@ export default {
       }
       if (!env.DB) return json({ error: "D1 no vinculado" }, 501);
 
-      // Autorización (E1e auth): secreto compartido por cabecera Bearer +
-      // rol en BD (defensa en profundidad). Si MOD_TOKEN está configurado, el
-      // token es obligatorio — no basta con declarar un rol desde el cliente.
-      const device = request.headers.get("x-device-id") || "anon";
-      if (env.MOD_TOKEN) {
-        const auth = request.headers.get("authorization") || "";
-        const tok = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-        if (tok !== env.MOD_TOKEN) return json({ error: "token de moderación inválido" }, 401);
-      }
-      const actor = await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(device).first();
-      if (!actor || (actor.role !== "moderator" && actor.role !== "admin")) {
+      // Autorización: sesión magic-link (Bearer) o fallback legacy MOD_TOKEN+rol
+      // (defensa en profundidad). Ver resolveActor().
+      const actor = await resolveActor(env, request);
+      if (!actor) return json({ error: "autenticación requerida" }, 401);
+      if (actor.role !== "moderator" && actor.role !== "admin") {
         return json({ error: "requiere rol de moderación" }, 403);
       }
+      const device = actor.id;
 
       const report = await env.DB.prepare("SELECT status FROM reports WHERE id = ?").bind(reportId).first();
       if (!report) return json({ error: "reporte no encontrado" }, 404);

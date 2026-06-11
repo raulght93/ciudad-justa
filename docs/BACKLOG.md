@@ -20,7 +20,9 @@ Orden = prioridad dentro de cada bloque.
 
 ## 🟠 Para la Fase 1 social (cuando se decida abrir)
 
-- **Auth de sesión real** (magic-link) en vez del secreto compartido `MOD_TOKEN` de moderación.
+- ✅ **Auth de sesión real** (magic-link): `/api/auth/magic` + `/api/auth/verify` + `sessions`/
+  `login_tokens` en D1, login por email en `ModPanel`, sesión de 30 días como Bearer. `MOD_TOKEN`
+  queda como fallback. **Pendiente operativo:** poner `RESEND_API_KEY` y aplicar la migración 0002.
 - **Decisión: plataforma propia vs. contribuir a Arrels** (`02 §2.3 bis`) — explorar colaboración.
 - **R2**: `wrangler r2 bucket create ciudad-justa-photos` + política de retención/servido de fotos.
 - **Lifecycle de fotos** y panel de moderación enlazado desde la app (hoy `#/mod` por hash + token).

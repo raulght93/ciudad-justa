@@ -12,6 +12,7 @@ const ICONS = {
   x: "M18 6 6 18 M6 6l12 12",
   menu: "M4 6h16 M4 12h16 M4 18h16",
   chevronDown: "M6 9l6 6 6-6",
+  check: "M5 13l4 4L19 7",
 };
 export function Icon({ name, size = 18, stroke = 2.25, style }) {
   const d = ICONS[name] || "";

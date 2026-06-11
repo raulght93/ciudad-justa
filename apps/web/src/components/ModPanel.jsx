@@ -1,23 +1,69 @@
 // Panel de moderación (E1e · UI). Vista mínima, accesible y on-brand, accesible
 // en #/mod. No forma parte del dossier divulgativo: es herramienta interna.
 // Requiere el token de moderación (MOD_TOKEN) — se guarda en localStorage.
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { c, font } from "../styles/tokens.js";
-import { fetchReports, moderate } from "../api/reports.js";
+import { fetchReports, moderate, requestMagicLink, verifyMagicLink } from "../api/reports.js";
 import { Brand, StatusPill, Icon } from "./primitives.jsx";
 
 const BCN_BBOX = [2.05, 41.32, 2.25, 41.47];
 const ACTIONS = ["confirm", "reject", "document", "dispute", "restore"];
 const ls = (k, v) => { try { return v === undefined ? localStorage.getItem(k) : localStorage.setItem(k, v); } catch { return null; } };
 
+// El enlace mágico llega como #/mod?token=XYZ — extrae el token de la query del hash.
+function tokenFromHash() {
+  const h = window.location.hash || "";
+  const qi = h.indexOf("?");
+  if (qi === -1) return null;
+  return new URLSearchParams(h.slice(qi + 1)).get("token");
+}
+
 export default function ModPanel() {
-  const [token, setToken] = useState(() => ls("cj-mod-token") || "");
+  const [session, setSession] = useState(() => ls("cj-mod-session") || "");
+  const [role, setRole] = useState(() => ls("cj-mod-role") || "");
+  const [email, setEmail] = useState("");
+  const [token, setToken] = useState(() => ls("cj-mod-token") || ""); // MOD_TOKEN legacy (fallback)
   const [device, setDevice] = useState(() => ls("cj-mod-device") || "");
   const [items, setItems] = useState([]);
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const save = () => { ls("cj-mod-token", token); ls("cj-mod-device", device); setMsg("Credenciales guardadas."); };
+  // Al cargar: si el enlace mágico trae token, canjéalo por una sesión y límpialo de la URL.
+  useEffect(() => {
+    const t = tokenFromHash();
+    if (!t) return;
+    (async () => {
+      setBusy(true);
+      try {
+        const r = await verifyMagicLink(t);
+        ls("cj-mod-session", r.session); ls("cj-mod-role", r.role);
+        setSession(r.session); setRole(r.role);
+        setMsg(`Sesión iniciada como ${r.role}.`);
+      } catch (e) { setMsg(`No se pudo iniciar sesión: ${e.message}`); }
+      history.replaceState(null, "", window.location.pathname + "#/mod");
+      setBusy(false);
+    })();
+  }, []);
+
+  async function sendLink() {
+    setMsg(null);
+    if (!email.includes("@")) return setMsg("Introduce un email válido.");
+    setBusy(true);
+    try {
+      const r = await requestMagicLink(email.trim());
+      setMsg(r.devLink
+        ? `Enlace (modo dev): ${r.devLink}`
+        : "Si el email pertenece a un moderador, recibirás un enlace de acceso.");
+    } catch (e) { setMsg(`Error: ${e.message}`); }
+    setBusy(false);
+  }
+
+  function logout() {
+    ls("cj-mod-session", ""); ls("cj-mod-role", "");
+    setSession(""); setRole(""); setMsg("Sesión cerrada.");
+  }
+
+  const save = () => { ls("cj-mod-token", token); ls("cj-mod-device", device); setMsg("Credenciales legacy guardadas."); };
 
   async function load() {
     setBusy(true); setMsg(null);
@@ -32,7 +78,11 @@ export default function ModPanel() {
   async function act(id, action) {
     setMsg(null);
     try {
-      const r = await moderate(id, action, { token, device });
+      // Sesión magic-link preferente (el actor se resuelve en el servidor);
+      // si no hay sesión, cae al MOD_TOKEN + id de dispositivo legacy.
+      const r = await moderate(id, action, session
+        ? { token: session }
+        : { token, device });
       setItems((xs) => xs.map((it) => (it.id === id ? { ...it, status: r.status } : it)));
       setMsg(`#${id.slice(0, 8)} → ${r.status}`);
     } catch (e) { setMsg(`Acción rechazada: ${e.message}`); }
@@ -51,16 +101,42 @@ export default function ModPanel() {
           Cola de revisión
         </h1>
 
-        {/* Credenciales */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 12, marginTop: 22, alignItems: "end" }}>
-          <label style={lbl}>Token de moderación
-            <input type="password" value={token} onChange={(e) => setToken(e.target.value)} style={inputStyle()} autoComplete="off" />
-          </label>
-          <label style={lbl}>Tu id de moderador (audit)
-            <input value={device} onChange={(e) => setDevice(e.target.value)} style={inputStyle()} placeholder="p.ej. mod-ana" />
-          </label>
-          <button onClick={save} style={solidBtn(c.yellow)}>Guardar</button>
-        </div>
+        {/* Acceso por enlace mágico */}
+        {session ? (
+          <div style={{ display: "flex", gap: 12, marginTop: 22, alignItems: "center", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: font.mono, fontSize: 12.5, color: c.green }}>
+              <Icon name="check" size={13} /> Sesión activa · rol <strong>{role || "?"}</strong>
+            </span>
+            <button onClick={logout} style={ghostBtn(c.muted)}>Cerrar sesión</button>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, marginTop: 22, alignItems: "end" }}>
+            <label style={lbl}>Email de moderador/a
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle()}
+                placeholder="tu@correo.org" autoComplete="email"
+                onKeyDown={(e) => { if (e.key === "Enter") sendLink(); }} />
+            </label>
+            <button onClick={sendLink} disabled={busy} style={solidBtn(c.yellow)}>Enviar enlace</button>
+          </div>
+        )}
+
+        {/* Fallback legacy MOD_TOKEN (mientras se migra) */}
+        {!session && (
+          <details style={{ marginTop: 14 }}>
+            <summary style={{ cursor: "pointer", fontFamily: font.mono, fontSize: 11.5, color: c.faint, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Acceso legacy (token compartido)
+            </summary>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 12, marginTop: 12, alignItems: "end" }}>
+              <label style={lbl}>Token de moderación
+                <input type="password" value={token} onChange={(e) => setToken(e.target.value)} style={inputStyle()} autoComplete="off" />
+              </label>
+              <label style={lbl}>Tu id de moderador (audit)
+                <input value={device} onChange={(e) => setDevice(e.target.value)} style={inputStyle()} placeholder="p.ej. mod-ana" />
+              </label>
+              <button onClick={save} style={solidBtn(c.yellow)}>Guardar</button>
+            </div>
+          </details>
+        )}
 
         <div style={{ display: "flex", gap: 12, marginTop: 18, alignItems: "center" }}>
           <button onClick={load} disabled={busy} style={solidBtn(c.accent)}>{busy ? "Cargando…" : "Cargar reportes"}</button>
@@ -88,7 +164,7 @@ export default function ModPanel() {
         </ul>
 
         <p style={{ marginTop: 30, fontFamily: font.mono, fontSize: 11.5, color: c.faint, lineHeight: 1.6 }}>
-          <Icon name="arrowUpRight" size={12} /> El token nunca viaja en la URL ni se comparte. La acción queda registrada en el audit log con tu id. Auth de sesión real: pendiente (docs/07 §E).
+          <Icon name="arrowUpRight" size={12} /> Acceso por enlace mágico (sesión de 30 días, ligada a tu rol en la BD). El enlace caduca en 15 min y solo sirve una vez. Cada acción queda en el audit log con tu id. El token compartido legacy queda como fallback durante la migración.
         </p>
       </div>
     </div>
@@ -106,6 +182,11 @@ function solidBtn(bg) {
   return { cursor: "pointer", background: bg, color: "#0a0a0b", border: "2px solid transparent",
     fontFamily: font.sans, fontWeight: 700, fontSize: 14, letterSpacing: "0.02em", textTransform: "uppercase",
     padding: "11px 20px", borderRadius: 0 };
+}
+function ghostBtn(col) {
+  return { cursor: "pointer", background: "transparent", border: `2px solid ${col}`, color: col,
+    fontFamily: font.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+    padding: "7px 14px", borderRadius: 0 };
 }
 function actBtn(a) {
   const col = a === "reject" ? c.hostile : a === "confirm" ? c.green : a === "document" ? c.service : a === "dispute" ? c.yellow : c.muted;

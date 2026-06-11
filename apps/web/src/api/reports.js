@@ -45,6 +45,36 @@ export async function moderate(id, action, opts = {}) {
   return body;
 }
 
+/**
+ * Solicita un enlace mágico de acceso. POST /api/auth/magic { email }
+ * Responde { ok: true } siempre (anti-enumeración). En dev puede traer { devLink }.
+ */
+export async function requestMagicLink(email) {
+  const res = await fetch(`${API_URL}/api/auth/magic`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `auth ${res.status}`);
+  return body;
+}
+
+/**
+ * Canjea el token del enlace por una sesión. POST /api/auth/verify { token }
+ * → { session, role, handle, expires_at }
+ */
+export async function verifyMagicLink(token) {
+  const res = await fetch(`${API_URL}/api/auth/verify`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `verify ${res.status}`);
+  return body;
+}
+
 /** Crea un reporte. POST /api/reports → { id, status, categories, geohash } */
 export async function submitReport({ lat, lng, type, categories, description, device }) {
   const headers = { "content-type": "application/json" };

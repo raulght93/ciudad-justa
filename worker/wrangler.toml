@@ -4,6 +4,12 @@ name = "ciudad-justa-api"
 main = "src/index.js"
 compatibility_date = "2026-01-01"
 
+# Auth magic-link: origen del front (para construir el enlace) + remitente del email.
+# El secreto RESEND_API_KEY se pone con `wrangler secret put RESEND_API_KEY`.
+[vars]
+APP_ORIGIN = "https://ciudad-justa.pages.dev"
+MAIL_FROM = "Ciudad Justa <login@ciudad-justa.org>"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "ciudad-justa"
