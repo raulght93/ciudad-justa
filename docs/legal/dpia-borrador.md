@@ -129,7 +129,7 @@ aplicar las medidas de §6.
 | R-1 | Exponer/identificar a una persona vulnerable en la foto | **Alto** | M-1, M-2, M-6 | Medio-bajo |
 | R-2 | El blur falla en gama baja y se sube sin difuminar | **Alto** | M-2 (no-subir), M-3 | Bajo |
 | R-3 | Reidentificación por **contexto** aunque se difumine el rostro | Alto-Medio | M-6 (revisión), M-1, M-7 | Medio |
-| R-4 | Coordenadas exactas revelan el lugar habitual de una persona sin hogar | **Alto** | **M-7 (pendiente)**, M-6 | Medio (mitigable a bajo) |
+| R-4 | Coordenadas exactas revelan el lugar habitual de una persona sin hogar | **Alto** | **M-7 (✅ hostil)**, M-6 | Bajo |
 | R-5 | Texto libre con datos personales (matrícula, nombre, cara descrita) | Medio | M-6, M-8 | Bajo |
 | R-6 | Señalamiento de propiedad/negocio (honor, no RGPD) | Medio | M-5 (takedown ≤72 h) | Bajo |
 | R-7 | Filtración de la foto original | Bajo | M-1 (no sale del cliente) | Muy bajo |
@@ -150,9 +150,12 @@ aplicar las medidas de §6.
   `photos.blurred CHECK (blurred = 1)`.
 - **M-3.** Cadena de detección con *fallback* (API nativa → MediaPipe). Documentar criterio de
   aceptación de rendimiento en gama baja (`03 §3.9`).
-- **M-7.** *(Pendiente de implementar)* **Ofuscar la precisión** de las coordenadas para los tipos
-  sensibles: almacenar/mostrar a resolución de geohash (~150 m) o aplicar *jitter*, evitando exponer
-  el punto exacto donde pernocta una persona. **Recomendación prioritaria de esta EIPD.**
+- **M-7.** ✅ **Ofuscación de coordenadas para tipos sensibles** — implementado para `hostile`:
+  el Worker redondea lat/lng a 3 decimales (~100 m, irreversible) **antes de persistir**, por lo que
+  el punto exacto donde puede pernoctar una persona **nunca se almacena** (`worker/src/index.js`,
+  `blurCoord`/`SENSITIVE_TYPES`; tests en `worker/test/coord-privacy.test.js`). Los tipos de
+  infraestructura (`housing`/`service`/`climate`) conservan precisión. *Pendiente:* revisar si algún
+  otro tipo debe considerarse sensible.
 - **M-9.** Cifrado en tránsito (HTTPS) y en reposo (D1/R2); control de acceso por roles.
 - **M-10.** Minimización de logs (§1.6) y rotación de secretos; auth de moderación con sesión real
   (sustituir el `MOD_TOKEN` compartido — ver backlog 🟠).
@@ -173,8 +176,7 @@ aplicar las medidas de §6.
 Con M-1…M-6 y M-8…M-10 el riesgo residual es **bajo-medio**. **R-3 (reidentificación por contexto)** y
 **R-4 (coordenadas exactas)** se mantienen como los más relevantes:
 
-- **R-4 se reduce a bajo** al implementar **M-7** (ofuscación de coordenadas). Se considera
-  **bloqueante** para los tipos que pueden involucrar a personas.
+- **R-4 ya reducido a bajo**: implementada **M-7** (ofuscación de coordenadas) para `hostile`.
 - **R-3** depende de la moderación humana; aceptar sólo si la curación previa a la publicación está
   operativa (`06 §6.4`).
 
@@ -195,7 +197,8 @@ política de privacidad.
 
 ## 10. Plan de acción (acciones abiertas)
 
-- [ ] **M-7**: ofuscar la precisión de coordenadas para tipos sensibles (geohash/jitter). *(Prioritario)*
+- [x] **M-7**: ofuscar la precisión de coordenadas para tipos sensibles — hecho para `hostile`
+      (revisar si algún otro tipo debe incluirse).
 - [ ] Validar rendimiento del difuminado en **móviles de gama baja** (`03 §3.9`).
 - [ ] Redactar el **test de ponderación del interés legítimo** y fijar la base del art. 6.
 - [ ] Definir **responsable del tratamiento** y, en su caso, **DPO** (al constituir la entidad, `06 §6.2`).

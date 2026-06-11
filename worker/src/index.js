@@ -13,6 +13,15 @@ const CATEGORIES = new Set([
 // Tipos de exclusión (espejo del CHECK de reports.type).
 const TYPES = new Set(["hostile", "climate", "housing", "service"]);
 
+// EIPD/DPIA M-7 (docs/legal/dpia-borrador.md, riesgo R-4): para los tipos que pueden
+// involucrar a personas (arquitectura hostil → donde alguien puede pernoctar), se OFUSCA
+// la precisión de las coordenadas antes de persistir. 3 decimales ≈ 100 m, irreversible:
+// el punto exacto nunca se almacena. Los tipos de infraestructura conservan precisión.
+export const SENSITIVE_TYPES = new Set(["hostile"]);
+export function blurCoord(v) {
+  return Math.round(v * 1000) / 1000; // ~100 m
+}
+
 // Umbrales de transición de estado por score (docs/04 §4.4). Configurables.
 const UNDER_REVIEW_AT = 2; // score ≥ → entra en cola de revisión
 const CONFIRM_AT = 5; //       score ≥ → confirmado por la comunidad
@@ -154,7 +163,11 @@ export default {
 
       const id = crypto.randomUUID();
       const now = Date.now();
-      const gh = geohash(body.lat, body.lng);
+      // M-7: ofusca coordenadas de tipos sensibles antes de persistir (el exacto no se guarda).
+      const sensitive = SENSITIVE_TYPES.has(reportType);
+      const lat = sensitive ? blurCoord(body.lat) : body.lat;
+      const lng = sensitive ? blurCoord(body.lng) : body.lng;
+      const gh = geohash(lat, lng);
       // Usuario anónimo por dispositivo (cabecera opcional). INSERT idempotente.
       const device = request.headers.get("x-device-id") || "anon";
 
@@ -165,7 +178,7 @@ export default {
         env.DB.prepare(
           "INSERT INTO reports (id, lat, lng, type, geohash, status, taxonomy_version, score, description, created_by, created_at, updated_at) " +
           "VALUES (?, ?, ?, ?, ?, 'reported', 1, 0, ?, ?, ?, ?)"
-        ).bind(id, body.lat, body.lng, reportType, gh, body.description ?? null, device, now, now),
+        ).bind(id, lat, lng, reportType, gh, body.description ?? null, device, now, now),
         ...categories.map((k) =>
           env.DB.prepare(
             "INSERT INTO report_categories (report_id, category_key) VALUES (?, ?)"
