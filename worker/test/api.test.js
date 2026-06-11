@@ -316,3 +316,15 @@ test("ruta desconocida → 404", async () => {
   const res = await worker.fetch(req("/nope"), {});
   assert.equal(res.status, 404);
 });
+
+test("GET /api/reports incluye URL de foto cuando el reporte tiene foto", async () => {
+  const db = mockDB([
+    { id: "r1", lat: 41.38, lng: 2.17, type: "hostile", status: "confirmed", description: "x", score: 5, photo_key: "reports/r1/p1.jpg" },
+    { id: "r2", lat: 41.39, lng: 2.18, type: "service", status: "reported", description: "y", score: 0, photo_key: null },
+  ]);
+  const res = await worker.fetch(req("/api/reports?bbox=2.1,41.3,2.2,41.4"), { DB: db });
+  const body = await res.json();
+  assert.match(body.features[0].properties.photo, /\/api\/photos\/reports\/r1\/p1\.jpg$/);
+  assert.equal(body.features[1].properties.photo, undefined); // sin foto → sin propiedad
+  assert.match(db.log[0].sql, /FROM photos WHERE report_id = reports\.id/);
+});

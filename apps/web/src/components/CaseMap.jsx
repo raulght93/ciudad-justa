@@ -170,12 +170,16 @@ function wirePopup(map, layerId) {
     const p = e.features[0].properties;
     const cats = Array.isArray(p.categories) ? p.categories : JSON.parse(p.categories || "[]");
     const tcol = TYPE_COLOR[p.type] || c.accentDeep;
+    const photo = p.photo
+      ? `<img src="${p.photo}" alt="Foto del reporte (rostros difuminados)" loading="lazy" style="display:block;width:100%;height:auto;margin-top:8px;border:1px solid #0002" />`
+      : "";
     popup.setLngLat(e.lngLat).setHTML(
       `<div style="font-family:${font.sans};max-width:220px">
          <span style="font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;background:${tcol};color:#0a0a0b;padding:2px 6px">${TYPE_LABEL[p.type] || "Hostil"}</span>
          <strong style="color:#111;margin-left:6px">${STATUS_LABEL[p.status] || p.status}</strong>
          <div style="margin-top:5px;color:#111">${p.description || ""}</div>
          <div style="margin-top:6px;font-size:11px;color:#666">${cats.join(" · ")}</div>
+         ${photo}
        </div>`).addTo(map);
   });
 }

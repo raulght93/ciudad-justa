@@ -199,8 +199,11 @@ export default {
       const [minLng, minLat, maxLng, maxLat] = bbox;
 
       // D1: consulta espacial por bounding-box (índice idx_reports_bbox).
+      // Subconsulta: la foto más reciente del reporte (difuminada; servida vía /api/photos).
       let sql =
-        "SELECT id,lat,lng,type,status,description,score FROM reports " +
+        "SELECT id,lat,lng,type,status,description,score, " +
+        "(SELECT r2_key FROM photos WHERE report_id = reports.id ORDER BY created_at DESC LIMIT 1) AS photo_key " +
+        "FROM reports " +
         "WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?";
       const args = [minLat, maxLat, minLng, maxLng];
       if (status) {
@@ -217,7 +220,10 @@ export default {
         features: (results || []).map((r) => ({
           type: "Feature",
           geometry: { type: "Point", coordinates: [r.lng, r.lat] },
-          properties: { id: r.id, type: r.type || "hostile", status: r.status, description: r.description, score: r.score },
+          properties: {
+            id: r.id, type: r.type || "hostile", status: r.status, description: r.description, score: r.score,
+            ...(r.photo_key ? { photo: `${url.origin}/api/photos/${r.photo_key}` } : {}),
+          },
         })),
       });
     }
